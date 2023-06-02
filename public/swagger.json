@@ -11,7 +11,7 @@
 	"info": {
 		"title": "pass-manager-back",
 		"version": "1.0.0",
-		"description": "Node js + Express + Typescript + Mongodb + Swagger ",
+		"description": "Node.js + Express + Typescript + Mongodb + Swagger ",
 		"license": {
 			"name": "ISC"
 		},
@@ -47,6 +47,47 @@
 						"required": false,
 						"schema": {
 							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/api/users": {
+			"get": {
+				"operationId": "GetUsers",
+				"responses": {
+					"200": {
+						"description": "A group of users",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"description": "Enpoint to retrive all users data paginated",
+				"tags": [
+					"UserController"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "page",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"description": "per page to show users",
+						"in": "query",
+						"name": "limit",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
 						}
 					}
 				]

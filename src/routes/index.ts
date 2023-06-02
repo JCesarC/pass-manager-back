@@ -1,10 +1,9 @@
 import express, { Request, Response } from 'express';
-
-import helloRouter from '../hello/services/routes/hello.router';
-import { LogInfo } from '../utils/logger';
+import userRouter from '../Collections/users/routes/UserRouter';
 
 const mainRooter = express.Router();
 
-mainRooter.use('/hello', helloRouter);
+// mainRooter.use('/hello', helloRouter);
+mainRooter.use('/users', userRouter);
 
 export default mainRooter;
