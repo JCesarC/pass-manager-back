@@ -10,6 +10,8 @@ dotenv.config();
 const PORT = process.env.PORT || 8000;
 const MONGODB_URL = process.env.MONGODB_URL as string;
 
+console.log('Starting server...');
+
 const server = http.createServer(app);
 
 mongoose.connection.once('open', () => {
