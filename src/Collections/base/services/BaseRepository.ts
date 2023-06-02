@@ -2,7 +2,7 @@ import { Model } from 'mongoose';
 import { IBaseRepository } from '../model/IBaseRepository';
 
 export class BaseRepository implements IBaseRepository {
-  private model;
+  public model;
   // * TODO: Type for model [unknown]
   // * TODO: Type for entity [any]
   // eslint-disable-next-line @typescript-eslint/ban-types
@@ -10,12 +10,12 @@ export class BaseRepository implements IBaseRepository {
     this.model = baseModel;
   }
 
-  async getAll() {
+  async getAll(): Promise<unknown> {
     // const data = this.model.
     return await this.model.find({});
   };
 
-  async getById(id: string) {
+  async getById(id: string): Promise<unknown> {
     return await this.model.findById(id);
   }
 
@@ -31,4 +31,8 @@ export class BaseRepository implements IBaseRepository {
     await this.model.findByIdAndDelete(id);
     return true;
   };
+
+  async countDocuments(): Promise<any> {
+    return await this.model.countDocuments();
+  }
 };
