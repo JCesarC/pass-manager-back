@@ -6,19 +6,15 @@ const userSchema: Schema = new Schema(
       type: String,
       required: true,
     },
-    firtName: {
+    firstName: {
       type: String,
       required: true
-    },
-    secondName: {
-      type: String,
-      required: false
     },
     lastName: {
       type: String,
       required: true
     },
-    secondLastName: {
+    password: {
       type: String,
       required: false
     },
@@ -32,14 +28,16 @@ const userSchema: Schema = new Schema(
     },
     active: {
       type: Boolean,
-      required: true },
+      required: false,
+      default: false
+    },
     displayName: {
       type: String,
-      required: true
+      required: false
     },
     photoURL: {
       type: String,
-      required: true
+      required: false
     },
   },
   {

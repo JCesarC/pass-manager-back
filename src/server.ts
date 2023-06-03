@@ -19,7 +19,7 @@ mongoose.connection.once('open', () => {
 });
 
 mongoose.connection.on('error', (err) => {
-  console.error('Error with MongoDB', err);
+  console.log('Error with MongoDB', err);
 });
 
 const startServer = async () => {
