@@ -19,7 +19,7 @@ export class BaseRepository implements IBaseRepository {
     return await this.model.findById(id);
   }
 
-  async create(entity: any): Promise<unknown> {
+  async create(entity: any): Promise<any> {
     return await this.model.create(entity);
   }
 
