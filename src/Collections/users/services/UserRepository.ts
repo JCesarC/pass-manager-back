@@ -1,10 +1,21 @@
 import { BaseRepository } from '../../base/services/BaseRepository';
 import { UserModel } from '../dataAccess/UserSchema';
+import { IUserResponseModel } from '../models';
 import { IUserModel } from '../models/IUserModel';
 
 export class UserRepository extends BaseRepository {
   constructor() {
     super(UserModel);
+  }
+
+  async getUserByEmail(email: string){
+    const foundUser = await this.model.findOne({ email });
+    return foundUser;
+  }
+
+  async getFilteredUserData(_id: string): Promise<IUserResponseModel>{
+    const foundUser = await this.model.findById(_id, { __v: 0, password: 0 });
+    return foundUser;
   }
 
   async getAllUsers(): Promise<IUserModel[]> {

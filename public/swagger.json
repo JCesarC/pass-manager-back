@@ -49,6 +49,22 @@
 				],
 				"type": "object",
 				"additionalProperties": false
+			},
+			"IAuthCredentials": {
+				"properties": {
+					"email": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"email",
+					"password"
+				],
+				"type": "object",
+				"additionalProperties": false
 			}
 		},
 		"securitySchemes": {}
@@ -162,6 +178,36 @@
 						"application/json": {
 							"schema": {
 								"$ref": "#/components/schemas/IUserModel"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/auth/login": {
+			"post": {
+				"operationId": "LoginUser",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"AuthController"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/IAuthCredentials"
 							}
 						}
 					}
