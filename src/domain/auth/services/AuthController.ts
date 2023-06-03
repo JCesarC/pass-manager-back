@@ -24,8 +24,14 @@ export class AuthController implements IAuthController {
     throw new Error(AUTH_ERRORS.DATA_NOT_FOUND);
   }
 
-  loginUser(authCredentials: IAuthCredentials): Promise<unknown> {
-    throw new Error('Method not implemented.');
+  @Post('/login')
+  async loginUser(@Body()authCredentials: IAuthCredentials): Promise<unknown> {
+    const { email, password } = authCredentials;
+    if(email && password ) {
+      const response = await this.authService.loginUser(authCredentials);
+      return response;
+    }
+    throw new Error(AUTH_ERRORS.CREDENTIALS_NOT_FOUND);
   }
 
   loginByGoogle(): Promise<unknown> {
