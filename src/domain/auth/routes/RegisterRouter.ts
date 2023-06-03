@@ -1,7 +1,7 @@
-import express, { Request, Response, Router } from 'express';
+import express, { NextFunction, Request, Response, Router } from 'express';
 import { AuthController } from '../services/AuthController';
 
-const firstMiddleware = (req: Request, res: Response, next: any) => {
+const firstMiddleware = (req: Request, res: Response, next: NextFunction) => {
   // Realizar alguna lógica antes de pasar al siguiente middleware o controlador
   console.log('Middleware 1');
   next();
