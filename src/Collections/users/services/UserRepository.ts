@@ -8,13 +8,13 @@ export class UserRepository extends BaseRepository {
   }
 
   async getAllUsers(): Promise<IUserModel[]> {
-    const users = await this.model.find({}, { __v: 0 }).exec();
+    const users = await this.model.find({}, { __v: 0, password: 0 }).exec();
     return users;
   }
 
   async getUsersPaginated(page: number, limit: number): Promise<IUserModel[]> {
     const users = await this.model
-      .find({}, { __v: 0 })
+      .find({}, { __v: 0, password: 0 })
       .limit(limit)
       .skip((page - 1) * limit)
       .exec();
