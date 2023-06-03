@@ -1,6 +1,6 @@
-import express, { Request, Response } from 'express';
+import express from 'express';
 import userRouter from '../Collections/users/routes/UserRouter';
-import authRouter from '../domain/auth/routes/AuthRouter';
+import authRouter from '../domain/auth/routes';
 
 const mainRooter = express.Router();
 
