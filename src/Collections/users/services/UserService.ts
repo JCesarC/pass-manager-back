@@ -11,12 +11,15 @@ export class UserService {
   public async getAll(page: number, limit: number): Promise<UserResponse> {
     try {
       const users = await this.userRepository.getUsersPaginated(page, limit);
-      const totalPages = await this.userRepository.countDocuments();
+      const total = await this.userRepository.countDocuments();
+      const totalPages = Math.ceil(total / limit);
+
       const response: UserResponse = {
         users,
         totalPages,
         currentPage: page
       };
+
       return response;
     } catch (error) {
       throw new Error('Error getting Users.'+error);
