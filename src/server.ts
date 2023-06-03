@@ -1,11 +1,10 @@
 import http from 'http';
 import mongoose from 'mongoose';
 
-import * as dotenv from 'dotenv';
+import dotenv from 'dotenv';
+dotenv.config();
 
 import app from './app';
-
-dotenv.config();
 
 const PORT = process.env.PORT || 8000;
 const MONGODB_URL = process.env.MONGODB_URL as string;

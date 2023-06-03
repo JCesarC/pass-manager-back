@@ -19,25 +19,54 @@ export class UserService {
         totalPages,
         currentPage: page
       };
-
       return response;
     } catch (error) {
       throw new Error('Error getting Users.'+error);
     }
+  };
+
+  async getFilteredUserData(_id: string) {
+    try {
+      const userData = await this.userRepository.getFilteredUserData(_id);
+      return userData;
+    } catch (error) {
+      throw new Error(`Getting User by Id: ${_id}.`+error);
+    }
   }
   // * TODO: get user by name
-  public async getUserById(id: string) {
-    const product = await this.userRepository.getById(id);
-    return product;
+  public async getUserById(_id: string) {
+    try {
+      const user = await this.userRepository.getById(_id);
+      return user;
+    } catch (error) {
+      throw new Error(`Getting User by Id: ${_id}.`+error);
+    }
   }
 
-  public async newUser(user: IUserModel) {
-    const response = await this.userRepository.create(user);
-    return response;
+  public async getUserByEmail(email: string){
+    try {
+      const user = await this.userRepository.getUserByEmail(email);
+      return user;
+    } catch (error) {
+      throw new Error(`Getting User by email: ${email}.`+error);
+    }
   }
 
-  public async deleteUser(id: string) {
-    const response = await this.userRepository.delete(id);
-    return response;
+  public async createUser(user: IUserModel) {
+    try {
+      const response = await this.userRepository.create(user);
+      return response;
+    } catch (error) {
+      throw new Error('Creating User:.'+error);
+    }
+  }
+
+  public async deleteUser(_id: string) {
+    try {
+      const response = await this.userRepository.delete(_id);
+      return response;
+    } catch (error) {
+      throw new Error(`Deleting User with id: ${_id}:.`+error);
+    }
   };
 };
