@@ -1,6 +1,7 @@
 import { Get, Query, Route, Tags } from 'tsoa';
 import { IUserController } from '../interfaces/IUserController';
 import { UserService } from './UserService';
+import { IUserResponseModel } from '../models';
 
 @Route('/api/users')
 @Tags('UserController')
@@ -22,9 +23,17 @@ export class UserController implements IUserController {
     const users = await this.userService.getAll(page, limit);
     return users;
   }
-  getUserById(id: string): Promise<unknown> {
-    throw new Error('Method not implemented.');
+
+  async getUserData(id: string): Promise<IUserResponseModel> {
+    const user = await this.userService.getFilteredUserData(id);
+    return user;
   }
+
+  async getUserById(id: string): Promise<any> {
+    const user = await this.userService.getUserById(id);
+    return user;
+  }
+
   deleteUserById(id: string): Promise<unknown> {
     throw new Error('Method not implemented.');
   }

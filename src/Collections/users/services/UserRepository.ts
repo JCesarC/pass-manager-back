@@ -8,6 +8,11 @@ export class UserRepository extends BaseRepository {
     super(UserModel);
   }
 
+  async getUserById(_id: string){
+    const foundUser = await this.model.findOne({ _id });
+    return foundUser;
+  }
+
   async getUserByEmail(email: string){
     const foundUser = await this.model.findOne({ email });
     return foundUser;

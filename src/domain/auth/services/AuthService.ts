@@ -46,7 +46,7 @@ export class AuthService {
       const validPassword = comparePassword(password, foundUser.password,);
       if (!validPassword) throw new Error(AUTH_ERRORS.INVALID_CREDENTIALS);
 
-      const token = generateToken(foundUser.email);
+      const token = generateToken(foundUser._id, foundUser.email);
 
       const userData = await this.userService.getFilteredUserData(foundUser._id);
 
