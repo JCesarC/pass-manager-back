@@ -12,10 +12,7 @@ export const checkLoggedIn = (req: Request, res: Response, next: NextFunction) =
 
   try {
     const decodedToken = validateToken(token);
-
-    console.log('decodedToken.id: ', decodedToken._id);
     req.user = { _id: decodedToken._id };
-
     next();
   } catch (error) {
     return res.status(401).json({

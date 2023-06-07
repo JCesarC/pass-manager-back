@@ -29,10 +29,20 @@ export class UserService {
     try {
       const userData = await this.userRepository.getFilteredUserData(_id);
       return userData;
+    } catch (error: any) {
+      throw new Error(`Getting User by Id: ${_id}`);
+    }
+  }
+
+  public async getOneUserById(_id: string) {
+    try {
+      const user = await this.userRepository.getUserById(_id);
+      return user;
     } catch (error) {
       throw new Error(`Getting User by Id: ${_id}.`+error);
     }
   }
+
   // * TODO: get user by name
   public async getUserById(_id: string) {
     try {
@@ -58,6 +68,15 @@ export class UserService {
       return response;
     } catch (error) {
       throw new Error('Creating User:.'+error);
+    }
+  }
+
+  public async createBySocialProfile(user: any) {
+    try {
+      const response = await this.userRepository.create(user);
+      return response;
+    } catch (error) {
+      throw new Error('Creating User by social profile:.'+error);
     }
   }
 

@@ -37,6 +37,12 @@
 					},
 					"photoURL": {
 						"type": "string"
+					},
+					"provider": {
+						"type": "string"
+					},
+					"verified": {
+						"type": "boolean"
 					}
 				},
 				"required": [

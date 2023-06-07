@@ -26,6 +26,8 @@ const models: TsoaRoute.Models = {
             "roles": {"dataType":"array","array":{"dataType":"string"}},
             "phone": {"dataType":"string"},
             "photoURL": {"dataType":"string"},
+            "provider": {"dataType":"string"},
+            "verified": {"dataType":"boolean"},
         },
         "additionalProperties": false,
     },

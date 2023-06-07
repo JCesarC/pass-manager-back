@@ -23,7 +23,6 @@ export const generateToken = (_id: string, email: string) => {
 };
 
 export const validateToken = (token: string) => {
-  console.log('tokenReceived: ', token);
   const decodedToken : JwtPayload = jwt.verify(token, JWT_SECRET) as JwtPayload;
   return decodedToken;
 };

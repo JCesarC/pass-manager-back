@@ -2,7 +2,7 @@ import express from 'express';
 import registerRoute from './RegisterRouter';
 import loginRouter from './LoginRouter';
 import oauthRouter from './OAuthRouter';
-import userRouter from './UserRouter';
+import userRouter from './AuthUserRouter';
 
 const authRouter = express.Router();
 

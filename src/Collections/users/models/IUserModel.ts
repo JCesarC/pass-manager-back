@@ -9,4 +9,6 @@ export interface IUserModel {
   roles?: string [];
   phone? : string;
   photoURL?: string,
+  provider?: string,
+  verified?: boolean
 };

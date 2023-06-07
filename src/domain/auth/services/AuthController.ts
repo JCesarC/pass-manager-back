@@ -1,17 +1,24 @@
-import { IUserModel } from '../../../Collections/users/models/IUserModel';
-import { IAuthCredentials, IAuthController } from '../interfaces';
+import { Body, Post, Route, Tags } from 'tsoa';
+
 import { AuthService } from './AuthService';
+import { UserService } from '../../../Collections/users/services/UserService';
+
+import { IUserModel, IUserResponseModel} from '../../../Collections/users/models';
+import { IGoogleProfile } from '../models/IGoogleProfileModel';
+import { IAuthCredentials, IAuthController } from '../interfaces';
 
 import { AUTH_ERRORS } from '../../../constants';
-import { Body, Post, Route, Tags } from 'tsoa';
+import { generateToken } from '../../../utils/AuthUtils';
 
 @Route('/api/auth')
 @Tags('AuthController')
 export class AuthController implements IAuthController {
 
   private authService;
+  private userService;
   constructor(){
     this.authService = new AuthService();
+    this.userService = new UserService();
   }
 
   @Post('/register')
@@ -34,8 +41,35 @@ export class AuthController implements IAuthController {
     throw new Error(AUTH_ERRORS.CREDENTIALS_NOT_FOUND);
   }
 
-  loginByGoogle(): Promise<unknown> {
-    throw new Error('Method not implemented.');
+  async signInByGoogle(user: IGoogleProfile): Promise<unknown> {
+
+    // * TODO: Validate by Email and if it exists just dont create new user
+    const { email } = user._json;
+    const existingUser = await this.userService.getUserByEmail(email);
+
+    if (existingUser) return;
+
+    const newUser: IUserModel = {
+      email: user._json.email,
+      firstName: user.name.givenName,
+      lastName: user.name.familyName,
+      active: true,
+      verified: user._json.email_verified,
+      displayName: user.displayName,
+      photoURL: user._json.picture,
+      password: ''
+    };
+
+    await this.userService.createBySocialProfile(newUser);
+    return;
+  }
+
+  async generateAuthToken(email: string) {
+    const existingUser: IUserResponseModel = await this.userService.getUserByEmail(email);
+    if (!existingUser) throw new Error(`Cannot find user with email: ${email} in DB`);
+
+    const token = generateToken(existingUser._id, existingUser.email);
+    return token;
   }
 
   logoutUser(): Promise<unknown> {
