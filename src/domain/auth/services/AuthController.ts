@@ -76,4 +76,11 @@ export class AuthController implements IAuthController {
     throw new Error('Method not implemented.');
   }
 
+  async getAuthenticatedUserData(id: string) {
+    const existingUser: IUserResponseModel = await this.userService.getFilteredUserData(id);
+
+    if (!existingUser) throw new Error(`Cannot find user with id: ${id}`);
+    return existingUser;
+  }
+
 }
