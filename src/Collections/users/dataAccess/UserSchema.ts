@@ -1,4 +1,4 @@
-import mongoose, { Schema, SchemaTypes } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 
 const userSchema: Schema = new Schema(
   {
@@ -39,6 +39,15 @@ const userSchema: Schema = new Schema(
       type: String,
       required: false
     },
+    provider: {
+      type: String,
+      required: false
+    },
+    verified: {
+      type: Boolean,
+      required: false,
+      default: false
+    }
   },
   {
     timestamps: true,

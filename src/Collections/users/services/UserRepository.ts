@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import { BaseRepository } from '../../base/services/BaseRepository';
 import { UserModel } from '../dataAccess/UserSchema';
 import { IUserResponseModel } from '../models';
@@ -6,6 +7,12 @@ import { IUserModel } from '../models/IUserModel';
 export class UserRepository extends BaseRepository {
   constructor() {
     super(UserModel);
+  }
+
+  async getUserById(_id: string){
+    const objectId = new mongoose.Types.ObjectId(_id);
+    const foundUser = await this.model.findOne({ _id: objectId });
+    return foundUser;
   }
 
   async getUserByEmail(email: string){

@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 
 const SALTS = 10;
 const EXPIRATION_TIME = '1h';
@@ -15,9 +15,14 @@ export const comparePassword = (password: string, hashedPassword: string, ): boo
   return isValidPassword;
 };
 
-export const generateToken = (email: string) => {
-  const token = jwt.sign({ email }, JWT_SECRET, {
+export const generateToken = (_id: string, email: string) => {
+  const token = jwt.sign({ _id, email }, JWT_SECRET, {
     expiresIn: EXPIRATION_TIME
   });
   return token;
+};
+
+export const validateToken = (token: string) => {
+  const decodedToken : JwtPayload = jwt.verify(token, JWT_SECRET) as JwtPayload;
+  return decodedToken;
 };

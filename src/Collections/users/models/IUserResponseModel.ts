@@ -6,8 +6,10 @@ export interface IUserResponseModel {
   lastName: string;
   active: boolean;
   displayName: string,
-  password: string,
+  password?: string,
   roles?: string [];
   phone? : string;
   photoURL?: string;
+  provider?: string;
+  verified?: boolean;
 }
