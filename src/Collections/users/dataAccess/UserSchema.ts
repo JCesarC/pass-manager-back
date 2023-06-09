@@ -37,7 +37,8 @@ const userSchema: Schema = new Schema(
     },
     photoURL: {
       type: String,
-      required: false
+      required: false,
+      default: ''
     },
     provider: {
       type: String,
