@@ -11,4 +11,5 @@ export const AUTH_ERRORS = {
 export const USER_EXISTS_TYPES = {
   EXISTS: 'EXISTS',
   NOT_EXISTS: 'NOT_EXISTS',
+  EXIST_ON_LOGIN: 'EXIST_ON_LOGIN',
 };

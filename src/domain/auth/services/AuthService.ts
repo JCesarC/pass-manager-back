@@ -15,6 +15,9 @@ export class AuthService {
     const foundUser = await this.userService.getUserByEmail(email);
 
     switch (validationType) {
+    case USER_EXISTS_TYPES.EXIST_ON_LOGIN:
+      if (!foundUser) throw new Error(AUTH_ERRORS.INVALID_CREDENTIALS);
+      return foundUser;
     case USER_EXISTS_TYPES.EXISTS:
       if (!foundUser) throw new Error(`User with email: ${email} ${AUTH_ERRORS.NOT_FOUND}`);
       return foundUser;
@@ -39,9 +42,8 @@ export class AuthService {
       await this.validateUserExistsByEmail(email, USER_EXISTS_TYPES.NOT_EXISTS);
 
       const response: IUserResponseModel = await this.userService.createUser(user);
-
       const userData = await this.userService.getFilteredUserData(response._id);
-      console.log('userData: ', userData);
+
       return {
         error: false,
         user: userData
@@ -59,7 +61,7 @@ export class AuthService {
     try {
       const { email, password } = authCredentials;
 
-      const foundUser = await this.validateUserExistsByEmail(email, USER_EXISTS_TYPES.EXISTS);
+      const foundUser = await this.validateUserExistsByEmail(email, USER_EXISTS_TYPES.EXIST_ON_LOGIN);
 
       const validPassword = comparePassword(password, foundUser.password,);
       if (!validPassword) throw new Error(AUTH_ERRORS.INVALID_CREDENTIALS);
