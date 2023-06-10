@@ -1,6 +1,6 @@
 
 export const AUTH_ERRORS = {
-  CREDENTIALS_NOT_FOUND: '\'email\' or \'password\' has not been received at request.',
+  CREDENTIALS_NOT_FOUND: '\'email\' or \'password\' are needed to log in.',
   DATA_NOT_FOUND: '\'firstName\', \'lastName\', \'email\' or \'password\' has not been received at request.',
   USER_NOT_FOUND: 'User was not found in the dataBase',
   EMAIL_ALREADY_EXISTS: 'already exists.',

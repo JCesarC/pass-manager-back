@@ -6,7 +6,8 @@ export const checkLoggedIn = (req: Request, res: Response, next: NextFunction) =
 
   if (!token) {
     return res.status(401).json({
-      error: 'You must log in!',
+      error: true,
+      errorMessage: 'You must log in!',
     });
   }
 
@@ -16,7 +17,8 @@ export const checkLoggedIn = (req: Request, res: Response, next: NextFunction) =
     next();
   } catch (error) {
     return res.status(401).json({
-      error: 'Invalid token!',
+      error: true,
+      errorMessage: 'The session is over, please log in again!',
     });
   }
 };
