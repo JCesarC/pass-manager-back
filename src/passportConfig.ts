@@ -5,8 +5,6 @@ import { AuthController } from './domain/auth/services/AuthController';
 const config = {
   CLIENT_ID: process.env.CLIENT_ID as string,
   CLIENT_SECRET: process.env.CLIENT_SECRET as string,
-  COOKIE_KEY_1: process.env.COOKIE_KEY_1 as string,
-  COOKIE_KEY_2: process.env.COOKIE_KEY_2 as string,
   PROXY: (process.env.USE_PROXY as string === 'true')
 };
 
