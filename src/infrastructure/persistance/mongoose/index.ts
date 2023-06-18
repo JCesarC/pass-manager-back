@@ -30,3 +30,11 @@ SIGS.forEach((SIG) => {
 export const startDBConnection = async () => {
   await mongoose.connect(MONGODB_URL);
 };
+
+export const closeDBConnection = async () => {
+  await mongoose.connection.close();
+};
+
+export const forceCloseDBConnection = () => {
+  mongoose.connection.close(true);
+};

@@ -13,6 +13,7 @@ import path from 'path';
 import { AppInfo, AppConfig } from './config';
 import compression from 'compression';
 import http, { Server as ServerInstance } from 'http';
+import { closeDBConnection, forceCloseDBConnection } from '../../infrastructure/persistance/mongoose';
 // import winston from 'winston';
 
 class Server{
@@ -82,6 +83,13 @@ class Server{
 
   public async stopServer(message = '') {
     console.log(message);
+    await closeDBConnection();
+    process.exit();
+  }
+
+  public async forceStopServer(message = ''){
+    console.log(message);
+    forceCloseDBConnection();
     process.exit(1);
   }
 
