@@ -10,6 +10,10 @@ mongoose.connection.on('error', (err) => {
   console.log('Error with MongoDB', err);
 });
 
+mongoose.connection.on('close', () => {
+  console.log('MongoDB Connection Closed sucessfully!');
+});
+
 const SIGS = [
   'SIGINT',
   'SIGBREAK',
@@ -18,10 +22,8 @@ const SIGS = [
 
 SIGS.forEach((SIG) => {
   process.on(SIG, () => {
-    mongoose.connection.close(() => {
-      console.log(`Mongodb connection closed On ${SIG}`);
-      process.exit(1);
-    });
+    console.log('Closing db connection...');
+    mongoose.connection.close(true);
   });
 });
 

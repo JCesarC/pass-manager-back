@@ -80,8 +80,8 @@ class Server{
     this.startServer();
   }
 
-  public stopServer(): void {
-    console.log('Server shut down');
+  public async stopServer(message = '') {
+    console.log(message);
     process.exit(1);
   }
 

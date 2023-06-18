@@ -11,7 +11,10 @@ const start = async () => {
 
   process
     .on('SIGINT', () => {
-      server.stopServer();
+      server.stopServer('Shutting down the server...');
+    })
+    .on('SIGBREAK', () => {
+      server.forceStopServer('Forcing server shutdown...');
     })
     .on('unhandledRejection', (error) => {
       server.logErrorAndTerminate(`unhandledRejection captured: ${error}`);
