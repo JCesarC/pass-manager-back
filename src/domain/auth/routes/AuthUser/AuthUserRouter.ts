@@ -1,6 +1,6 @@
 import express, { Router } from 'express';
 
-import { checkLoggedIn } from '../../../../middlewares/Auth';
+import { checkLoggedIn } from '../../../../presentation/rest/v1/middlewares/AuthenticationMiddleware';
 
 import { authUserRouterHandler } from './AuthUserHandler';
 
