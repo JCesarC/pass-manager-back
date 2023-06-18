@@ -87,7 +87,7 @@ class Server{
     process.exit();
   }
 
-  public async forceStopServer(message = ''){
+  public forceStopServer(message = ''){
     console.log(message);
     forceCloseDBConnection();
     process.exit(1);
