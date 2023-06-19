@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { userModelValidator } from '../../../../../../application/users/UserValidator';
-import { IUserModel, IUserResponseModel } from '../../../../../../Collections/users/models';
 import { AuthController } from '../controller/AuthController';
+import { IUserModel, IUserResponseModel } from '../../../../../../application/users/interfaces';
 
 export class AuthHandler {
 

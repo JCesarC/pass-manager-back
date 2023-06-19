@@ -1,6 +1,6 @@
 import express from 'express';
 
-import userRouter from '../../../../Collections/users/routes/UserRouter';
+import userRouter from '../web/users/router';
 import authRouter from '../web/auth/router';
 import uploadRouter from '../web/upload/router';
 

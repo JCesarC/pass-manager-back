@@ -1,11 +1,11 @@
 import { Body, Post, Route, Tags } from 'tsoa';
 
 import { AuthService } from '../../../../../../domain/auth/services/AuthService';
-import { UserService } from '../../../../../../Collections/users/services/UserService';
+import { UserService } from '../../../../../../application/users/UseCases/UserUseCase';
 
-import { IUserModel, IUserResponseModel} from '../../../../../../Collections/users/models';
 import { IGoogleProfile } from '../../../../../../domain/auth/models/IGoogleProfileModel';
 import { IAuthCredentials, IAuthController } from '../../../../../../domain/auth/interfaces';
+import { IUserModel, IUserResponseModel } from '../../../../../../application/users/interfaces';
 
 import { AUTH_ERRORS } from '../../../../../../domain/shared/constants/AuthContants';
 import { generateToken } from '../../../../../../utils/AuthUtils';
@@ -66,7 +66,7 @@ export class AuthController implements IAuthController {
   }
 
   async generateAuthToken(email: string) {
-    const existingUser: IUserResponseModel = await this.userService.getUserByEmail(email);
+    const existingUser = await this.userService.getUserByEmail(email);
     if (!existingUser) throw new Error(`Cannot find user with email: ${email} in DB`);
 
     const token = generateToken(existingUser._id, existingUser.email);
@@ -78,7 +78,7 @@ export class AuthController implements IAuthController {
   }
 
   async getAuthenticatedUserData(id: string) {
-    const existingUser: IUserResponseModel = await this.userService.getFilteredUserData(id);
+    const existingUser = await this.userService.getFilteredUserData(id);
 
     if (!existingUser) throw new Error(`Cannot find user with id: ${id}`);
     return existingUser;

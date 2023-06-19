@@ -1,8 +1,8 @@
-import { IUserResponseModel, IUserModel } from '../../../Collections/users/models';
-import { UserService } from '../../../Collections/users/services/UserService';
+import { UserService } from '../../../application/users/UseCases/UserUseCase';
 import { AUTH_ERRORS, USER_EXISTS_TYPES } from '../../shared/constants/AuthContants';
 import { comparePassword, generateToken, hashPassword } from '../../../utils/AuthUtils';
 import { IAuthCredentials } from '../interfaces';
+import { IUserModel, IUserResponseModel } from '../../../application/users/interfaces';
 
 export class AuthService {
 
@@ -11,7 +11,7 @@ export class AuthService {
     this.userService = new UserService();
   }
 
-  private async validateUserExistsByEmail(email: string, validationType: string){
+  private async validateUserExistsByEmail(email: string, validationType: string): Promise<IUserResponseModel | null>{
     const foundUser = await this.userService.getUserByEmail(email);
 
     switch (validationType) {
@@ -23,9 +23,9 @@ export class AuthService {
       return foundUser;
     case USER_EXISTS_TYPES.NOT_EXISTS:
       if (foundUser) throw new Error(`User with email: ${email} ${AUTH_ERRORS.EMAIL_ALREADY_EXISTS}`);
-      break;
+      return null;
     default:
-      break;
+      return null;
     }
   }
 
@@ -62,6 +62,8 @@ export class AuthService {
       const { email, password } = authCredentials;
 
       const foundUser = await this.validateUserExistsByEmail(email, USER_EXISTS_TYPES.EXIST_ON_LOGIN);
+
+      if (!foundUser) throw new Error(`Cannot find user with email: ${foundUser}`);
 
       const validPassword = comparePassword(password, foundUser.password,);
       if (!validPassword) throw new Error(AUTH_ERRORS.INVALID_CREDENTIALS);

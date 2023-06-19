@@ -1,4 +1,4 @@
-import { IUserModel } from '../../../Collections/users/models/IUserModel';
+import { IUserModel } from '../../../application/users/interfaces/IUserModel';
 import { IGoogleProfile } from '../models/IGoogleProfileModel';
 import { IAuthCredentials } from './IAuthCredentials';
 

@@ -1,6 +1,6 @@
-import { IUserModel } from '../models/IUserModel';
+import { IUserModel } from '../interfaces/IUserModel';
 import { UserResponse } from '../types/UserResponse.type';
-import { UserRepository } from './UserRepository';
+import { UserRepository } from '../repositories/UserRepository';
 
 export class UserService {
   private userRepository;

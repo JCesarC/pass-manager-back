@@ -1,4 +1,4 @@
-import { IUserModel } from '../models/IUserModel';
+import { IUserModel } from '../interfaces/IUserModel';
 
 export type UserResponse = {
   users: IUserModel [],

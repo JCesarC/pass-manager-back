@@ -1,7 +1,7 @@
 import { Get, Query, Route, Tags } from 'tsoa';
-import { IUserController } from '../interfaces/IUserController';
-import { UserService } from './UserService';
-import { IUserResponseModel } from '../models';
+import { IUserController } from '../../../../../../application/users/interfaces/IUserController';
+import { UserService } from '../../../../../../application/users/UseCases/UserUseCase';
+import { IUserResponseModel } from '../../../../../../application/users/interfaces';
 
 @Route('/api/users')
 @Tags('UserController')
@@ -24,7 +24,7 @@ export class UserController implements IUserController {
     return users;
   }
 
-  async getUserData(id: string): Promise<IUserResponseModel> {
+  async getUserData(id: string): Promise<IUserResponseModel | null> {
     const user = await this.userService.getFilteredUserData(id);
     return user;
   }

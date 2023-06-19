@@ -1,5 +1,5 @@
 import Joi from 'joi';
-import { IUserModel } from '../../Collections/users/models';
+import { IUserModel } from './interfaces';
 
 // Definir el esquema de validación con Joi
 const userModelValidator = Joi.object<IUserModel>({
