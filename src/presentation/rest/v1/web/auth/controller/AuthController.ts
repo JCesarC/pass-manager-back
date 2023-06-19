@@ -1,14 +1,14 @@
 import { Body, Post, Route, Tags } from 'tsoa';
 
-import { AuthService } from './AuthService';
-import { UserService } from '../../../Collections/users/services/UserService';
+import { AuthService } from '../../../../../../domain/auth/services/AuthService';
+import { UserService } from '../../../../../../Collections/users/services/UserService';
 
-import { IUserModel, IUserResponseModel} from '../../../Collections/users/models';
-import { IGoogleProfile } from '../models/IGoogleProfileModel';
-import { IAuthCredentials, IAuthController } from '../interfaces';
+import { IUserModel, IUserResponseModel} from '../../../../../../Collections/users/models';
+import { IGoogleProfile } from '../../../../../../domain/auth/models/IGoogleProfileModel';
+import { IAuthCredentials, IAuthController } from '../../../../../../domain/auth/interfaces';
 
-import { AUTH_ERRORS } from '../../../constants/AuthContants';
-import { generateToken } from '../../../utils/AuthUtils';
+import { AUTH_ERRORS } from '../../../../../../constants/AuthContants';
+import { generateToken } from '../../../../../../utils/AuthUtils';
 
 @Route('/api/auth')
 @Tags('AuthController')
@@ -24,6 +24,7 @@ export class AuthController implements IAuthController {
   @Post('/register')
   async registerUser(@Body()user: IUserModel): Promise<unknown> {
     const { firstName, lastName, email, password } = user;
+    console.log('firstName, lastName, email, password: ', firstName, lastName, email, password);
     if(firstName && lastName && email && password ) {
       const response = await this.authService.registerUser(user);
       return response;

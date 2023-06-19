@@ -48,6 +48,7 @@ class Server{
     this.app.use('/', (req, res) => {
       res.sendFile(path.join(__dirname, '..','..','..', 'public', 'docs', 'index.html'));
     });
+    // * TODO: Add Error handling with tsoa
   }
 
   private showBanner(): void {

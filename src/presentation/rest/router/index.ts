@@ -1,6 +1,6 @@
 import express from 'express';
 import userRouter from '../../../Collections/users/routes/UserRouter';
-import authRouter from '../../../domain/auth/routes';
+import authRouter from '../v1/web/auth/router';
 import uploadRouter from '../../../domain/upload/routes';
 
 const mainRooter = express.Router();

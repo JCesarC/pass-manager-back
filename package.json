@@ -42,6 +42,7 @@
     "express": "^4.18.1",
     "helmet": "^6.0.0",
     "inversify": "^6.0.1",
+    "joi": "^17.9.2",
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^6.6.5",
     "morgan": "^1.10.0",

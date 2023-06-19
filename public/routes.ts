@@ -7,7 +7,7 @@ import { HelloController } from './../src/Collections/base/services/HelloControl
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { UserController } from './../src/Collections/users/services/UserController';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { AuthController } from './../src/domain/auth/services/AuthController';
+import { AuthController } from './../src/presentation/rest/v1/web/auth/controller/AuthController';
 import type { RequestHandler } from 'express';
 import * as express from 'express';
 
