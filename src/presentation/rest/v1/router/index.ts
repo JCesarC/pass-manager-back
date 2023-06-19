@@ -2,7 +2,7 @@ import express from 'express';
 
 import userRouter from '../../../../Collections/users/routes/UserRouter';
 import authRouter from '../web/auth/router';
-import uploadRouter from '../web/upload/routes';
+import uploadRouter from '../web/upload/router';
 
 const v1Router = express.Router();
 
