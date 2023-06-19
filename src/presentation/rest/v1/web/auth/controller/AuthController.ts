@@ -7,7 +7,7 @@ import { IUserModel, IUserResponseModel} from '../../../../../../Collections/use
 import { IGoogleProfile } from '../../../../../../domain/auth/models/IGoogleProfileModel';
 import { IAuthCredentials, IAuthController } from '../../../../../../domain/auth/interfaces';
 
-import { AUTH_ERRORS } from '../../../../../../constants/AuthContants';
+import { AUTH_ERRORS } from '../../../../../../domain/shared/constants/AuthContants';
 import { generateToken } from '../../../../../../utils/AuthUtils';
 
 @Route('/api/auth')

@@ -1,6 +1,6 @@
 import { IUserResponseModel, IUserModel } from '../../../Collections/users/models';
 import { UserService } from '../../../Collections/users/services/UserService';
-import { AUTH_ERRORS, USER_EXISTS_TYPES } from '../../../constants/AuthContants';
+import { AUTH_ERRORS, USER_EXISTS_TYPES } from '../../shared/constants/AuthContants';
 import { comparePassword, generateToken, hashPassword } from '../../../utils/AuthUtils';
 import { IAuthCredentials } from '../interfaces';
 
