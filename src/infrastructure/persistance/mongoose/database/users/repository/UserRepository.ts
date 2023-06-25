@@ -1,11 +1,13 @@
 import mongoose from 'mongoose';
-import { IUserModel } from '../interfaces/IUserModel';
+
 import UserModel from '../models/UserSchema';
-import { IUserResponseModel } from '../interfaces';
 
-export class UserRepository {
+import { IUserResponseModel, IUserModel } from '../../../../../../domain/users/interfaces';
+import { IUserRepository } from '../../../../../../domain/users/repository/IUserRepository';
 
-  async getAll(): Promise<unknown> {
+export class UserRepository implements IUserRepository{
+
+  async getAll(): Promise<IUserResponseModel[] | null> {
     return await UserModel.find({});
   };
 
@@ -13,8 +15,8 @@ export class UserRepository {
     return await UserModel.findById(id);
   }
 
-  async create(entity: any): Promise<any> {
-    return await UserModel.create(entity);
+  async create(userData: IUserModel): Promise<IUserResponseModel> {
+    return await UserModel.create(userData);
   }
 
   async update(id: string, entity: any): Promise<IUserResponseModel | null> {

@@ -1,7 +1,7 @@
 import { Get, Query, Route, Tags } from 'tsoa';
-import { IUserController } from '../../../../../../application/users/interfaces/IUserController';
+import { IUserController } from '../../../../../../domain/users/interfaces/IUserController';
 import { UserService } from '../../../../../../application/users/UseCases/UserUseCase';
-import { IUserResponseModel } from '../../../../../../application/users/interfaces';
+import { IUserResponseModel } from '../../../../../../domain/users/interfaces';
 
 @Route('/api/users')
 @Tags('UserController')

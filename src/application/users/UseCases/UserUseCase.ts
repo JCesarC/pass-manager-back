@@ -1,6 +1,6 @@
-import { IUserModel } from '../interfaces/IUserModel';
+import { IUserModel } from '../../../domain/users/interfaces/IUserModel';
 import { UserResponse } from '../types/UserResponse.type';
-import { UserRepository } from '../repository/UserRepository';
+import { UserRepository } from '../../../infrastructure/persistance/mongoose/database/users/repository/UserRepository';
 
 export class UserService {
   private userRepository;

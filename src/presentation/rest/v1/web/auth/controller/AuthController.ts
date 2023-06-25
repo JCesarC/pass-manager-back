@@ -1,11 +1,11 @@
 import { Body, Post, Route, Tags } from 'tsoa';
 
-import { AuthService } from '../../../../../../domain/auth/services/AuthService';
+import { AuthService } from '../../../../../../application/auth/services/AuthService';
 import { UserService } from '../../../../../../application/users/UseCases/UserUseCase';
 
 import { IGoogleProfile } from '../../../../../../domain/auth/models/IGoogleProfileModel';
 import { IAuthCredentials, IAuthController } from '../../../../../../domain/auth/interfaces';
-import { IUserModel, IUserResponseModel } from '../../../../../../application/users/interfaces';
+import { IUserModel } from '../../../../../../domain/users/interfaces';
 
 import { AUTH_ERRORS } from '../../../../../../domain/shared/constants/AuthContants';
 import { generateToken } from '../../../../../../utils/AuthUtils';

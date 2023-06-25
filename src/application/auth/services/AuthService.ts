@@ -1,8 +1,11 @@
-import { UserService } from '../../../application/users/UseCases/UserUseCase';
-import { AUTH_ERRORS, USER_EXISTS_TYPES } from '../../shared/constants/AuthContants';
+import { CreateUserUseCase } from '../../users/UseCases/CreateUserUseCase';
+
+import { UserService } from '../../users/UseCases/UserUseCase';
+import { AUTH_ERRORS, USER_EXISTS_TYPES } from '../../../domain/shared/constants/AuthContants';
 import { comparePassword, generateToken, hashPassword } from '../../../utils/AuthUtils';
-import { IAuthCredentials } from '../interfaces';
-import { IUserModel, IUserResponseModel } from '../../../application/users/interfaces';
+import { IAuthCredentials } from '../../../domain/auth/interfaces';
+import { IUserModel, IUserResponseModel } from '../../../domain/users/interfaces';
+import { UserRepository } from '../../../infrastructure/persistance/mongoose/database/users/repository/UserRepository';
 
 export class AuthService {
 
@@ -41,7 +44,11 @@ export class AuthService {
 
       await this.validateUserExistsByEmail(email, USER_EXISTS_TYPES.NOT_EXISTS);
 
-      const response: IUserResponseModel = await this.userService.createUser(user);
+      // const response: IUserResponseModel = await this.userService.createUser(user);
+      const userRepository = new UserRepository();
+      const createUserUseCase = new CreateUserUseCase(userRepository);
+
+      const response = await createUserUseCase.execute(user);
       const userData = await this.userService.getFilteredUserData(response._id);
 
       return {
