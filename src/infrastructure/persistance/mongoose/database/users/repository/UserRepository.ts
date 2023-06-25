@@ -11,7 +11,7 @@ export class UserRepository implements IUserRepository{
     return await UserModel.find({});
   };
 
-  async getById(id: string): Promise<IUserModel | null> {
+  async getById(id: string): Promise<IUserResponseModel | null> {
     return await UserModel.findById(id);
   }
 

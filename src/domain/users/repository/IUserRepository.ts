@@ -2,7 +2,7 @@ import { IUserModel, IUserResponseModel } from '../interfaces';
 
 export interface IUserRepository {
   getAll(): Promise<IUserResponseModel[] | null>;
-  getById(id: string): Promise<IUserModel | null>;
+  getById(id: string): Promise<IUserResponseModel | null>;
   create(userData: IUserModel): Promise<IUserResponseModel>;
   update(id: string, userData: IUserModel): Promise<IUserResponseModel | null>;
   delete(id: string): Promise<any>;
