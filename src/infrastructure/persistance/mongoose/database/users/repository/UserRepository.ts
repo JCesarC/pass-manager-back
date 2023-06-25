@@ -27,7 +27,7 @@ export class UserRepository implements IUserRepository{
     return await UserModel.findByIdAndDelete(id);
   };
 
-  async countDocuments(): Promise<any> {
+  async countDocuments(): Promise<number> {
     return await UserModel.countDocuments();
   }
   async getUserById(_id: string): Promise<IUserModel | null>{
@@ -48,12 +48,11 @@ export class UserRepository implements IUserRepository{
     return await UserModel.findById(_id, { __v: 0, password: 0 });
   }
 
-  async getUsersPaginated(page: number, limit: number): Promise<IUserModel[]> {
-    const users = await UserModel
+  async getUsersPaginated(page: number, limit: number): Promise<IUserResponseModel[]> {
+    return await UserModel
       .find({}, { __v: 0, password: 0 })
       .limit(limit)
       .skip((page - 1) * limit)
       .exec();
-    return users as IUserModel[];
   }
 }
