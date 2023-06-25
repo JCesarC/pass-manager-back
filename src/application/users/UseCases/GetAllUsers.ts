@@ -1,4 +1,4 @@
-import { IGetAllUsersUseCase } from '../../../domain/users/UseCases/IGetAllUsersUseCase';
+import { IGetAllUsersUseCase } from '../../../domain/users/UseCases';
 import { IUserRepository } from '../../../domain/users/repository/IUserRepository';
 import { UserResponse } from '../../../domain/users/types/UserResponseType';
 

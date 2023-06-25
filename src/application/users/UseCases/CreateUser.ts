@@ -1,6 +1,7 @@
-import { IUserModel, IUserResponseModel } from '../../../domain/users/interfaces';
-import { ICreateUserUseCase } from '../../../domain/users/UseCases/ICreateUserUseCase';
+import { ICreateUserUseCase } from '../../../domain/users/UseCases';
+
 import { IUserRepository } from '../../../domain/users/repository/IUserRepository';
+import { IUserModel, IUserResponseModel } from '../../../domain/users/interfaces';
 
 export class CreateUserUseCase implements ICreateUserUseCase{
   private userRepository: IUserRepository;

@@ -1,4 +1,4 @@
-import { IGetFilteredUserDataUseCase } from '../../../domain/users/UseCases/IGetFilteredUserDataUseCase';
+import { IGetFilteredUserDataUseCase } from '../../../domain/users/UseCases/IGetFilteredUserData';
 import { IUserResponseModel } from '../../../domain/users/interfaces';
 import { IUserRepository } from '../../../domain/users/repository/IUserRepository';
 

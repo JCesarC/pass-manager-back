@@ -1,17 +1,16 @@
-import { IGetUserByEmailUseCase } from '../../../domain/users/UseCases/IGetUserByEmailUseCase';
+import { IGetUserByIdUseCase } from '../../../domain/users/UseCases/IGetUserById';
 import { IUserResponseModel } from '../../../domain/users/interfaces';
 import { IUserRepository } from '../../../domain/users/repository/IUserRepository';
 
-export class GetUserByEmailUseCase implements IGetUserByEmailUseCase{
-
+export class GetUserByIdUseCase implements IGetUserByIdUseCase {
   private userRepository;
 
   constructor(userRepository: IUserRepository){
     this.userRepository = userRepository;
   }
 
-  async execute(email: string): Promise<IUserResponseModel | null> {
-    const user = await this.userRepository.getUserByEmail(email);
+  async execute(id: string): Promise<IUserResponseModel | null> {
+    const user = await this.userRepository.getById(id);
     return user;
   }
 

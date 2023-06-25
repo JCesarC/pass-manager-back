@@ -1,4 +1,4 @@
-import { CreateUserUseCase } from '../../users/UseCases/CreateUserUseCase';
+import { CreateUserUseCase } from '../../users/UseCases';
 
 import { UserService } from '../../users/UseCases/UserUseCase';
 import { AUTH_ERRORS, USER_EXISTS_TYPES } from '../../../domain/shared/constants/AuthContants';
