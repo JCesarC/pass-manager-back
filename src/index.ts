@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 import { Server } from './presentation/rest/server';
-import { startDBConnection } from './infrastructure/persistance/mongoose';
+import { startDBConnection } from './infrastructure/persistance/mongoose/connection';
 
 const start = async () => {
   const server = new Server();

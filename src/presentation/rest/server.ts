@@ -13,7 +13,7 @@ import path from 'path';
 import { AppInfo, AppConfig } from './config';
 import compression from 'compression';
 import http, { Server as ServerInstance } from 'http';
-import { closeDBConnection, forceCloseDBConnection } from '../../infrastructure/persistance/mongoose';
+import { closeDBConnection, forceCloseDBConnection } from '../../infrastructure/persistance/mongoose/connection';
 // import winston from 'winston';
 
 class Server{
@@ -90,6 +90,7 @@ class Server{
 
   public forceStopServer(message = ''){
     console.log(message);
+    //* TODO: Move connection methods to index.ts
     forceCloseDBConnection();
     process.exit(1);
   }
