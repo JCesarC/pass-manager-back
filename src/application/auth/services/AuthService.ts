@@ -1,21 +1,20 @@
-import { CreateUserUseCase } from '../../users/UseCases';
+import bcrypt from 'bcrypt';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 
-import { UserService } from '../../users/UseCases/UserUseCase';
 import { AUTH_ERRORS, USER_EXISTS_TYPES } from '../../../domain/shared/constants/AuthContants';
-import { comparePassword, generateToken, hashPassword } from '../../../utils/AuthUtils';
-import { IAuthCredentials } from '../../../domain/auth/interfaces';
-import { IUserModel, IUserResponseModel } from '../../../domain/users/interfaces';
-import { UserRepository } from '../../../infrastructure/persistance/mongoose/database/users/repository/UserRepository';
 
+import { IUserResponseModel } from '../../../domain/users/interfaces';
+
+const SALTS = 10;
+const EXPIRATION_TIME = '1h';
+const JWT_SECRET = process.env.JWT_SECRET as string;
 export class AuthService {
 
-  private userService;
-  constructor(){
-    this.userService = new UserService();
-  }
-
-  private async validateUserExistsByEmail(email: string, validationType: string): Promise<IUserResponseModel | null>{
-    const foundUser = await this.userService.getUserByEmail(email);
+  validateUserExistsByEmail(
+    foundUser: IUserResponseModel | null,
+    email: string,
+    validationType: string,
+  ): IUserResponseModel | null {
 
     switch (validationType) {
     case USER_EXISTS_TYPES.EXIST_ON_LOGIN:
@@ -25,71 +24,33 @@ export class AuthService {
       if (!foundUser) throw new Error(`User with email: ${email} ${AUTH_ERRORS.NOT_FOUND}`);
       return foundUser;
     case USER_EXISTS_TYPES.NOT_EXISTS:
-      if (foundUser) throw new Error(`User with email: ${email} ${AUTH_ERRORS.EMAIL_ALREADY_EXISTS}`);
+      if (foundUser)
+        throw new Error(`User with email: ${email} ${AUTH_ERRORS.EMAIL_ALREADY_EXISTS}`);
       return null;
     default:
       return null;
     }
   }
 
-  async registerUser(newUserData: IUserModel) {
-    try {
-      const { password: passwordString, email } = newUserData;
-      const hashedPassword = hashPassword(passwordString);
-
-      const user = {
-        ...newUserData,
-        password: hashedPassword
-      };
-
-      await this.validateUserExistsByEmail(email, USER_EXISTS_TYPES.NOT_EXISTS);
-
-      // const response: IUserResponseModel = await this.userService.createUser(user);
-      const userRepository = new UserRepository();
-      const createUserUseCase = new CreateUserUseCase(userRepository);
-
-      const response = await createUserUseCase.execute(user);
-      const userData = await this.userService.getFilteredUserData(response._id);
-
-      return {
-        error: false,
-        user: userData
-      };
-    } catch (error) {
-      if (error instanceof Error) {
-        throw new Error(`Authentication Failed. ${error.message}`);
-      } else {
-        throw new Error(`Authentication Failed. ${error}`);
-      }
-    }
+  hashPassword(password: string): string {
+    const hashedPassword = bcrypt.hashSync(password, SALTS);
+    return hashedPassword;
   }
 
-  async loginUser(authCredentials: IAuthCredentials) {
-    try {
-      const { email, password } = authCredentials;
-
-      const foundUser = await this.validateUserExistsByEmail(email, USER_EXISTS_TYPES.EXIST_ON_LOGIN);
-
-      if (!foundUser) throw new Error(`Cannot find user with email: ${foundUser}`);
-
-      const validPassword = comparePassword(password, foundUser.password,);
-      if (!validPassword) throw new Error(AUTH_ERRORS.INVALID_CREDENTIALS);
-
-      const token = generateToken(foundUser._id, foundUser.email);
-
-      const userData = await this.userService.getFilteredUserData(foundUser._id);
-
-      return {
-        error: false,
-        user: userData,
-        token
-      };
-    } catch (error) {
-      if (error instanceof Error) {
-        throw new Error(`Authentication Failed. ${error.message}`);
-      } else {
-        throw new Error(`Authentication Failed. ${error}`);
-      }
-    }
+  comparePassword(password: string, hashedPassword: string): boolean {
+    const isValidPassword = bcrypt.compareSync(password, hashedPassword);
+    return isValidPassword;
   }
+
+  generateToken(_id: string, email: string): string {
+    const token = jwt.sign({ _id, email }, JWT_SECRET, {
+      expiresIn: EXPIRATION_TIME,
+    });
+    return token;
+  }
+
+  validateToken = (token: string) => {
+    const decodedToken: JwtPayload = jwt.verify(token, JWT_SECRET) as JwtPayload;
+    return decodedToken;
+  };
 }

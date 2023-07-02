@@ -1,16 +1,20 @@
 import { Get, Query, Route, Tags } from 'tsoa';
+
+import {
+  GetAllUsersUseCase,
+  GetFilteredUserDataUseCase,
+  GetUserByIdUseCase,
+} from '../../../../../../application/users/UseCases';
+
 import { IUserController } from '../../../../../../domain/users/interfaces/IUserController';
-import { UserService } from '../../../../../../application/users/UseCases/UserUseCase';
 import { IUserResponseModel } from '../../../../../../domain/users/interfaces';
+
+import { UserRepository } from '../../../../../../infrastructure/persistance/mongoose/database/users/repository/UserRepository';
 
 @Route('/api/users')
 @Tags('UserController')
 export class UserController implements IUserController {
 
-  private userService;
-  constructor() {
-    this.userService = new UserService();
-  }
   /**
    * Enpoint to retrive all users data paginated
    * @param especific number of page to show
@@ -20,17 +24,24 @@ export class UserController implements IUserController {
 
   @Get('/')
   async getUsers(@Query()page: number,@Query()limit: number): Promise<any> {
-    const users = await this.userService.getAll(page, limit);
+    const userRepository = new UserRepository();
+    const getAllUsersUseCase = new GetAllUsersUseCase(userRepository);
+    const users = await getAllUsersUseCase.execute(page, limit);
     return users;
   }
 
   async getUserData(id: string): Promise<IUserResponseModel | null> {
-    const user = await this.userService.getFilteredUserData(id);
+    const userRepository = new UserRepository();
+    const getFilteredUserDataUseCase = new GetFilteredUserDataUseCase(userRepository);
+
+    const user = await getFilteredUserDataUseCase.execute(id);
     return user;
   }
 
   async getUserById(id: string): Promise<any> {
-    const user = await this.userService.getUserById(id);
+    const userRepository = new UserRepository();
+    const getUserByIdUseCase = new GetUserByIdUseCase(userRepository);
+    const user = await getUserByIdUseCase.execute(id);
     return user;
   }
 
