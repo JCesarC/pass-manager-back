@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 const path = require('path');
 const nodeExternals = require('webpack-node-externals');
+const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 
 module.exports = {
   mode: 'development',
   entry: {
-    server: './src/server.ts',
+    index: './src/index.ts',
   },
   output: {
     path: path.join(__dirname, 'dist'),
@@ -22,6 +23,7 @@ module.exports = {
   },
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],
+    plugins: [new TsconfigPathsPlugin({ configFile: './tsconfig.json' })],
   },
   externals: [nodeExternals()],
 };

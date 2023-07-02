@@ -1,0 +1,56 @@
+import bcrypt from 'bcrypt';
+import jwt, { JwtPayload } from 'jsonwebtoken';
+
+import { AUTH_ERRORS, USER_EXISTS_TYPES } from '../../../domain/shared/constants/AuthContants';
+
+import { IUserResponseModel } from '../../../domain/users/interfaces';
+
+const SALTS = 10;
+const EXPIRATION_TIME = '1h';
+const JWT_SECRET = process.env.JWT_SECRET as string;
+export class AuthService {
+
+  validateUserExistsByEmail(
+    foundUser: IUserResponseModel | null,
+    email: string,
+    validationType: string,
+  ): IUserResponseModel | null {
+
+    switch (validationType) {
+    case USER_EXISTS_TYPES.EXIST_ON_LOGIN:
+      if (!foundUser) throw new Error(AUTH_ERRORS.INVALID_CREDENTIALS);
+      return foundUser;
+    case USER_EXISTS_TYPES.EXISTS:
+      if (!foundUser) throw new Error(`User with email: ${email} ${AUTH_ERRORS.NOT_FOUND}`);
+      return foundUser;
+    case USER_EXISTS_TYPES.NOT_EXISTS:
+      if (foundUser)
+        throw new Error(`User with email: ${email} ${AUTH_ERRORS.EMAIL_ALREADY_EXISTS}`);
+      return null;
+    default:
+      return null;
+    }
+  }
+
+  hashPassword(password: string): string {
+    const hashedPassword = bcrypt.hashSync(password, SALTS);
+    return hashedPassword;
+  }
+
+  comparePassword(password: string, hashedPassword: string): boolean {
+    const isValidPassword = bcrypt.compareSync(password, hashedPassword);
+    return isValidPassword;
+  }
+
+  generateToken(_id: string, email: string): string {
+    const token = jwt.sign({ _id, email }, JWT_SECRET, {
+      expiresIn: EXPIRATION_TIME,
+    });
+    return token;
+  }
+
+  validateToken = (token: string) => {
+    const decodedToken: JwtPayload = jwt.verify(token, JWT_SECRET) as JwtPayload;
+    return decodedToken;
+  };
+}
