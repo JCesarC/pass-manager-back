@@ -1,11 +1,14 @@
-import multerS3 from 'multer-s3';
 import path from 'path';
 
-import { generateUniqueId } from '../../utils';
+import multer from 'multer';
+import multerS3 from 'multer-s3';
+
 import { s3Config } from '../s3/config';
 
+import { generateUniqueId } from '../shared/utils/uniqueIdGenerator';
+
 //* TODO: Configure cacheTime with cacheControl
-export const createMulterStorage = (folder: string) => {
+const createMulterStorage = (folder: string) => {
   const storage = multerS3({
     s3: s3Config,
     bucket: 'macrodstorage',
@@ -18,4 +21,10 @@ export const createMulterStorage = (folder: string) => {
     }
   });
   return storage;
+};
+
+export const configMulterHandler = (folder: string) => {
+  return multer({
+    storage: createMulterStorage(folder)
+  }).array('upload', 3);
 };
