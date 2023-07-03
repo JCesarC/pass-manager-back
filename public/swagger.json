@@ -153,10 +153,19 @@
 				"operationId": "GetUsers",
 				"responses": {
 					"200": {
-						"description": "A group of users",
+						"description": "Success",
 						"content": {
 							"application/json": {
-								"schema": {}
+								"schema": {},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"users": [],
+											"totalPages": 1,
+											"currentPage": 1
+										}
+									}
+								}
 							}
 						}
 					}

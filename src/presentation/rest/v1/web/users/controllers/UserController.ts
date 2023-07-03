@@ -1,4 +1,4 @@
-import { Get, Query, Route, Tags } from 'tsoa';
+import { Example, Get, Query, Route, SuccessResponse, Tags } from 'tsoa';
 
 import {
   GetAllUsersUseCase,
@@ -8,13 +8,13 @@ import {
 
 import { IUserController } from '../../../../../../domain/users/interfaces/IUserController';
 import { IUserResponseModel } from '../../../../../../domain/users/interfaces';
+import { UserResponse } from '../../../../../../domain/users/types/UserResponseType';
 
 import { UserRepository } from '../../../../../../infrastructure/persistance/mongoose/database/users/repository/UserRepository';
 
 @Route('/api/users')
 @Tags('UserController')
 export class UserController implements IUserController {
-
   /**
    * Enpoint to retrive all users data paginated
    * @param especific number of page to show
@@ -23,7 +23,13 @@ export class UserController implements IUserController {
    */
 
   @Get('/')
-  async getUsers(@Query()page: number,@Query()limit: number): Promise<any> {
+  @SuccessResponse('200', 'Success')
+  @Example<UserResponse>({
+    users: [],
+    totalPages: 1,
+    currentPage: 1,
+  })
+  async getUsers(@Query() page: number, @Query() limit: number): Promise<unknown> {
     const userRepository = new UserRepository();
     const getAllUsersUseCase = new GetAllUsersUseCase(userRepository);
     const users = await getAllUsersUseCase.execute(page, limit);
@@ -38,7 +44,7 @@ export class UserController implements IUserController {
     return user;
   }
 
-  async getUserById(id: string): Promise<any> {
+  async getUserById(id: string): Promise<unknown> {
     const userRepository = new UserRepository();
     const getUserByIdUseCase = new GetUserByIdUseCase(userRepository);
     const user = await getUserByIdUseCase.execute(id);
@@ -51,5 +57,4 @@ export class UserController implements IUserController {
   updateUser(id: string, user: unknown): Promise<unknown> {
     throw new Error('Method not implemented.');
   }
-
 };

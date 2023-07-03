@@ -119,7 +119,7 @@ export function RegisterRoutes(app: express.Router) {
 
 
               const promise = controller.getUsers.apply(controller, validatedArgs as any);
-              promiseHandler(controller, promise, response, undefined, next);
+              promiseHandler(controller, promise, response, 200, next);
             } catch (err) {
                 return next(err);
             }
