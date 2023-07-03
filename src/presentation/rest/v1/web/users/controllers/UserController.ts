@@ -1,4 +1,4 @@
-import { Example, Get, Query, Route, SuccessResponse, Tags } from 'tsoa';
+import { Example, Get, Query, Response, Route, SuccessResponse, Tags } from 'tsoa';
 
 import {
   GetAllUsersUseCase,
@@ -8,7 +8,7 @@ import {
 
 import { IUserController } from '../../../../../../domain/users/interfaces/IUserController';
 import { IUserResponseModel } from '../../../../../../domain/users/interfaces';
-import { UserResponse } from '../../../../../../domain/users/types/UserResponseType';
+import { UserResponseExample, UserResponse } from '../../../../../../domain/users/types';
 
 import { UserRepository } from '../../../../../../infrastructure/persistance/mongoose/database/users/repository/UserRepository';
 
@@ -27,6 +27,35 @@ export class UserController implements IUserController {
   @Example<UserResponse>({
     users: [],
     totalPages: 1,
+    currentPage: 1,
+  })
+  @Response<UserResponseExample>('200', 'Success', {
+    users: [
+      {
+        photoURL: '',
+        verified: false,
+        _id: '647b74c0b05e9795e0be8b5e',
+        email: 'julio+test15@gmail.com',
+        firstName: 'Julio15',
+        lastName: 'Cantun15',
+        roles: [],
+        active: false,
+        displayName: 'Example'
+      },
+      {
+        photoURL: '',
+        verified: false,
+        _id: '647b764d38ba527a9bada83e',
+        email: 'julio+test15@gmail.com',
+        firstName: 'Julio16',
+        lastName: 'Cantun16',
+        roles: [],
+        active: false,
+        displayName: 'Example'
+
+      },
+    ],
+    totalPages: 3,
     currentPage: 1,
   })
   async getUsers(@Query() page: number, @Query() limit: number): Promise<unknown> {
