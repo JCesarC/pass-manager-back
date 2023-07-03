@@ -1,12 +1,9 @@
 import { Request, Response } from 'express';
-import multer from 'multer';
 
-import { createMulterStorage } from '../../../../../../services/multer';
+import { configMulterHandler } from '../../../../../../infrastructure/multer';
 
 export const uploadHandler = (req: Request, res: Response, folder: string) => {
-  const multerUpload = multer({
-    storage: createMulterStorage(folder)
-  }).array('upload', 3);
+  const multerUpload = configMulterHandler(folder);
 
   multerUpload(req, res, (error) => {
     if (error) {

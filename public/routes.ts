@@ -39,6 +39,37 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Pick_IUserModel.Exclude_keyofIUserModel.password__": {
+        "dataType": "refAlias",
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"email":{"dataType":"string","required":true},"firstName":{"dataType":"string","required":true},"lastName":{"dataType":"string","required":true},"active":{"dataType":"boolean","required":true},"displayName":{"dataType":"string","required":true},"roles":{"dataType":"array","array":{"dataType":"string"}},"phone":{"dataType":"string"},"photoURL":{"dataType":"string"},"provider":{"dataType":"string"},"verified":{"dataType":"boolean"}},"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IUserResponseExample": {
+        "dataType": "refObject",
+        "properties": {
+            "email": {"dataType":"string","required":true},
+            "firstName": {"dataType":"string","required":true},
+            "lastName": {"dataType":"string","required":true},
+            "active": {"dataType":"boolean","required":true},
+            "displayName": {"dataType":"string","required":true},
+            "roles": {"dataType":"array","array":{"dataType":"string"}},
+            "phone": {"dataType":"string"},
+            "photoURL": {"dataType":"string"},
+            "provider": {"dataType":"string"},
+            "verified": {"dataType":"boolean"},
+            "_id": {"dataType":"string","required":true},
+            "__v": {"dataType":"string"},
+            "createdAt": {"dataType":"string"},
+            "updatedAt": {"dataType":"string"},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "UserResponseExample": {
+        "dataType": "refAlias",
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"currentPage":{"dataType":"double","required":true},"totalPages":{"dataType":"double","required":true},"users":{"dataType":"array","array":{"dataType":"refObject","ref":"IUserResponseExample"},"required":true}},"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 };
 const validationService = new ValidationService(models);
 
@@ -119,7 +150,7 @@ export function RegisterRoutes(app: express.Router) {
 
 
               const promise = controller.getUsers.apply(controller, validatedArgs as any);
-              promiseHandler(controller, promise, response, undefined, next);
+              promiseHandler(controller, promise, response, 200, next);
             } catch (err) {
                 return next(err);
             }

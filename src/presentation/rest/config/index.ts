@@ -8,7 +8,7 @@ const AppInfo = Object.freeze({
 
 const AppConfig = Object.freeze({
   PORT: getEnnvironmentNumber('PORT', 8031),
-  BASE_PATH: getEnvironmentString('BASE_PATH', '/api'),
+  BASE_PATH: getEnvironmentString('BASE_PATH', '/api/v1'),
 });
 
 export { AppInfo, AppConfig };

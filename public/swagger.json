@@ -71,6 +71,135 @@
 				],
 				"type": "object",
 				"additionalProperties": false
+			},
+			"Pick_IUserModel.Exclude_keyofIUserModel.password__": {
+				"properties": {
+					"email": {
+						"type": "string"
+					},
+					"firstName": {
+						"type": "string"
+					},
+					"lastName": {
+						"type": "string"
+					},
+					"active": {
+						"type": "boolean"
+					},
+					"displayName": {
+						"type": "string"
+					},
+					"roles": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"phone": {
+						"type": "string"
+					},
+					"photoURL": {
+						"type": "string"
+					},
+					"provider": {
+						"type": "string"
+					},
+					"verified": {
+						"type": "boolean"
+					}
+				},
+				"required": [
+					"email",
+					"firstName",
+					"lastName",
+					"active",
+					"displayName"
+				],
+				"type": "object",
+				"description": "From T, pick a set of properties whose keys are in the union K"
+			},
+			"IUserResponseExample": {
+				"properties": {
+					"email": {
+						"type": "string"
+					},
+					"firstName": {
+						"type": "string"
+					},
+					"lastName": {
+						"type": "string"
+					},
+					"active": {
+						"type": "boolean"
+					},
+					"displayName": {
+						"type": "string"
+					},
+					"roles": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"phone": {
+						"type": "string"
+					},
+					"photoURL": {
+						"type": "string"
+					},
+					"provider": {
+						"type": "string"
+					},
+					"verified": {
+						"type": "boolean"
+					},
+					"_id": {
+						"type": "string"
+					},
+					"__v": {
+						"type": "string"
+					},
+					"createdAt": {
+						"type": "string"
+					},
+					"updatedAt": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"email",
+					"firstName",
+					"lastName",
+					"active",
+					"displayName",
+					"_id"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UserResponseExample": {
+				"properties": {
+					"currentPage": {
+						"type": "number",
+						"format": "double"
+					},
+					"totalPages": {
+						"type": "number",
+						"format": "double"
+					},
+					"users": {
+						"items": {
+							"$ref": "#/components/schemas/IUserResponseExample"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"currentPage",
+					"totalPages",
+					"users"
+				],
+				"type": "object"
 			}
 		},
 		"securitySchemes": {}
@@ -153,10 +282,19 @@
 				"operationId": "GetUsers",
 				"responses": {
 					"200": {
-						"description": "A group of users",
+						"description": "Success",
 						"content": {
 							"application/json": {
-								"schema": {}
+								"schema": {},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"users": [],
+											"totalPages": 1,
+											"currentPage": 1
+										}
+									}
+								}
 							}
 						}
 					}

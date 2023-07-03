@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
-import { validateToken } from '../../../../utils/AuthUtils';
+
+import { AuthService } from '../../../../application/auth/services/AuthService';
 
 export const checkLoggedIn = (req: Request, res: Response, next: NextFunction) => {
   const token = req.headers.authorization;
@@ -12,7 +13,8 @@ export const checkLoggedIn = (req: Request, res: Response, next: NextFunction) =
   }
 
   try {
-    const decodedToken = validateToken(token);
+    const authService = new AuthService();
+    const decodedToken = authService.validateToken(token);
     req.user = { _id: decodedToken._id };
     next();
   } catch (error) {

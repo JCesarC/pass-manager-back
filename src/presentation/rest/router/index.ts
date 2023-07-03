@@ -1,8 +1,8 @@
 import express from 'express';
 import v1Router from '../v1/router';
 
-const mainRooter = express.Router();
+const mainRouter = express.Router();
 
-mainRooter.use('/v1', v1Router);
+mainRouter.use('/v1', v1Router);
 
-export default mainRooter;
+export default mainRouter;
