@@ -1,20 +1,22 @@
-import cors from 'cors';
-import helmet from 'helmet';
+import path from 'path';
+import http, { Server as ServerInstance } from 'http';
 
 import express from 'express';
+
+import cors from 'cors';
+import helmet from 'helmet';
 import morgan from 'morgan';
+import compression from 'compression';
+import swaggerUi from 'swagger-ui-express';
+
+import { AppInfo, AppConfig } from './config';
+
+import mainRouter from './router';
 
 import passportConfig from '../../infrastructure/authentication/passport/passportConfig';
-
-import swaggerUi from 'swagger-ui-express';
-import swaggerDoc from '../../../public/swagger.json';
-import mainRooter from './router';
-import path from 'path';
-import { AppInfo, AppConfig } from './config';
-import compression from 'compression';
-import http, { Server as ServerInstance } from 'http';
 import { closeDBConnection, forceCloseDBConnection } from '../../infrastructure/persistance/mongoose/connection';
-// import winston from 'winston';
+
+import swaggerDoc from '../../../public/swagger.json';
 
 class Server{
   private app;
@@ -43,7 +45,7 @@ class Server{
     this.app.use(compression({}));
     this.app.use(passportConfig.initialize());
     this.app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDoc, this.swaggerOptions));
-    this.app.use('/api', mainRooter);
+    this.app.use('/api', mainRouter);
     this.app.use(express.static(path.join(__dirname, '..','..','..', 'public', 'docs')));
     this.app.use('/', (req, res) => {
       res.sendFile(path.join(__dirname, '..','..','..', 'public', 'docs', 'index.html'));
