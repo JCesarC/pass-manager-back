@@ -2,12 +2,14 @@ import { Request, Response } from 'express';
 import { userModelValidator } from '../../../../../../application/users/UserValidator';
 import { AuthController } from '../controller/AuthController';
 import { IUserModel, IUserResponseModel } from '../../../../../../domain/users/interfaces';
+import { UserRepository } from '../../../../../../infrastructure/persistance/mongoose/database/users/repository/UserRepository';
 
 export class AuthHandler {
 
   public async registerHandler(req: Request, res: Response) {
     try {
-      const authController = new AuthController();
+      const userRepository = new UserRepository();
+      const authController = new AuthController(userRepository);
 
       const { error, value } = userModelValidator.validate(req.body);
       if (error) {
@@ -32,7 +34,8 @@ export class AuthHandler {
 
   public async loginHandler(req: Request, res: Response) {
     try {
-      const authController = new AuthController();
+      const userRepository = new UserRepository();
+      const authController = new AuthController(userRepository);
 
       const response = await authController.loginUser(req.body);
       return res.status(201).send(response);
@@ -46,7 +49,8 @@ export class AuthHandler {
 
   public async getauthUserDataHandler(req: Request, res: Response){
     try {
-      const authController = new AuthController();
+      const userRepository = new UserRepository();
+      const authController = new AuthController(userRepository);
 
       const { _id = '' } = req.user as IUserResponseModel;
 

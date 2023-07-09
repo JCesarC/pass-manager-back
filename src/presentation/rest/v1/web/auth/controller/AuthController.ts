@@ -3,6 +3,8 @@ import { Body, Post, Route, Tags } from 'tsoa';
 import { IGoogleProfile } from '../../../../../../domain/auth/models/IGoogleProfileModel';
 import { IAuthCredentials, IAuthController } from '../../../../../../domain/auth/interfaces';
 import { IUserModel } from '../../../../../../domain/users/interfaces';
+import { IUserRepository } from '../../../../../../domain/users/repository/IUserRepository';
+
 import { AUTH_ERRORS } from '../../../../../../domain/shared/constants/AuthContants';
 
 import { LoginUserUseCase, RegisterUserUseCase } from '../../../../../../application/auth/UseCases';
@@ -13,21 +15,21 @@ import {
 } from '../../../../../../application/users/UseCases';
 import { AuthService } from '../../../../../../application/auth/services/AuthService';
 
-import { UserRepository } from '../../../../../../infrastructure/persistance/mongoose/database/users/repository/UserRepository';
-
 @Route('/api/auth')
 @Tags('AuthController')
 export class AuthController implements IAuthController {
 
   private authService;
-  constructor(){
+  private userRepository;
+
+  constructor(userRepository: IUserRepository){
     this.authService = new AuthService();
+    this.userRepository = userRepository;
   }
 
   @Post('/register')
   async registerUser(@Body()user: IUserModel): Promise<unknown> {
-    const userRepository = new UserRepository();
-    const registerUserUseCase = new RegisterUserUseCase(userRepository);
+    const registerUserUseCase = new RegisterUserUseCase(this.userRepository);
 
     const { firstName, lastName, email, password } = user;
     console.log('firstName, lastName, email, password: ', firstName, lastName, email, password);
@@ -40,8 +42,7 @@ export class AuthController implements IAuthController {
 
   @Post('/login')
   async loginUser(@Body()authCredentials: IAuthCredentials): Promise<unknown> {
-    const userRepository = new UserRepository();
-    const loginUserUseCase = new LoginUserUseCase(userRepository);
+    const loginUserUseCase = new LoginUserUseCase(this.userRepository);
 
     const { email, password } = authCredentials;
     if(email && password ) {
@@ -52,9 +53,8 @@ export class AuthController implements IAuthController {
   }
 
   async signInByGoogle(user: IGoogleProfile): Promise<unknown> {
-    const userRepository = new UserRepository();
-    const getUserByEmailUseCase = new GetUserByEmailUseCase(userRepository);
-    const createUserUseCase = new CreateUserUseCase(userRepository);
+    const getUserByEmailUseCase = new GetUserByEmailUseCase(this.userRepository);
+    const createUserUseCase = new CreateUserUseCase(this.userRepository);
 
     const { email } = user._json;
 
@@ -79,8 +79,7 @@ export class AuthController implements IAuthController {
   }
 
   async generateAuthToken(email: string) {
-    const userRepository = new UserRepository();
-    const getUserByEmailUseCase = new GetUserByEmailUseCase(userRepository);
+    const getUserByEmailUseCase = new GetUserByEmailUseCase(this.userRepository);
 
     const existingUser = await getUserByEmailUseCase.execute(email);
     if (!existingUser) throw new Error(`Cannot find user with email: ${email} in DB`);
@@ -94,8 +93,7 @@ export class AuthController implements IAuthController {
   }
 
   async getAuthenticatedUserData(id: string) {
-    const userRepository = new UserRepository();
-    const getFilteredUserDataUseCase = new GetFilteredUserDataUseCase(userRepository);
+    const getFilteredUserDataUseCase = new GetFilteredUserDataUseCase(this.userRepository);
 
     const existingUser = await getFilteredUserDataUseCase.execute(id);
 

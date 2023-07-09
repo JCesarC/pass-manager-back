@@ -1,6 +1,9 @@
 import { Request, Response } from 'express';
-import { AuthController } from '../controller/AuthController';
 import passport from 'passport';
+
+import { UserRepository } from '../../../../../../infrastructure/persistance/mongoose/database/users/repository/UserRepository';
+
+import { AuthController } from '../controller/AuthController';
 
 export class OAuthHandler {
 
@@ -15,7 +18,8 @@ export class OAuthHandler {
 
   public async googleSuccessCallbackHandler(req: any, res: Response) {
     try {
-      const authController = new AuthController();
+      const userRepository = new UserRepository();
+      const authController = new AuthController(userRepository);
 
       const token = await authController.generateAuthToken(req.user._json.email);
 
