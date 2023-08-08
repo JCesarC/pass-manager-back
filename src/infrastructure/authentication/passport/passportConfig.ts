@@ -1,6 +1,7 @@
 import passport from 'passport';
 import { Strategy } from 'passport-google-oauth20';
 import { AuthController } from '../../../presentation/rest/v1/web/auth/controller/AuthController';
+import { UserRepository } from '../../persistance/mongoose/database/users/repository/UserRepository';
 
 const config = {
   CLIENT_ID: process.env.CLIENT_ID as string,
@@ -17,7 +18,9 @@ const AUTH_OPTIONS = {
 
 const verifyCallback = async (accessToken: any, refreshToken: any, profile: any, done: any) => {
   try {
-    const authController = new AuthController();
+    const userRepository = new UserRepository();
+
+    const authController = new AuthController(userRepository);
     await authController.signInByGoogle(profile);
     return done(null, profile);
   } catch (error) {
