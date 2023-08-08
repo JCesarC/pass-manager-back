@@ -1,24 +1,29 @@
 import { IFieldValueModel } from '../../../../../../domain/fieldValues/interfaces';
 import { IFieldValueRepository } from '../../../../../../domain/fieldValues/repository/IFieldValueRepository';
 
+import FieldValueSchema from '../models/FieldValueSchema';
+
 export class FieldValueRepository implements IFieldValueRepository{
-  getAll(): Promise<IFieldValueModel[]> {
-    throw new Error('Method not implemented.');
+  async getAll(): Promise<IFieldValueModel[] | null> {
+    return await FieldValueSchema.find({});
   }
-  getById(id: string): Promise<IFieldValueModel> {
-    throw new Error('Method not implemented.');
+  async getById(id: string): Promise<IFieldValueModel | null> {
+    return await FieldValueSchema.findById(id);
   }
-  getByVault(vaultId: string): Promise<IFieldValueModel[]> {
-    throw new Error('Method not implemented.');
+  async getByVault(vaultId: string): Promise<IFieldValueModel[] | null> {
+    return await FieldValueSchema.find({ vault: vaultId });
   }
-  create(fieldValueData: IFieldValueModel): Promise<IFieldValueModel> {
-    throw new Error('Method not implemented.');
+  async create(fieldValueData: IFieldValueModel): Promise<IFieldValueModel> {
+    return await FieldValueSchema.create(fieldValueData);
   }
-  update(id: string, fieldValueData: IFieldValueModel): Promise<IFieldValueModel> {
-    throw new Error('Method not implemented.');
+  async update(id: string, fieldValueData: IFieldValueModel): Promise<IFieldValueModel | null> {
+    return await FieldValueSchema.findByIdAndUpdate(id, fieldValueData);
   }
-  delete(id: string): Promise<unknown> {
-    throw new Error('Method not implemented.');
+  async delete(id: string): Promise<unknown> {
+    return await FieldValueSchema.findByIdAndDelete(id);
+  }
+  async query(query: Record<string, unknown>): Promise<IFieldValueModel[]> {
+    return await FieldValueSchema.find({ query });
   }
 
 }

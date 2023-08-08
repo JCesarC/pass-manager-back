@@ -1,30 +1,43 @@
-import { IVaultModel } from '../../../../../../domain/vault/interfaces';
-import { IVaultRepository } from '../../../../../../domain/vault/repository/IVaultRepository';
+import { injectable } from 'inversify';
+import { IVaultModel } from '../../../../../../domain/vaults/interfaces';
+import { IVaultRepository } from '../../../../../../domain/vaults/repository/IVaultRepository';
 
+import VaultSchema from '../models/VaultSchema';
+
+@injectable()
 export class VaultRepository implements IVaultRepository {
-  getAll(): Promise<IVaultModel[]> {
-    throw new Error('Method not implemented.');
+  async create(vaultData: IVaultModel): Promise<IVaultModel> {
+    return await VaultSchema.create(vaultData);
   }
-  getById(id: string): Promise<IVaultModel> {
-    throw new Error('Method not implemented.');
+  async getAll(): Promise<IVaultModel[] | null> {
+    return await VaultSchema.find({});
   }
-  getByUser(userId: string): Promise<IVaultModel> {
-    throw new Error('Method not implemented.');
+  async getAllVaultsPaginated(page: number, limit: number): Promise<IVaultModel[] | null> {
+    return await VaultSchema.find({}, { __v: 0 })
+      .limit(limit)
+      .skip((page - 1) * limit)
+      .exec();
   }
-  update(id: string, newVaultData: IVaultModel): Promise<IVaultModel> {
-    throw new Error('Method not implemented.');
+  async getById(id: string): Promise<IVaultModel | null> {
+    return await VaultSchema.findById(id);
   }
-  delete(id: string): Promise<unknown> {
-    throw new Error('Method not implemented.');
+  async getByUser(userId: string): Promise<IVaultModel[] | null> {
+    return await VaultSchema.find({ user: userId });
   }
-  countDocuments(): Promise<number> {
-    throw new Error('Method not implemented.');
+  async update(id: string, newVaultData: IVaultModel): Promise<IVaultModel | null> {
+    return await VaultSchema.findByIdAndUpdate(id, newVaultData);
   }
-  query(query: Record<string, unknown>): Promise<IVaultModel[]> {
-    throw new Error('Method not implemented.');
+  async delete(id: string): Promise<unknown> {
+    return await VaultSchema.findByIdAndDelete(id);
   }
-  queryOne(query: Record<string, unknown>): Promise<IVaultModel> {
-    throw new Error('Method not implemented.');
+  async countDocuments(): Promise<number> {
+    return await VaultSchema.countDocuments();
+  }
+  async query(query: Record<string, unknown>): Promise<IVaultModel[]> {
+    return await VaultSchema.find({ query });
+  }
+  async queryOne(query: Record<string, unknown>): Promise<IVaultModel | null> {
+    return await VaultSchema.findOne({ query });
   }
 
 }
