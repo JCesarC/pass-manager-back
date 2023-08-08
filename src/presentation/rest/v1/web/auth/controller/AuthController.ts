@@ -1,4 +1,4 @@
-import { Body, Post, Route, Tags } from 'tsoa';
+import { Body, Inject, Post, Route, Tags } from 'tsoa';
 
 import { IGoogleProfile } from '../../../../../../domain/auth/models/IGoogleProfileModel';
 import { IAuthCredentials, IAuthController } from '../../../../../../domain/auth/interfaces';
@@ -22,7 +22,7 @@ export class AuthController implements IAuthController {
   private authService;
   private userRepository;
 
-  constructor(userRepository: IUserRepository){
+  constructor(@Inject()userRepository: IUserRepository){
     this.authService = new AuthService();
     this.userRepository = userRepository;
   }
