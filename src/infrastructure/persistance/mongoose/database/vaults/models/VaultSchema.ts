@@ -1,7 +1,7 @@
 import mongoose, { Schema } from 'mongoose';
 import autopopulate from 'mongoose-autopopulate';
 
-import { IVaultModel } from '../../../../../../domain/vault/interfaces';
+import { IVaultModel } from '../../../../../../domain/vaults/interfaces';
 
 const vaultSchema = new Schema<IVaultModel>({
   user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
