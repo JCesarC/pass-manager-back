@@ -8,7 +8,7 @@ import { CreateVaultUseCase, GetAllVaultsUseCase } from '../../../../../../appli
 import { inject, injectable } from 'inversify';
 import { TYPES } from '../../../../../../domain/types';
 
-@Route('/api/vaults')
+@Route('/api/v1/vaults')
 @Tags('VaultController')
 @injectable()
 export class VaultController {

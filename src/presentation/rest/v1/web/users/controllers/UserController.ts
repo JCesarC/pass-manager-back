@@ -12,7 +12,7 @@ import { UserResponseExample, UserResponse } from '../../../../../../domain/user
 
 import { UserRepository } from '../../../../../../infrastructure/persistance/mongoose/database/users/repository/UserRepository';
 
-@Route('/api/users')
+@Route('/api/v1/users')
 @Tags('UserController')
 export class UserController implements IUserController {
   /**
