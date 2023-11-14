@@ -4,7 +4,9 @@ import UserModel from '../models/UserSchema';
 
 import { IUserResponseModel, IUserModel } from '../../../../../../domain/users/interfaces';
 import { IUserRepository } from '../../../../../../domain/users/repository/IUserRepository';
+import { injectable } from 'inversify';
 
+@injectable()
 export class UserRepository implements IUserRepository{
 
   async getAll(): Promise<IUserResponseModel[] | null> {
