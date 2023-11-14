@@ -1,8 +1,10 @@
+import { injectable } from 'inversify';
 import { IFieldValueModel } from '../../../../../../domain/fieldValues/interfaces';
 import { IFieldValueRepository } from '../../../../../../domain/fieldValues/repository/IFieldValueRepository';
 
 import FieldValueSchema from '../models/FieldValueSchema';
 
+@injectable()
 export class FieldValueRepository implements IFieldValueRepository{
   async getAll(): Promise<IFieldValueModel[] | null> {
     return await FieldValueSchema.find({});
