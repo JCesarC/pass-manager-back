@@ -1,5 +1,5 @@
 import { Document } from 'mongoose';
 
-export interface IFieldType extends Document {
+export interface IFieldTypeModel extends Document {
   name: string;
 }

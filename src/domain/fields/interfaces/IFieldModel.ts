@@ -1,7 +1,7 @@
 import { Document } from 'mongoose';
-import { IFieldType } from './IFieldType';
+import { IFieldTypeModel } from './IFieldType';
 
 export interface IFieldModel extends Document{
   name: string;
-  type: IFieldType
+  type: IFieldTypeModel
 }
