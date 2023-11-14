@@ -13,7 +13,7 @@ const vaultSchema = new Schema<IVaultModel>({
   isArchived: { type: Boolean, default: false },
   expirationDate: { type: Date, default: null },
   attachments: { type: [String], default: [] },
-  extraFields: { type: [Schema.Types.ObjectId], ref: 'FieldValue', autopopulate: true },
+  extraFields: { type: [Schema.Types.ObjectId], ref: 'FieldValue', autopopulate: true, required: false },
 });
 
 vaultSchema.plugin(autopopulate);

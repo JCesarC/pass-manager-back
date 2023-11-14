@@ -15,7 +15,7 @@ import {
 } from '../../../../../../application/users/UseCases';
 import { AuthService } from '../../../../../../application/auth/services/AuthService';
 
-@Route('/api/auth')
+@Route('/api/v1/auth')
 @Tags('AuthController')
 export class AuthController implements IAuthController {
 
@@ -32,7 +32,6 @@ export class AuthController implements IAuthController {
     const registerUserUseCase = new RegisterUserUseCase(this.userRepository);
 
     const { firstName, lastName, email, password } = user;
-    console.log('firstName, lastName, email, password: ', firstName, lastName, email, password);
     if(firstName && lastName && email && password ) {
       const response = await registerUserUseCase.execute(user);
       return response;
