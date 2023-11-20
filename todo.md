@@ -14,3 +14,4 @@
 - [ ] Crear una Interfaz base de los UseCases
 - [ ] Crear una interfaz base para los Controllers
 - [ ] Desacoplar schemas de los repositorios y utilizar la abstraccion y model a traves del contructor para quitar el acoplamiento
+- [ ] Estructurar correctamente ioc
