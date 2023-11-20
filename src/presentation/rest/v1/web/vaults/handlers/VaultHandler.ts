@@ -26,7 +26,7 @@ export class VaultHandler {
     } catch (error) {
       return res.status(500).send({
         error: true,
-        errorMessage: `${error}`
+        errorMessage: `${error}`,
       });
     }
   }
@@ -44,7 +44,7 @@ export class VaultHandler {
     } catch (error) {
       return res.status(500).send({
         error: true,
-        errorMessage: `${error}`
+        errorMessage: `${error}`,
       });
     }
   }
