@@ -32,4 +32,12 @@ export abstract class BaseRepository<T extends Document> implements IBaseReposit
   async delete(id: string): Promise<unknown> {
     return this.model.findByIdAndDelete(id);
   }
+
+  async query(query: Record<string, unknown>): Promise<T[]> {
+    return this.model.find({ query });
+  }
+
+  async queryOne(query: Record<string, unknown>): Promise<T | null> {
+    return this.model.findOne({ query });
+  }
 }
