@@ -11,9 +11,6 @@ export class NoteRepository extends BaseRepository<INoteModel> implements INoteR
   constructor(model: Model<INoteModel>) {
     super(model);
   }
-  getAllNotesPaginated(page: number, limit: number): Promise<INoteModel[] | null> {
-    throw new Error('Method not implemented.');
-  }
   async getNotesByUser(userId: string): Promise<INoteModel[] | null> {
     return this.model.find({ user: userId });
   }

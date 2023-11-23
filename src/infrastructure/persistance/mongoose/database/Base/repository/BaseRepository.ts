@@ -40,4 +40,11 @@ export abstract class BaseRepository<T extends Document> implements IBaseReposit
   async queryOne(query: Record<string, unknown>): Promise<T | null> {
     return this.model.findOne({ query });
   }
+
+  async getDocumentsPaginated(page: number, limit: number): Promise<T[] | null> {
+    return this.model.find({}, { __v: 0 })
+      .limit(limit)
+      .skip((page - 1) * limit)
+      .exec();
+  }
 }

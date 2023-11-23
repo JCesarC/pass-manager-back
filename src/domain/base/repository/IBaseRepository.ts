@@ -7,5 +7,6 @@ export interface IBaseRepository<T extends Document> {
   update(id: string, newData: Partial<T>): Promise<T | null>;
   delete(id: string): Promise<unknown>;
   countDocuments(): Promise<number>;
+  getDocumentsPaginated(page: number, limit: number): Promise<T[] | null>
   // Otros métodos comunes para los repositorios
 }
