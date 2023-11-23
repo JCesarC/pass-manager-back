@@ -18,3 +18,6 @@
 
 ### 20 Nov
 - [ ] Test a query y queryOne en repositories
+
+### 21 nov
+- [ ] Hacer useCase para notas por usuario paginadas?
