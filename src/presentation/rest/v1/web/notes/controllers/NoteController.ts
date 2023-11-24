@@ -1,12 +1,15 @@
 import { inject, injectable } from 'inversify';
-import { Get, Query, Route, Tags, Post, Body, Path } from 'tsoa';
+import { Get, Query, Route, Tags, Post, Body, Path, Example } from 'tsoa';
 
 import { TYPES } from '../../../../../../domain/types';
 
-import { INoteRepository } from '../../../../../../domain/notes/repository/INoteRepository';
-import { INoteController, INoteModel } from '../../../../../../domain/notes/interfaces';
 import { AllNotesResponseType } from '../../../../../../domain/notes/types';
+import { INoteController, INoteModel } from '../../../../../../domain/notes/interfaces';
+import { INoteRepository } from '../../../../../../domain/notes/repository/INoteRepository';
 import { CreateNoteUseCase, GetAllNotesUseCase, GetNotesByUserUseCase } from '../../../../../../application/notes/UseCases';
+
+import { ThrowValidatorError } from '../../../../../../application/shared';
+import { noteValidator } from '../../../../../../application/notes/NoteValidator';
 
 @Route('/api/v1/notes')
 @Tags('NoteController')
@@ -32,7 +35,11 @@ export class NoteController implements INoteController{
   @Post('/')
   async createNote(@Body()noteData: INoteModel): Promise<INoteModel> {
     const createNoteUseCase = new CreateNoteUseCase(this.noteRepository);
-    return createNoteUseCase.exec(noteData);
+    const { error, value } = noteValidator.validate(noteData);
+    console.log('🚀 ~ createNote ~ value:', value);
+
+    if (error) return ThrowValidatorError(error);
+    return createNoteUseCase.exec(value);
   }
 
 }
