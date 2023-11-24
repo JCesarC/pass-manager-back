@@ -33,8 +33,8 @@ export class FieldValueHandler{
       const fieldValueController = new FieldValueController(fieldValueRepository);
       const { error, value } = fieldValueValidator.validate(req.body);
 
-      if (error) return ThrowValidatorError(error, res);
-
+      if (error) return ThrowValidatorError(error);
+      // * TODO: Move validator logic to controller
       const fieldValueData = value as IFieldValueModel;
       const response = await fieldValueController.createFieldValue(fieldValueData);
       return res.status(201).send(response);
