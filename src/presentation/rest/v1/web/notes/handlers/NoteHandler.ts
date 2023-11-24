@@ -48,6 +48,16 @@ export class NoteHandler {
   }
 
   async createNote(req: Request, res: Response) {
-    throw new Error('Method not implemented');
+    try {
+      const noteRepository = iocContainer.get<INoteRepository>(TYPES.INoteRepository);
+      const noteController = new NoteController(noteRepository);
+      const response = await noteController.createNote(req.body);
+      return res.send(response);
+    } catch (error) {
+      return res.status(500).send({
+        error: true,
+        errorMessage: `${error}`,
+      });
+    }
   }
 }

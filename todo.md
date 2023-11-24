@@ -21,3 +21,7 @@
 
 ### 21 nov
 - [ ] Hacer useCase para notas por usuario paginadas?
+
+
+### 24 nov
+- [ ] Mover logica de validacion de fieldValue body en fieldHandler a fieldController
