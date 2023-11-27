@@ -35,8 +35,8 @@ export class NoteController implements INoteController{
   @Post('/')
   async createNote(@Body()noteData: INoteModel): Promise<INoteModel> {
     const createNoteUseCase = new CreateNoteUseCase(this.noteRepository);
+
     const { error, value } = noteValidator.validate(noteData);
-    console.log('🚀 ~ createNote ~ value:', value);
 
     if (error) return ThrowValidatorError(error);
     return createNoteUseCase.exec(value);
