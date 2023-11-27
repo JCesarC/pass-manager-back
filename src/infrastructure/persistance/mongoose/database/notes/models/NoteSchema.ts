@@ -3,14 +3,19 @@ import autopopulate from 'mongoose-autopopulate';
 
 import { INoteModel } from '../../../../../../domain/notes/interfaces';
 
-const noteSchema = new Schema<INoteModel>({
-  user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-  title: { type: String, required: true },
-  data: { type: String, required: false },
-  isFavorite: { type: Boolean, required: false, default: false },
-  isArchived: { type: Boolean, default: false },
-  tags: { type: [String], required: false, default: [] },
-});
+const noteSchema = new Schema<INoteModel>(
+  {
+    user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+    title: { type: String, required: true },
+    body: { type: String, required: false },
+    isFavorite: { type: Boolean, required: false, default: false },
+    isArchived: { type: Boolean, default: false },
+    tags: { type: [String], required: false, default: [] },
+  },
+  {
+    timestamps: true,
+  },
+);
 
 noteSchema.plugin(autopopulate);
 
