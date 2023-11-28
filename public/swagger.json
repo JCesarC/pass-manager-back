@@ -508,7 +508,7 @@
 				}
 			}
 		},
-		"/api/v1/notes/{userId}": {
+		"/api/v1/notes/user/{userId}": {
 			"get": {
 				"operationId": "GetNotesByUser",
 				"responses": {

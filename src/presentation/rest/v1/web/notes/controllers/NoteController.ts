@@ -26,7 +26,7 @@ export class NoteController implements INoteController{
     return getAllNotesUseCase.exec(page, limit);
   }
 
-  @Get('/:userId')
+  @Get('/user/:userId')
   async getNotesByUser(@Path() userId: string): Promise<INoteModel[] | null> {
     const getNotesByUserUseCase = new GetNotesByUserUseCase(this.noteRepository);
     return getNotesByUserUseCase.exec(userId);
