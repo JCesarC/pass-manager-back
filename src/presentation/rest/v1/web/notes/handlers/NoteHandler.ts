@@ -60,4 +60,21 @@ export class NoteHandler {
       });
     }
   }
+
+  async updateNoteById(req: Request, res: Response) {
+    try {
+      const noteRepository = iocContainer.get<INoteRepository>(TYPES.INoteRepository);
+      const noteController = new NoteController(noteRepository);
+      const { id } = req.params;
+      const noteData = req.body;
+
+      const response = await noteController.updateNoteById(id, noteData);
+      return res.send(response);
+    } catch (error) {
+      return res.status(500).send({
+        error: true,
+        errorMessage: `${error}`,
+      });
+    }
+  }
 }

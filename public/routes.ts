@@ -334,36 +334,6 @@ export function RegisterRoutes(app: express.Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.get('/api/v1/notes/user/:userId',
-            ...(fetchMiddlewares<RequestHandler>(NoteController)),
-            ...(fetchMiddlewares<RequestHandler>(NoteController.prototype.getNotesByUser)),
-
-            async function NoteController_getNotesByUser(request: any, response: any, next: any) {
-            const args = {
-                    userId: {"in":"path","name":"userId","required":true,"dataType":"string"},
-            };
-
-            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-            let validatedArgs: any[] = [];
-            try {
-                validatedArgs = getValidatedArgs(args, request, response);
-
-                const container: IocContainer = typeof iocContainer === 'function' ? (iocContainer as IocContainerFactory)(request) : iocContainer;
-
-                const controller: any = await container.get<NoteController>(NoteController);
-                if (typeof controller['setStatus'] === 'function') {
-                controller.setStatus(undefined);
-                }
-
-
-              const promise = controller.getNotesByUser.apply(controller, validatedArgs as any);
-              promiseHandler(controller, promise, response, undefined, next);
-            } catch (err) {
-                return next(err);
-            }
-        });
-        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         app.post('/api/v1/notes',
             ...(fetchMiddlewares<RequestHandler>(NoteController)),
             ...(fetchMiddlewares<RequestHandler>(NoteController.prototype.createNote)),
@@ -388,6 +358,67 @@ export function RegisterRoutes(app: express.Router) {
 
 
               const promise = controller.createNote.apply(controller, validatedArgs as any);
+              promiseHandler(controller, promise, response, undefined, next);
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.put('/api/v1/notes/:id',
+            ...(fetchMiddlewares<RequestHandler>(NoteController)),
+            ...(fetchMiddlewares<RequestHandler>(NoteController.prototype.updateNoteById)),
+
+            async function NoteController_updateNoteById(request: any, response: any, next: any) {
+            const args = {
+                    id: {"in":"path","name":"id","required":true,"dataType":"string"},
+                    noteData: {"in":"body","name":"noteData","required":true,"ref":"INoteModel"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+
+                const container: IocContainer = typeof iocContainer === 'function' ? (iocContainer as IocContainerFactory)(request) : iocContainer;
+
+                const controller: any = await container.get<NoteController>(NoteController);
+                if (typeof controller['setStatus'] === 'function') {
+                controller.setStatus(undefined);
+                }
+
+
+              const promise = controller.updateNoteById.apply(controller, validatedArgs as any);
+              promiseHandler(controller, promise, response, undefined, next);
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.get('/api/v1/notes/user/:userId',
+            ...(fetchMiddlewares<RequestHandler>(NoteController)),
+            ...(fetchMiddlewares<RequestHandler>(NoteController.prototype.getNotesByUser)),
+
+            async function NoteController_getNotesByUser(request: any, response: any, next: any) {
+            const args = {
+                    userId: {"in":"path","name":"userId","required":true,"dataType":"string"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+
+                const container: IocContainer = typeof iocContainer === 'function' ? (iocContainer as IocContainerFactory)(request) : iocContainer;
+
+                const controller: any = await container.get<NoteController>(NoteController);
+                if (typeof controller['setStatus'] === 'function') {
+                controller.setStatus(undefined);
+                }
+
+
+              const promise = controller.getNotesByUser.apply(controller, validatedArgs as any);
               promiseHandler(controller, promise, response, undefined, next);
             } catch (err) {
                 return next(err);

@@ -25,3 +25,9 @@
 
 ### 24 nov
 - [ ] Mover logica de validacion de fieldValue body en fieldHandler a fieldController
+
+### 29 nov
+
+- [ ] Separar IModels en models y types para poder hacer los mocks de los bodys de cada endpoint con tsoa
+
+- [ ] Hacer una function para mockear automaticamente todas las props de una interfaz utilizando faker (basandose en el type de la property)

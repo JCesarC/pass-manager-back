@@ -7,7 +7,8 @@ const noteRouter = express.Router();
 const noteHandler = new NoteHandler();
 
 noteRouter.get('/', noteHandler.getAllNotes);
-noteRouter.get('/user/:userId', noteHandler.getNotesByUser);
 noteRouter.post('/', noteHandler.createNote);
+noteRouter.put('/:id', noteHandler.updateNoteById);
+noteRouter.get('/user/:userId', noteHandler.getNotesByUser);
 
 export default noteRouter;

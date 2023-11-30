@@ -508,6 +508,47 @@
 				}
 			}
 		},
+		"/api/v1/notes/{id}": {
+			"put": {
+				"operationId": "UpdateNoteById",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/INoteModel"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"NoteController"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/INoteModel"
+							}
+						}
+					}
+				}
+			}
+		},
 		"/api/v1/notes/user/{userId}": {
 			"get": {
 				"operationId": "GetNotesByUser",
