@@ -9,6 +9,7 @@ const noteValidator = Joi.object<INoteModel>({
   isFavorite: Joi.boolean(),
   isArchived: Joi.boolean(),
   tags: Joi.array(),
+  imageURLs: Joi.array().items(Joi.string()),
 });
 
 export { noteValidator };

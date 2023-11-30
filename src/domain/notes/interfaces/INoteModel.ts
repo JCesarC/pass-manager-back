@@ -8,4 +8,5 @@ export interface INoteModel extends Document {
   isFavorite: boolean;
   isArchived: boolean;
   tags: string[];
+  imageURLs: string[];
 }

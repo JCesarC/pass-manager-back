@@ -11,6 +11,10 @@ const noteSchema = new Schema<INoteModel>(
     isFavorite: { type: Boolean, required: false, default: false },
     isArchived: { type: Boolean, default: false },
     tags: { type: [String], required: false, default: [] },
+    imageURLs: {
+      type: [[String]],
+      required: false, default: []
+    }
   },
   {
     timestamps: true,
