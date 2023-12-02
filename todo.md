@@ -31,3 +31,7 @@
 - [ ] Separar IModels en models y types para poder hacer los mocks de los bodys de cada endpoint con tsoa
 
 - [ ] Hacer una function para mockear automaticamente todas las props de una interfaz utilizando faker (basandose en el type de la property)
+
+
+### 1 dic
+- [ ] Documentar endpoints para carga de archivos (/upload)
