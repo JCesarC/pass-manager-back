@@ -61,6 +61,22 @@ export class NoteHandler {
     }
   }
 
+  async deleteNoteById(req: Request, res: Response) {
+    try {
+      const noteRepository = iocContainer.get<INoteRepository>(TYPES.INoteRepository);
+      const noteController = new NoteController(noteRepository);
+      const { id } = req.params;
+      await noteController.deleteNoteById(id);
+
+      return res.status(204).send({ error: false, message: 'Note deleted successfully' });
+    } catch (error) {
+      return res.status(500).send({
+        error: true,
+        errorMessage: `${error}`,
+      });
+    }
+  }
+
   async updateNoteById(req: Request, res: Response) {
     try {
       const noteRepository = iocContainer.get<INoteRepository>(TYPES.INoteRepository);

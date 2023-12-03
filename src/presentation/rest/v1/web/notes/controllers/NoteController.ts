@@ -1,12 +1,18 @@
 import { inject, injectable } from 'inversify';
-import { Get, Query, Route, Tags, Post, Body, Path, Example, Put } from 'tsoa';
+import { Get, Query, Route, Tags, Post, Body, Path, Example, Put, Delete } from 'tsoa';
 
 import { TYPES } from '../../../../../../domain/types';
 
 import { AllNotesResponseType } from '../../../../../../domain/notes/types';
 import { INoteController, INoteModel } from '../../../../../../domain/notes/interfaces';
 import { INoteRepository } from '../../../../../../domain/notes/repository/INoteRepository';
-import { CreateNoteUseCase, GetAllNotesUseCase, GetNotesByUserUseCase, UpdateNoteByIdUseCase } from '../../../../../../application/notes/UseCases';
+import {
+  CreateNoteUseCase,
+  DeleteNoteByIdUseCase,
+  GetAllNotesUseCase,
+  GetNotesByUserUseCase,
+  UpdateNoteByIdUseCase,
+} from '../../../../../../application/notes/UseCases';
 
 import { ThrowValidatorError } from '../../../../../../application/shared';
 import { noteValidator } from '../../../../../../application/notes/NoteValidator';
@@ -34,6 +40,12 @@ export class NoteController implements INoteController{
 
     if (error) return ThrowValidatorError(error);
     return createNoteUseCase.exec(value);
+  }
+
+  @Delete('/:id')
+  async deleteNoteById(@Path() id: string){
+    const deleteNoteByIdUseCase = new DeleteNoteByIdUseCase(this.noteRepository);
+    return deleteNoteByIdUseCase.exec(id);
   }
 
   @Put('/:id')

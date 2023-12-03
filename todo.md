@@ -35,3 +35,10 @@
 
 ### 1 dic
 - [ ] Documentar endpoints para carga de archivos (/upload)
+
+### 3 dic
+- [ ] Implementar endpoint delete note
+- [ ] Implementar isDeleted property a las notas
+- [ ] Modificar endpoint que regresa las notas para que filtre las notas con la propiedad isDeleted en false
+- [ ] Implementar endpoint para eliminar imagenes de notas eliminadas o incluirlo en el endpoint que elimina la nota
+
