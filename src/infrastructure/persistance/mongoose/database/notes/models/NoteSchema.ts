@@ -12,7 +12,7 @@ const noteSchema = new Schema<INoteModel>(
     isArchived: { type: Boolean, default: false },
     tags: { type: [String], required: false, default: [] },
     imageURLs: {
-      type: [[String]],
+      type: [String],
       required: false, default: []
     }
   },
