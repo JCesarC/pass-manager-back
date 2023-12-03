@@ -1,12 +1,13 @@
+import { inject, injectable } from 'inversify';
 import { Body, Get, Post, Query, Route, Tags } from 'tsoa';
+
+import { TYPES } from '../../../../../../domain/types';
 
 import { AllVaultsResponseType } from '../../../../../../domain/vaults/types';
 import { IVaultModel } from '../../../../../../domain/vaults/interfaces';
 import { IVaultRepository } from '../../../../../../domain/vaults/repository/IVaultRepository';
 
 import { CreateVaultUseCase, GetAllVaultsUseCase } from '../../../../../../application/vaults/UseCases';
-import { inject, injectable } from 'inversify';
-import { TYPES } from '../../../../../../domain/types';
 
 @Route('/api/v1/vaults')
 @Tags('VaultController')

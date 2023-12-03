@@ -26,5 +26,5 @@ const createMulterStorage = (folder: string) => {
 export const configMulterHandler = (folder: string) => {
   return multer({
     storage: createMulterStorage(folder)
-  }).array('upload', 3);
+  }).array('file', 5);
 };

@@ -16,10 +16,11 @@ import { UserRepository } from '../../../../../../infrastructure/persistance/mon
 @Tags('UserController')
 export class UserController implements IUserController {
   /**
-   * Enpoint to retrive all users data paginated
-   * @param especific number of page to show
-   * @param limit per page to show users
-   * @returns A group of users
+   * Tsoa documentation for this endpoint with optional page and limit query params
+   *
+   * @param {number} page - The page number
+   * @param {number} limit - The limit per page
+   * @returns {Promise<UserResponseExample>} - The response data
    */
 
   @Get('/')
@@ -58,6 +59,7 @@ export class UserController implements IUserController {
     totalPages: 3,
     currentPage: 1,
   })
+
   async getUsers(@Query() page: number, @Query() limit: number): Promise<unknown> {
     const userRepository = new UserRepository();
     const getAllUsersUseCase = new GetAllUsersUseCase(userRepository);

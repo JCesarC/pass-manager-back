@@ -17,7 +17,7 @@ export class FieldHandler {
     } catch (error) {
       return res.status(500).send({
         error: true,
-        errorMessage: `${error}`
+        errorMessage: `${error}`,
       });
     }
   }
@@ -32,7 +32,7 @@ export class FieldHandler {
     } catch (error) {
       return res.status(500).send({
         error: true,
-        errorMessage: `${error}`
+        errorMessage: `${error}`,
       });
     }
   }

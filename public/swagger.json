@@ -82,6 +82,33 @@
 			"IFieldValueModel": {
 				"$ref": "#/components/schemas/FlattenMaps_T_"
 			},
+			"INoteModel": {
+				"$ref": "#/components/schemas/FlattenMaps_T_"
+			},
+			"AllNotesResponseType": {
+				"properties": {
+					"currentPage": {
+						"type": "number",
+						"format": "double"
+					},
+					"totalPages": {
+						"type": "number",
+						"format": "double"
+					},
+					"notes": {
+						"items": {
+							"$ref": "#/components/schemas/INoteModel"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"currentPage",
+					"totalPages",
+					"notes"
+				],
+				"type": "object"
+			},
 			"Pick_IUserModel.Exclude_keyofIUserModel.password__": {
 				"properties": {
 					"email": {
@@ -410,6 +437,180 @@
 				}
 			}
 		},
+		"/api/v1/notes": {
+			"get": {
+				"operationId": "GetAllNotes",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/AllNotesResponseType"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"NoteController"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "page",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "limit",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			},
+			"post": {
+				"operationId": "CreateNote",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/INoteModel"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"NoteController"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/INoteModel"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/v1/notes/{id}": {
+			"delete": {
+				"operationId": "DeleteNoteById",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"NoteController"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"put": {
+				"operationId": "UpdateNoteById",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/INoteModel"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"NoteController"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/INoteModel"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/v1/notes/user/{userId}": {
+			"get": {
+				"operationId": "GetNotesByUser",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/INoteModel"
+									},
+									"type": "array",
+									"nullable": true
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"NoteController"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
 		"/api/v1/users": {
 			"get": {
 				"operationId": "GetUsers",
@@ -432,13 +633,14 @@
 						}
 					}
 				},
-				"description": "Enpoint to retrive all users data paginated",
+				"description": "Tsoa documentation for this endpoint with optional page and limit query params",
 				"tags": [
 					"UserController"
 				],
 				"security": [],
 				"parameters": [
 					{
+						"description": "- The page number",
 						"in": "query",
 						"name": "page",
 						"required": true,
@@ -448,7 +650,7 @@
 						}
 					},
 					{
-						"description": "per page to show users",
+						"description": "- The limit per page",
 						"in": "query",
 						"name": "limit",
 						"required": true,

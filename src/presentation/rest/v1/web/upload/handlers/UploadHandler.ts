@@ -4,7 +4,6 @@ import { configMulterHandler } from '../../../../../../infrastructure/multer';
 
 export const uploadHandler = (req: Request, res: Response, folder: string) => {
   const multerUpload = configMulterHandler(folder);
-
   multerUpload(req, res, (error) => {
     if (error) {
       console.log(error);

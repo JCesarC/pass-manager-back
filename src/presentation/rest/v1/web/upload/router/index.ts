@@ -7,4 +7,8 @@ uploadRouter.route('/').post((req: Request, res: Response) => {
   uploadHandler(req, res, 'test');
 });
 
+uploadRouter.route('/notes').post((req: Request, res: Response) => {
+  uploadHandler(req, res, 'notes');
+});
+
 export default uploadRouter;
