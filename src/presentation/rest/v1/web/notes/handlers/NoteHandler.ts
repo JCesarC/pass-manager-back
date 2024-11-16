@@ -7,6 +7,7 @@ import { TYPES } from '../../../../../../domain/types';
 import { NoteController } from '../controllers';
 
 import { INoteRepository } from '../../../../../../domain/notes/repository/INoteRepository';
+import { getPaginationQueries } from '../../../../shared';
 
 export class NoteHandler {
 
@@ -15,13 +16,9 @@ export class NoteHandler {
       const noteRepository = iocContainer.get<INoteRepository>(TYPES.INoteRepository);
       const noteController = new NoteController(noteRepository);
 
-      const page = req?.query?.page as string || '1';
-      const limit = req?.query?.limit as string || '5';
+      const { page, limit } = getPaginationQueries(req);
 
-      const intPage = parseInt(page);
-      const intLimit = parseInt(limit);
-
-      const response = await noteController.getAllNotes(intPage, intLimit);
+      const response = await noteController.getAllNotes(page, limit);
       return res.send(response);
     } catch (error) {
       return res.status(500).send({

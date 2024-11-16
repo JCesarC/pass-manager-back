@@ -42,3 +42,13 @@
 - [ ] Modificar endpoint que regresa las notas para que filtre las notas con la propiedad isDeleted en false
 - [ ] Implementar endpoint para eliminar imagenes de notas eliminadas o incluirlo en el endpoint que elimina la nota
 
+### 13 dic
+
+- [ ] Utilizar function getPagination queries en otros handlers
+- [ ] Renombrar funcions de handlers (remover *handler)
+
+### 12 may 24
+- [ ] Agregar logger
+- [ ] Utilizar un encriptado para enviar los datos desde el front y desencriptarlos y volverlos a encriptar en el back
+- [ ] Consulta de contraseñas/vaults por medio de tokens por tiempo
+- [ ] Login por phone - code 
