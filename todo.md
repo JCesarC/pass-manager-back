@@ -52,3 +52,6 @@
 - [ ] Utilizar un encriptado para enviar los datos desde el front y desencriptarlos y volverlos a encriptar en el back
 - [ ] Consulta de contraseñas/vaults por medio de tokens por tiempo
 - [ ] Login por phone - code 
+
+### 19 nov 24
+- [ ] Actualizar y crear nuevos repositories a partir del BaseRepository y IBaserepository

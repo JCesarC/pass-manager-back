@@ -1,8 +1,8 @@
+import { IBaseRepository } from '../../base/repository/IBaseRepository';
 import { IVaultModel } from '../interfaces';
 
-export interface IVaultRepository {
+export interface IVaultRepository extends IBaseRepository<IVaultModel> {
   create(vaultData: IVaultModel): Promise<IVaultModel>;
-  getAll(): Promise<IVaultModel [] | null>;
   getAllVaultsPaginated(page: number, limit: number): Promise<IVaultModel[] | null>
   getById(id: string): Promise<IVaultModel | null>;
   getByUser(userId: string): Promise<IVaultModel[] | null>;
