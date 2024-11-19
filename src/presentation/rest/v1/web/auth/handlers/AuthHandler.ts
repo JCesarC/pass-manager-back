@@ -15,8 +15,8 @@ export class AuthHandler {
       if (error) {
         // Si hay errores de validación, devolver una respuesta de error
         return res.status(400).send({
-          error: true,
-          errorMessage: error.details[0].message,
+          hasError: true,
+          error: error.details[0].message,
         });
       }
 
@@ -26,8 +26,8 @@ export class AuthHandler {
       return res.status(201).send(response);
     } catch (error) {
       return res.status(400).send({
-        error: true,
-        errorMessage: `${error}`
+        hasError: true,
+        error: `${error}`
       });
     }
   };
@@ -41,8 +41,8 @@ export class AuthHandler {
       return res.status(201).send(response);
     } catch (error) {
       return res.status(400).send({
-        error: true,
-        errorMessage: `${error}`
+        hasError: true,
+        error: `${error}`
       });
     }
   };
@@ -56,13 +56,13 @@ export class AuthHandler {
 
       const user = await authController.getAuthenticatedUserData(_id);
       return res.status(200).send({
-        error: false,
+        hasError: false,
         user
       });
     } catch (error: any) {
       return res.status(500).send({
-        error: true,
-        errorMessage: `${error}`
+        hasError: true,
+        error: `${error}`
       });
     }
   };
