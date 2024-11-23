@@ -19,19 +19,6 @@ class MongoDBClient {
     this.client.connection.on('close', () => {
       console.log('MongoDB Connection Closed successfully!');
     });
-
-    const SIGS = [
-      'SIGINT',
-      'SIGBREAK',
-      'SIGTERM'
-    ] as const;
-
-    SIGS.forEach((SIG) => {
-      process.on(SIG, () => {
-        console.log('Closing db connection...');
-        this.forceCloseDBConnection();
-      });
-    });
   }
 
   async startDBConnection(): Promise<void> {

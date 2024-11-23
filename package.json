@@ -10,7 +10,7 @@
     "build-dev": "npm run cleanDist && npm run swagger && npx webpack --mode development",
     "tsoaWatch": "nodemon -x tsoa spec-and-routes",
     "test": "jest",
-    "dev": "concurrently -r  \"tsnd --respawn --clear src/index.ts\" \"npm run tsoaWatch\"",
+    "dev": "concurrently -r \"tsnd --respawn --clear src/index.ts\" \"npm run tsoaWatch\"",
     "dev:watch": "concurrently -r \"rimraf ./dist\" \"tsc --watch\" \"npm run tsoaWatch\" \"nodemon -q dist/src/index.js\"",
     "dev:nowatch": "concurrently -r \"nodemon -q\" \"npm run tsoaWatch\"",
     "server": "node dist/index.js",
