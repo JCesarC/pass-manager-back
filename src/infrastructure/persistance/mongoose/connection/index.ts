@@ -2,39 +2,49 @@ import mongoose from 'mongoose';
 
 const MONGODB_URL = process.env.MONGODB_URL as string;
 
-mongoose.connection.once('open', () => {
-  console.log('MongoDB Connection ready!');
-});
+class MongoDBClient {
+  private client: typeof mongoose;
 
-mongoose.connection.on('error', (err) => {
-  console.log('Error with MongoDB', err);
-});
+  constructor() {
+    this.client = mongoose;
 
-mongoose.connection.on('close', () => {
-  console.log('MongoDB Connection Closed sucessfully!');
-});
+    this.client.connection.once('open', () => {
+      console.log('MongoDB Connection ready!');
+    });
 
-const SIGS = [
-  'SIGINT',
-  'SIGBREAK',
-  'SIGTERM'
-] as const;
+    this.client.connection.on('error', (err) => {
+      console.log('Error with MongoDB', err);
+    });
 
-SIGS.forEach((SIG) => {
-  process.on(SIG, () => {
-    console.log('Closing db connection...');
-    mongoose.connection.close(true);
-  });
-});
+    this.client.connection.on('close', () => {
+      console.log('MongoDB Connection Closed successfully!');
+    });
 
-export const startDBConnection = async () => {
-  await mongoose.connect(MONGODB_URL);
-};
+    const SIGS = [
+      'SIGINT',
+      'SIGBREAK',
+      'SIGTERM'
+    ] as const;
 
-export const closeDBConnection = async () => {
-  await mongoose.connection.close();
-};
+    SIGS.forEach((SIG) => {
+      process.on(SIG, () => {
+        console.log('Closing db connection...');
+        this.forceCloseDBConnection();
+      });
+    });
+  }
 
-export const forceCloseDBConnection = () => {
-  mongoose.connection.close(true);
-};
+  async startDBConnection(): Promise<void> {
+    await this.client.connect(MONGODB_URL);
+  }
+
+  async closeDBConnection(): Promise<void> {
+    await this.client.connection.close();
+  }
+
+  forceCloseDBConnection(): void {
+    this.client.connection.close(true);
+  }
+}
+
+export default MongoDBClient;

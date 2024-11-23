@@ -2,12 +2,10 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 import { Server } from './presentation/rest/server';
-import { startDBConnection } from './infrastructure/persistance/mongoose/connection';
 
 const start = async () => {
   const server = new Server();
-  await startDBConnection();
-  server.exec();
+  await server.exec();
 
   process
     .on('SIGINT', () => {

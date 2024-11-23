@@ -14,14 +14,15 @@ import { AppInfo, AppConfig } from './config';
 import mainRouter from './router';
 
 import passportConfig from '../../infrastructure/authentication/passport/passportConfig';
-import { closeDBConnection, forceCloseDBConnection } from '../../infrastructure/persistance/mongoose/connection';
 
 import swaggerDoc from '../../../public/swagger.json';
+import MongoDBClient from '../../infrastructure/persistance/mongoose/connection';
 
 class Server{
   private app;
   private httpServer!: ServerInstance;
   private swaggerOptions;
+  private mongoClient: MongoDBClient;
   // private logger = winston.createLogger({
   //   transports: [
   //     new winston.transports.Console(),
@@ -34,6 +35,7 @@ class Server{
     this.swaggerOptions = {
       explorer: true
     };
+    this.mongoClient = new MongoDBClient();
   }
 
   private configureExpress():void {
@@ -78,22 +80,26 @@ class Server{
     this.httpServer = http.createServer(this.app);
   };
 
-  public exec(): void {
+  private async startDBsConnections(){
+    await this.mongoClient.startDBConnection();
+  }
+
+  public async exec(): Promise<void> {
     this.configureExpress();
     this.createServer();
+    await this.startDBsConnections();
     this.startServer();
   }
 
   public async stopServer(message = '') {
     console.log(message);
-    await closeDBConnection();
+    await this.mongoClient.closeDBConnection();
     process.exit();
   }
 
   public forceStopServer(message = ''){
     console.log(message);
-    //* TODO: Move connection methods to index.ts
-    forceCloseDBConnection();
+    this.mongoClient.forceCloseDBConnection();
     process.exit(1);
   }
 
