@@ -25,11 +25,11 @@ class MongoDBClient {
     await this.client.connect(MONGODB_URL);
   }
 
-  async closeDBConnection(): Promise<void> {
-    await this.client.connection.close();
+  async closeDBConnection(force = false): Promise<void> {
+    await this.client.connection.close(force);
   }
 
-  forceCloseDBConnection(): void {
+  forceCloseDBConnection(): void{
     this.client.connection.close(true);
   }
 }

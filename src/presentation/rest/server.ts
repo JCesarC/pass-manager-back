@@ -22,7 +22,7 @@ class Server{
   private app;
   private httpServer!: ServerInstance;
   private swaggerOptions;
-  private mongoClient: MongoDBClient;
+  private bdClient: MongoDBClient;
   // private logger = winston.createLogger({
   //   transports: [
   //     new winston.transports.Console(),
@@ -30,12 +30,12 @@ class Server{
   //   ]
   // });
 
-  constructor() {
+  constructor(bdClient: MongoDBClient) {
     this.app = express();
     this.swaggerOptions = {
       explorer: true
     };
-    this.mongoClient = new MongoDBClient();
+    this.bdClient = bdClient;
   }
 
   private configureExpress():void {
@@ -57,7 +57,7 @@ class Server{
 
   private showBanner(): void {
     const banner = `
-      Application started successfully!
+      Application started successsssssssfully!
       Name: ${AppInfo.APP_NAME}
       Port: ${AppConfig.PORT}
       BasePath: ${AppConfig.BASE_PATH}
@@ -70,36 +70,26 @@ class Server{
     console.log(banner);
   }
 
-  private startServer(): void {
-    this.httpServer.listen(AppConfig.PORT, () => {
+  private async startServer(): Promise<void> {
+    await this.bdClient.startDBConnection();
+    this.httpServer = http.createServer(this.app);
+    this.httpServer.listen(process.env.PORT || 3000, () => {
       this.showBanner();
     });
   }
 
-  private createServer(): void{
-    this.httpServer = http.createServer(this.app);
-  };
-
-  private async startDBsConnections(){
-    await this.mongoClient.startDBConnection();
-  }
-
   public async exec(): Promise<void> {
-    this.configureExpress();
-    this.createServer();
-    await this.startDBsConnections();
-    this.startServer();
+    await this.startServer();
   }
-
   public async stopServer(message = '') {
     console.log(message);
-    await this.mongoClient.closeDBConnection();
+    await this.bdClient.closeDBConnection();
     process.exit();
   }
 
-  public forceStopServer(message = ''){
+  public async forceStopServer(message = ''){
     console.log(message);
-    this.mongoClient.forceCloseDBConnection();
+    await this.bdClient.closeDBConnection();
     process.exit(1);
   }
 
