@@ -6,7 +6,7 @@ const userModelValidator = Joi.object<IUserModel>({
   email: Joi.string().email().required(),
   firstName: Joi.string().required(),
   lastName: Joi.string().required(),
-  displayName: Joi.string().required(),
+  displayName: Joi.string(),
   password: Joi.string().required(),
   roles: Joi.array().items(Joi.string()),
   phone: Joi.string(),

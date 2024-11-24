@@ -31,9 +31,13 @@ export class AuthController implements IAuthController {
   async registerUser(@Body()user: IUserModel): Promise<unknown> {
     const registerUserUseCase = new RegisterUserUseCase(this.userRepository);
 
-    const { firstName, lastName, email, password } = user;
+    const { firstName, lastName, email, password, displayName } = user;
+    const displayNameToSet = displayName || firstName;
     if(firstName && lastName && email && password ) {
-      const response = await registerUserUseCase.execute(user);
+      const response = await registerUserUseCase.execute({
+        ...user,
+        displayName: displayNameToSet
+      });
       return response;
     }
     throw new Error(AUTH_ERRORS.DATA_NOT_FOUND);
