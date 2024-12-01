@@ -1,37 +1,44 @@
-import mongoose from 'mongoose';
+import mongoose, { ConnectOptions } from 'mongoose';
 
 const MONGODB_URL = process.env.MONGODB_URL as string;
 
-class MongoDBClient {
-  private client: typeof mongoose;
+mongoose.connection.once('open', () => {
+  console.log('MongoDB Connection ready!');
+});
 
-  constructor() {
-    this.client = mongoose;
+mongoose.connection.on('error', (err) => {
+  console.log('Error with MongoDB', err);
+});
 
-    this.client.connection.once('open', () => {
-      console.log('MongoDB Connection ready!');
-    });
+mongoose.connection.on('close', () => {
+  console.log('MongoDB Connection Closed sucessfully!');
+});
 
-    this.client.connection.on('error', (err) => {
-      console.log('Error with MongoDB', err);
-    });
+// const SIGS = [
+//   'SIGINT',
+//   'SIGBREAK',
+//   'SIGTERM'
+// ] as const;
 
-    this.client.connection.on('close', () => {
-      console.log('MongoDB Connection Closed successfully!');
-    });
-  }
+// SIGS.forEach((SIG) => {
+//   process.on(SIG, () => {
+//     console.log('Closing db connection...');
+//     mongoose.connection.close(true);
+//   });
+// });
 
-  async startDBConnection(): Promise<void> {
-    await this.client.connect(MONGODB_URL);
-  }
+export const startDBConnection = async () => {
+  const options = {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+  } as ConnectOptions;
+  await mongoose.connect(MONGODB_URL, options);
+};
 
-  async closeDBConnection(force = false): Promise<void> {
-    await this.client.connection.close(force);
-  }
+export const closeDBConnection = async () => {
+  await mongoose.connection.close();
+};
 
-  forceCloseDBConnection(): void{
-    this.client.connection.close(true);
-  }
-}
-
-export default MongoDBClient;
+export const forceCloseDBConnection = () => {
+  mongoose.connection.close(true);
+};

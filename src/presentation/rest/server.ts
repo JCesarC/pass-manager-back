@@ -16,13 +16,11 @@ import mainRouter from './router';
 import passportConfig from '../../infrastructure/authentication/passport/passportConfig';
 
 import swaggerDoc from '../../../public/swagger.json';
-import MongoDBClient from '../../infrastructure/persistance/mongoose/connection';
-
+import { closeDBConnection, forceCloseDBConnection, startDBConnection } from '../../infrastructure/persistance/mongoose/connection';
 class Server{
   private app;
   private httpServer!: ServerInstance;
   private swaggerOptions;
-  private bdClient: MongoDBClient;
   // private logger = winston.createLogger({
   //   transports: [
   //     new winston.transports.Console(),
@@ -30,12 +28,11 @@ class Server{
   //   ]
   // });
 
-  constructor(bdClient: MongoDBClient) {
+  constructor() {
     this.app = express();
     this.swaggerOptions = {
       explorer: true
     };
-    this.bdClient = bdClient;
   }
 
   private configureExpress():void {
@@ -57,11 +54,11 @@ class Server{
 
   private showBanner(): void {
     const banner = `
-      Application started successsssssssfully!
+      Application starrted successssssssfully!
       Name: ${AppInfo.APP_NAME}
       Port: ${AppConfig.PORT}
       BasePath: ${AppConfig.BASE_PATH}
-      OpenApi Spec Path: ${AppConfig.BASE_PATH}/docs
+      OpenApi Spec Path: /api/docs
     `;
     // this.logger.log({
     //   level: 'info',
@@ -71,7 +68,8 @@ class Server{
   }
 
   private async startServer(): Promise<void> {
-    await this.bdClient.startDBConnection();
+    await startDBConnection();
+    this.configureExpress();
     this.httpServer = http.createServer(this.app);
     this.httpServer.listen(process.env.PORT || 3000, () => {
       this.showBanner();
@@ -82,20 +80,19 @@ class Server{
     await this.startServer();
   }
   public async stopServer(message = '') {
+    await closeDBConnection();
     console.log(message);
-    await this.bdClient.closeDBConnection();
     process.exit();
   }
 
-  public async forceStopServer(message = ''){
+  public forceStopServer(message = ''){
     console.log(message);
-    await this.bdClient.closeDBConnection();
+    forceCloseDBConnection();
     process.exit(1);
   }
 
   public logErrorAndTerminate(error: string){
-    console.log(error);
-    this.stopServer();
+    this.stopServer(`shutting down the server...${error}`);
   }
 }
 
