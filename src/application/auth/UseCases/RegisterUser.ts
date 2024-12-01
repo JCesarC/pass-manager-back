@@ -42,7 +42,9 @@ export class RegisterUserUseCase {
     };
 
     const response = await createUserUseCase.execute(user);
+    console.log('🚀 ~ execute ~ response:', response);
     const userData = await getFilteredUserDataUseCase.execute(response._id);
+    console.log('🚀 ~ execute ~ userData:', userData);
 
     return {
       error: false,

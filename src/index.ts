@@ -2,23 +2,21 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 import { Server } from './presentation/rest/server';
-import MongoDBClient from './infrastructure/persistance/mongoose/connection';
+import { SIGS_SERVER_EXIT } from './infrastructure/shared/config';
 
-const mongoDBClient = new MongoDBClient();
-const server = new Server(mongoDBClient);
+const server = new Server();
 const start = async () => {
 
-  await server.exec();
-
   process
-    .on('SIGINT', async () => {
+    .on(SIGS_SERVER_EXIT.SIGINT, async () => {
       await server.stopServer('Shutting down the server...');
     })
-    .on('SIGBREAK', () => {
-      server.forceStopServer('Forcing server shutdown...');
+    .on(SIGS_SERVER_EXIT.SIGBREAK, async () => {
+      await server.stopServer('Forcing server shutdown...');
     })
-    .on('SIGTERM', async () => {
-      await server.stopServer('Shutting down the server...');
+    .on(SIGS_SERVER_EXIT.SIGTERM, () => {
+      // server.stopServer('Shutting down the server...');
+      server.stopServer('Forcing server shutdown...');
     })
     .on('unhandledRejection', (error) => {
       server.logErrorAndTerminate(`unhandledRejection captured: ${error}`);
@@ -26,6 +24,8 @@ const start = async () => {
     .on('uncaughtException', (error) => {
       server.logErrorAndTerminate(`uncaughtException captured: ${error}`);
     });
+
+  await server.exec();
 };
 
 start();

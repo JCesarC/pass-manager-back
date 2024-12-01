@@ -1,0 +1,7 @@
+export const SIGS_SERVER_EXIT = {
+  SIGINT: 'SIGINT',
+  SIGTERM: 'SIGTERM',
+  SIGBREAK: 'SIGBREAK',
+};
+
+export const SIGS_SERVER_EXIT_ARRAY = Object.values(SIGS_SERVER_EXIT);
