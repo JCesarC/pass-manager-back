@@ -55,3 +55,10 @@
 
 ### 19 nov 24
 - [ ] Actualizar y crear nuevos repositories a partir del BaseRepository y IBaserepository
+
+### 10 jun 2025
+- [ ] Configuraciones y modulo por defecto para administrar roles, modulos, etc para usuario Super Admin.
+- [ ] Poder seleccionar y configurar que modulos contiene un rol
+
+- [ ] Utilizar un webSocket para el guardado-almacenado de datos en lugar de un POST, de esta forma se estarian encriptando directamente en el backend y no enviando encriptados en el FRONT
+
