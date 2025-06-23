@@ -1,7 +1,8 @@
 import mongoose, { Schema } from 'mongoose';
 import { IUserModel } from '../../../../../../domain/users/interfaces';
+import RolesSchema from '../../roles/models/RolesSchema';
 
-const userSchema: Schema = new Schema(
+const userSchema: Schema = new Schema<IUserModel>(
   {
     email: {
       type: String,
@@ -20,7 +21,8 @@ const userSchema: Schema = new Schema(
       required: false
     },
     roles: {
-      type: [],
+      type: mongoose.Schema.Types.ObjectId,
+      ref: RolesSchema,
       required: false
     },
     phone: {
