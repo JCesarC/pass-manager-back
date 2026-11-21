@@ -1,13 +1,17 @@
 import { Request } from 'express';
+import Joi from 'joi';
 
+import { validate } from '../../../application/shared';
+
+export const PAGINATION = Object.freeze({ DEFAULT_LIMIT: 10, MAX_LIMIT: 50 });
+
+const paginationSchema = Joi.object<{ page: number; limit: number }>({
+  page: Joi.number().integer().min(1).default(1),
+  limit: Joi.number().integer().min(1).max(PAGINATION.MAX_LIMIT).default(PAGINATION.DEFAULT_LIMIT),
+}).unknown(true);
+
+/** Reads ?page and ?limit, applying defaults and rejecting out-of-range values. */
 export const getPaginationQueries = (req: Request) => {
-  const page = req?.query?.page as string || '1';
-  const limit = req?.query?.limit as string || '5';
-
-  const intPage = parseInt(page);
-  const intLimit = parseInt(limit);
-  return {
-    page: intPage,
-    limit: intLimit
-  };
+  const { page, limit } = validate(paginationSchema, req.query);
+  return { page, limit };
 };

@@ -15,7 +15,7 @@ import {
 } from '../../../../../../application/notes/UseCases';
 
 import { NotFoundError, validate } from '../../../../../../application/shared';
-import { noteValidator } from '../../../../../../application/notes/NoteValidator';
+import { noteUpdateValidator, noteValidator } from '../../../../../../application/notes/NoteValidator';
 
 @Route('/api/v1/notes')
 @Tags('NoteController')
@@ -51,7 +51,8 @@ export class NoteController implements INoteController{
   @Put('/:id')
   async updateNoteById(@Path() id: string, @Body()noteData: INoteModel){
     const updateNoteById = new UpdateNoteByIdUseCase(this.noteRepository);
-    const note = await updateNoteById.exec(id, noteData);
+    const changes = validate(noteUpdateValidator, noteData) as INoteModel;
+    const note = await updateNoteById.exec(id, changes);
     if (!note) throw new NotFoundError('Note');
     return note;
   }
