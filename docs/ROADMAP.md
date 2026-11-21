@@ -30,29 +30,33 @@
 
 **DoD:** `docker compose up` starts the API and MongoDB from scratch following the README; `npm audit --omit=dev` reports no critical or high vulnerabilities; no empty files remain.
 
+**Status:** DoD met on branch `chore/m0-cleanup` (production audit: 0 vulnerabilities). Only CHORE-08 is pending.
+
+Found and fixed during M0 (not in the original audit): `IModule` extended the DOM `Document` type; Mongoose `strictQuery` is now explicit; tsoa only generates the spec (the unused generated routes were removed); a stale front-end bundle served at `/` was removed.
+
 ### Bugs
 
-- [ ] **BUG-01** `[BACK]` Environment variable mismatch: the code reads `MONGODB_URL` while `.env.template` declares `MONGO_URL`.
-- [ ] **BUG-02** `[BACK]` `BaseRepository.query/queryOne` (and the copy in `VaultRepository`) call `find({ query })`; it must be `find(query)`.
-- [ ] **BUG-03** `[BACK]` The user model is registered as `'Users'` but references point to `'User'`, so `populate` fails.
-- [ ] **BUG-04** `[BACK]` `roles` in `UserSchema` is a single ObjectId whose `ref` is a model object, while the validator expects an array. (Roles are frozen; make the shape consistent.)
-- [ ] **BUG-05** `[BACK]` OAuth `callbackURL` and `failureRedirect` are missing the `/v1` prefix, so Google sign-in is broken.
-- [ ] **BUG-06** `[BACK]` `authRouter.use('/login')` accepts any HTTP method; it must be `post`.
-- [ ] **BUG-07** `[BACK]` `createVault` persists the request body without validation; notes are validated but the owner (`user`) comes from the body.
-- [ ] **BUG-08** `[BACK]` `email` has no unique index (race condition on registration).
-- [ ] **BUG-09** `[BACK]` `stopServer` exits with code 0 after an `uncaughtException`/`unhandledRejection`; it must exit with a non-zero code.
+- [x] **BUG-01** `[BACK]` Environment variable mismatch: the code reads `MONGODB_URL` while `.env.template` declares `MONGO_URL`.
+- [x] **BUG-02** `[BACK]` `BaseRepository.query/queryOne` (and the copy in `VaultRepository`) call `find({ query })`; it must be `find(query)`.
+- [x] **BUG-03** `[BACK]` The user model is registered as `'Users'` but references point to `'User'`, so `populate` fails.
+- [x] **BUG-04** `[BACK]` `roles` in `UserSchema` is a single ObjectId whose `ref` is a model object, while the validator expects an array. (Roles are frozen; make the shape consistent.)
+- [x] **BUG-05** `[BACK]` OAuth `callbackURL` and `failureRedirect` are missing the `/v1` prefix, so Google sign-in is broken.
+- [x] **BUG-06** `[BACK]` `authRouter.use('/login')` accepts any HTTP method; it must be `post`.
+- [x] **BUG-07** `[BACK]` `createVault` persists the request body without validation. *(Validated now; taking the owner from the token is SEC-02.)*
+- [x] **BUG-08** `[BACK]` `email` has no unique index (race condition on registration).
+- [x] **BUG-09** `[BACK]` `stopServer` exits with code 0 after an `uncaughtException`/`unhandledRejection`; it must exit with a non-zero code.
 
 ### Maintenance
 
-- [ ] **CHORE-01** Remove the ~60 empty files and unused folders (`sessions`, `redis`, empty `health`, empty logger…).
-- [ ] **CHORE-02** Upgrade to Node 22 LTS, TypeScript 5, Mongoose 8, Jest 29+, ESLint 9 (flat config); add `.nvmrc` and `engines`.
-- [ ] **CHORE-03** Tidy dependencies: drop `aws-sdk` v2, `swagger-jsdoc`, `winston`, `esbuild`, `uuid` if unused; move `@faker-js/faker` and `ts-node-dev` to devDependencies.
-- [ ] **CHORE-04** Replace webpack with `tsc`: a Node API does not need bundling.
-- [ ] **CHORE-05** Centralized configuration validated at startup instead of reading `process.env` at import time in each module.
-- [ ] **CHORE-06** Multi-stage `Dockerfile` + `docker-compose.yml` (API + MongoDB).
-- [ ] **CHORE-07** Remove personal data from the Swagger examples and use fake data.
-- [ ] **CHORE-08** Delete the 15 remote branches already merged into `main`.
-- [ ] **CHORE-09** Initial v2 README: what it is, stack, how to run it, environment variables.
+- [x] **CHORE-01** Remove the ~60 empty files and unused folders (`sessions`, `redis`, empty `health`, empty logger…).
+- [x] **CHORE-02** Upgrade to Node 22 LTS, TypeScript 5, Jest 30, ESLint 9 (flat config); add `.nvmrc` and `engines`. *(Mongoose 8 and tsoa 6 moved to ARCH-06: tsoa cannot resolve Mongoose's generic `Document` types until ARCH-01 is done.)*
+- [x] **CHORE-03** Tidy dependencies: drop `aws-sdk` v2, `swagger-jsdoc`, `winston`, `esbuild`, `uuid` if unused; move `@faker-js/faker` and `ts-node-dev` to devDependencies.
+- [x] **CHORE-04** Replace webpack with `tsc`: a Node API does not need bundling.
+- [x] **CHORE-05** Centralized configuration validated at startup instead of reading `process.env` at import time in each module.
+- [x] **CHORE-06** Multi-stage `Dockerfile` + `docker-compose.yml` (API + MongoDB).
+- [x] **CHORE-07** Remove personal data from the Swagger examples and use fake data.
+- [ ] **CHORE-08** Delete the 15 remote branches already merged into `main`. *(Pending owner approval.)*
+- [x] **CHORE-09** Initial v2 README: what it is, stack, how to run it, environment variables.
 
 ---
 
@@ -71,6 +75,7 @@
 - [ ] **SEC-09** Structured logger (pino) redacting `password`, `token`, `authorization` and `data`; remove every `console.log`.
 - [ ] **SEC-10** Validate **every** body and param (including `ObjectId`s and pagination with a maximum `limit`).
 - [ ] **SEC-11** Uploads disabled until M2. If they come back: private, signed URLs, type/size limits, encrypted on the client.
+- [ ] **SEC-12** Mass assignment on registration: the user validator accepts `roles`, `active`, `verified` and `provider` from the client. Registration must only accept profile fields and credentials.
 
 ---
 
@@ -100,7 +105,8 @@
 - [ ] **QA-03** GitHub Actions: lint → typecheck → tests → `npm audit` → Docker image build.
 - [ ] **QA-04** Dependabot / Renovate + CodeQL.
 - [ ] **QA-05** Husky + lint-staged + commitlint (Conventional Commits).
-- [ ] **QA-06** A single source of truth for OpenAPI: either use tsoa's generated routes or remove tsoa. No two routing systems.
+- [ ] **QA-06** A single source of truth for OpenAPI: either use tsoa's generated routes or remove tsoa. No two routing systems. *(Generated routes were removed in M0; decide whether to adopt them or replace tsoa.)*
+- [ ] **QA-07** Format the whole codebase with Prettier in a single `style:` commit and reconcile the ESLint formatting rules (`indent`, `quotes`, `semi`) with Prettier.
 
 ## M3.5 — Architectural consistency
 
@@ -109,6 +115,7 @@
 - [ ] **ARCH-03** Infrastructure never imports from presentation (today `passportConfig` imports a controller).
 - [ ] **ARCH-04** Base `UseCase<I, O>` interface with a single method name (today both `exec` and `execute` exist).
 - [ ] **ARCH-05** Document the structure in `docs/ARCHITECTURE.md` with a diagram (ADR-002).
+- [ ] **ARCH-06** After ARCH-01: upgrade to Mongoose 8+ and tsoa 6+, move the tsoa CLI to devDependencies (runtime decorators from `@tsoa/runtime`) to shrink the Docker image (~520 MB today).
 
 ---
 
