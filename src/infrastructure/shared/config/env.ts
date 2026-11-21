@@ -23,6 +23,11 @@ export interface Env {
   REFRESH_TOKEN_TTL_DAYS: number;
   COOKIE_SECURE: boolean;
   COOKIE_SAME_SITE: 'strict' | 'lax' | 'none';
+  RATE_LIMIT_WINDOW_MINUTES: number;
+  AUTH_RATE_LIMIT_MAX: number;
+  API_RATE_LIMIT_MAX: number;
+  LOGIN_MAX_FAILED_ATTEMPTS: number;
+  LOGIN_LOCKOUT_MINUTES: number;
   USE_PROXY: boolean;
   FRONTEND_URL: string;
   CORS_ORIGINS: string[];
@@ -56,6 +61,13 @@ const envSchema = Joi.object<RawEnv>({
   }),
   // 'strict' when the front end and the API share a site; 'none' for cross-site deployments.
   COOKIE_SAME_SITE: Joi.string().valid('strict', 'lax', 'none').default('strict'),
+  // Per-IP request limits within a sliding window.
+  RATE_LIMIT_WINDOW_MINUTES: Joi.number().integer().min(1).default(15),
+  AUTH_RATE_LIMIT_MAX: Joi.number().integer().min(1).default(20),
+  API_RATE_LIMIT_MAX: Joi.number().integer().min(1).default(300),
+  // Per-account lockout after consecutive failed sign-ins.
+  LOGIN_MAX_FAILED_ATTEMPTS: Joi.number().integer().min(1).default(5),
+  LOGIN_LOCKOUT_MINUTES: Joi.number().integer().min(1).default(15),
   USE_PROXY: Joi.boolean().default(false),
   FRONTEND_URL: Joi.string().uri({ scheme: ['http', 'https'] }).default('http://localhost:5173'),
   // Comma-separated list of allowed browser origins; defaults to FRONTEND_URL.

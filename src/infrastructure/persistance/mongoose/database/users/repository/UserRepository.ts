@@ -6,6 +6,9 @@ import { IUserResponseModel, IUserModel } from '../../../../../../domain/users/i
 import { IUserRepository } from '../../../../../../domain/users/repository/IUserRepository';
 import { injectable } from 'inversify';
 
+/** Fields that must never leave the API. */
+const PRIVATE_FIELDS = { __v: 0, password: 0, failedLoginAttempts: 0, lockUntil: 0 };
+
 @injectable()
 export class UserRepository implements IUserRepository{
 
@@ -42,6 +45,25 @@ export class UserRepository implements IUserRepository{
   }
 
   async getFilteredUserData(_id: string): Promise<IUserResponseModel | null>{
-    return await UserModel.findById(_id, { __v: 0, password: 0 });
+    return await UserModel.findById(_id, PRIVATE_FIELDS);
+  }
+
+  async registerFailedLogin(_id: string, maxAttempts: number, lockMinutes: number): Promise<void> {
+    const user = await UserModel.findByIdAndUpdate(
+      _id,
+      { $inc: { failedLoginAttempts: 1 } },
+      { new: true, projection: { failedLoginAttempts: 1 } },
+    );
+
+    if (user && (user.failedLoginAttempts ?? 0) >= maxAttempts) {
+      await UserModel.updateOne(
+        { _id },
+        { $set: { failedLoginAttempts: 0, lockUntil: new Date(Date.now() + lockMinutes * 60_000) } },
+      );
+    }
+  }
+
+  async resetFailedLogins(_id: string): Promise<void> {
+    await UserModel.updateOne({ _id }, { $set: { failedLoginAttempts: 0, lockUntil: null } });
   }
 }

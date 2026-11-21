@@ -9,6 +9,8 @@ import { IUserRepository } from '../../../domain/users/repository/IUserRepositor
 
 import { USER_EXISTS_TYPES } from '../../../domain/shared/constants/AuthContants';
 import { InvalidCredentialsError } from '../../shared';
+import { env } from '../../../infrastructure/shared/config';
+import { logger } from '../../../infrastructure/shared/logger';
 
 export class LoginUserUseCase {
   private readonly authService = new AuthService();
@@ -33,14 +35,29 @@ export class LoginUserUseCase {
     );
 
     if (!userFound) throw new InvalidCredentialsError();
+    const userId = userFound._id.toString();
+
+    // A locked account answers exactly like wrong credentials, so lockouts
+    // cannot be used to discover which emails are registered.
+    if (userFound.lockUntil && userFound.lockUntil.getTime() > Date.now()) {
+      logger.warn({ userId }, 'Sign-in attempt on a locked account');
+      throw new InvalidCredentialsError();
+    }
 
     // Accounts created through Google have no password and cannot sign in with one.
     if (!userFound.password) throw new InvalidCredentialsError();
 
     const validPassword = this.authService.comparePassword(password, userFound.password);
-    if (!validPassword) throw new InvalidCredentialsError();
+    if (!validPassword) {
+      await this.userRepository.registerFailedLogin(
+        userId,
+        env.LOGIN_MAX_FAILED_ATTEMPTS,
+        env.LOGIN_LOCKOUT_MINUTES,
+      );
+      throw new InvalidCredentialsError();
+    }
 
-    const userId = userFound._id.toString();
+    await this.userRepository.resetFailedLogins(userId);
     const userData = await getFilteredUserDataUseCase.execute(userId);
     const refreshToken = await new RefreshTokenService(this.refreshTokenRepository).issue(userId);
 

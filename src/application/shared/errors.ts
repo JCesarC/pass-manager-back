@@ -10,7 +10,6 @@ export type ErrorCode =
   | 'FORBIDDEN'
   | 'NOT_FOUND'
   | 'CONFLICT'
-  | 'ACCOUNT_LOCKED'
   | 'RATE_LIMITED'
   | 'PAYLOAD_TOO_LARGE'
   | 'INTERNAL_ERROR';

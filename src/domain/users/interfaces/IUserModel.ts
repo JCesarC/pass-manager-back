@@ -10,5 +10,7 @@ export interface IUserModel {
   phone? : string;
   photoURL?: string,
   provider?: string,
-  verified?: boolean
+  verified?: boolean,
+  failedLoginAttempts?: number,
+  lockUntil?: Date | null
 };
