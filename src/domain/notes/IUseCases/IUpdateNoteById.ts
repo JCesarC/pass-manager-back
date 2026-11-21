@@ -1,5 +1,5 @@
 import { INoteModel } from '../interfaces';
 
 export interface IUpdateNoteByIdUseCase {
-  exec(noteId: string, noteData: INoteModel): Promise<INoteModel | null>
+  exec(ownerId: string, noteId: string, changes: Partial<INoteModel>): Promise<INoteModel>;
 }

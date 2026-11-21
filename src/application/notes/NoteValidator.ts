@@ -11,9 +11,8 @@ const noteFields = {
   imageURLs: Joi.array().items(Joi.string().uri()).max(5),
 };
 
-const noteValidator = Joi.object<INoteModel>({
+const noteValidator = Joi.object<Partial<INoteModel>>({
   ...noteFields,
-  user: Joi.string().hex().length(24).required(),
   title: noteFields.title.required(),
 });
 

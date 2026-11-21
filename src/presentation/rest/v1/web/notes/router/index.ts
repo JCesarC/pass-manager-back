@@ -9,7 +9,8 @@ const noteHandler = new NoteHandler();
 
 noteRouter.get('/', noteHandler.getAllNotes);
 noteRouter.post('/', noteHandler.createNote);
-noteRouter.delete('/:id', validateObjectIdParams('id'), noteHandler.deleteNoteById);
+noteRouter.get('/:id', validateObjectIdParams('id'), noteHandler.getNoteById);
 noteRouter.put('/:id', validateObjectIdParams('id'), noteHandler.updateNoteById);
-noteRouter.get('/user/:userId', validateObjectIdParams('userId'), noteHandler.getNotesByUser);
+noteRouter.delete('/:id', validateObjectIdParams('id'), noteHandler.deleteNoteById);
+
 export default noteRouter;

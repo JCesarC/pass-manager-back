@@ -1,3 +1,3 @@
 export interface IDeleteNoteById {
-  exec(id: string): Promise<unknown>;
+  exec(ownerId: string, noteId: string): Promise<void>;
 }

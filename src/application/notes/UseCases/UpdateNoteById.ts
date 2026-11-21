@@ -1,18 +1,14 @@
 import { IUpdateNoteByIdUseCase } from '../../../domain/notes/IUseCases';
-
 import { INoteModel } from '../../../domain/notes/interfaces';
 import { INoteRepository } from '../../../domain/notes/repository/INoteRepository';
+import { NotFoundError } from '../../shared';
 
 export class UpdateNoteByIdUseCase implements IUpdateNoteByIdUseCase {
-  private noteRepository: INoteRepository;
+  constructor(private readonly noteRepository: INoteRepository) {}
 
-  constructor (noteRepository: INoteRepository) {
-    this.noteRepository = noteRepository;
+  async exec(ownerId: string, noteId: string, changes: Partial<INoteModel>): Promise<INoteModel> {
+    const note = await this.noteRepository.updateOwned(noteId, ownerId, changes);
+    if (!note) throw new NotFoundError('Note');
+    return note;
   }
-
-  async exec(noteId: string, noteData: INoteModel): Promise<INoteModel | null> {
-    const noteUpdated = await this.noteRepository.update(noteId, noteData);
-    return noteUpdated;
-  }
-
 }
