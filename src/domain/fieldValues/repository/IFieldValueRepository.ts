@@ -8,4 +8,5 @@ export interface IFieldValueRepository {
   update(id: string, fieldValueData: IFieldValueModel): Promise<IFieldValueModel | null>;
   delete(id: string): Promise<unknown>;
   query(query: Record<string, unknown>): Promise<IFieldValueModel[]>;
+  deleteByVault(vaultId: string): Promise<void>;
 }

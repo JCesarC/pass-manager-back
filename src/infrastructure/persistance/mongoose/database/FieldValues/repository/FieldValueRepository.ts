@@ -16,4 +16,8 @@ export class FieldValueRepository extends BaseRepository<IFieldValueModel> imple
     return this.model.find({ vault: vaultId });
   }
 
+  async deleteByVault(vaultId: string): Promise<void> {
+    await this.model.deleteMany({ vault: vaultId });
+  }
+
 }

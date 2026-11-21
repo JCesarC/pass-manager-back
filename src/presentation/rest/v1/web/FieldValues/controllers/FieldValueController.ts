@@ -1,35 +1,41 @@
 import { inject, injectable } from 'inversify';
-import { Body, Get, Post, Route, Tags } from 'tsoa';
+import { Body, Inject, Post, Route, Security, Tags } from 'tsoa';
 
 import { TYPES } from '../../../../../../domain/types';
-import { IFieldValueRepository } from '../../../../../../domain/fieldValues/repository/IFieldValueRepository';
+import { IFieldRepository } from '../../../../../../domain/fields/repository';
 import { IFieldValueModel } from '../../../../../../domain/fieldValues/interfaces';
+import { IFieldValueRepository } from '../../../../../../domain/fieldValues/repository/IFieldValueRepository';
+import { IVaultRepository } from '../../../../../../domain/vaults/repository/IVaultRepository';
 
-import { CreateFieldValueUseCase, GetAllFieldValuesUseCase } from '../../../../../../application/FieldValues/UseCases';
+import { CreateFieldValueUseCase } from '../../../../../../application/FieldValues/UseCases';
 import { fieldValueValidator } from '../../../../../../application/FieldValues/FieldValueValidator';
 import { validate } from '../../../../../../application/shared';
 
-@Route('/api/v1/fieldvalues')
+@Route('/api/v1/fieldValues')
 @Tags('FieldValueController')
+@Security('bearer')
 @injectable()
-export class FieldValueController{
-  private fieldValueRepository;
-  constructor(@inject(TYPES.IFieldValueRepository) fieldValueRepository: IFieldValueRepository){
-    this.fieldValueRepository = fieldValueRepository;
-  }
-  //! Disable or hide enpoit after tests
-  @Get('/')
-  async getAllFieldValues(){
-    const getAllFieldValuesUseCase = new GetAllFieldValuesUseCase(this.fieldValueRepository);
-    const response = await getAllFieldValuesUseCase.exec();
-    return response;
-  }
+export class FieldValueController {
+  constructor(
+    @inject(TYPES.IFieldValueRepository) private readonly fieldValueRepository: IFieldValueRepository,
+    @inject(TYPES.IVaultRepository) private readonly vaultRepository: IVaultRepository,
+    @inject(TYPES.IFieldRepository) private readonly fieldRepository: IFieldRepository,
+  ) {}
 
+  /**
+   * Adds a field value to one of the caller's vaults. Field values are read
+   * through their vault (GET /vaults/{id}).
+   */
   @Post('/')
-  async createFieldValue(@Body()fieldValueData: IFieldValueModel ){
-    const createFieldValueUseCase = new CreateFieldValueUseCase(this.fieldValueRepository);
+  async createFieldValue(
+    @Body() fieldValueData: IFieldValueModel,
+    @Inject() ownerId: string,
+  ): Promise<IFieldValueModel> {
     const fieldValue = validate(fieldValueValidator, fieldValueData) as IFieldValueModel;
-    const response = await createFieldValueUseCase.exec(fieldValue);
-    return response;
+    return new CreateFieldValueUseCase(
+      this.fieldValueRepository,
+      this.vaultRepository,
+      this.fieldRepository,
+    ).exec(ownerId, fieldValue);
   }
 }

@@ -1,15 +1,28 @@
+import { IFieldRepository } from '../../../domain/fields/repository';
 import { IFieldValueModel } from '../../../domain/fieldValues/interfaces';
 import { IFieldValueRepository } from '../../../domain/fieldValues/repository/IFieldValueRepository';
+import { IVaultRepository } from '../../../domain/vaults/repository/IVaultRepository';
+import { NotFoundError } from '../../shared';
 
-export class CreateFieldValueUseCase{
-  private fieldValueRepository;
+export class CreateFieldValueUseCase {
+  constructor(
+    private readonly fieldValueRepository: IFieldValueRepository,
+    private readonly vaultRepository: IVaultRepository,
+    private readonly fieldRepository: IFieldRepository,
+  ) {}
 
-  constructor(fieldValueRepository: IFieldValueRepository){
-    this.fieldValueRepository = fieldValueRepository;
-  }
+  /** Adds a field value to one of the caller's vaults. */
+  async exec(ownerId: string, fieldValueData: IFieldValueModel): Promise<IFieldValueModel> {
+    const vaultId = String(fieldValueData.vault);
 
-  async exec(fieldValueData: IFieldValueModel){
-    const createdFieldValue = await this.fieldValueRepository.create(fieldValueData);
-    return createdFieldValue;
+    const vault = await this.vaultRepository.findOwnedById(vaultId, ownerId);
+    if (!vault) throw new NotFoundError('Vault');
+
+    const field = await this.fieldRepository.getById(String(fieldValueData.field));
+    if (!field) throw new NotFoundError('Field');
+
+    const created = await this.fieldValueRepository.create(fieldValueData);
+    await this.vaultRepository.addExtraField(vaultId, String(created._id));
+    return created;
   }
 }

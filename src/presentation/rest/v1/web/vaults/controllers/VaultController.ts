@@ -1,41 +1,72 @@
 import { inject, injectable } from 'inversify';
-import { Body, Get, Post, Query, Route, Tags } from 'tsoa';
+import { Body, Delete, Get, Inject, Path, Post, Put, Query, Route, Security, Tags } from 'tsoa';
 
 import { TYPES } from '../../../../../../domain/types';
 
 import { AllVaultsResponseType } from '../../../../../../domain/vaults/types';
 import { IVaultModel } from '../../../../../../domain/vaults/interfaces';
 import { IVaultRepository } from '../../../../../../domain/vaults/repository/IVaultRepository';
+import { IFieldValueRepository } from '../../../../../../domain/fieldValues/repository/IFieldValueRepository';
 
-import { CreateVaultUseCase, GetAllVaultsUseCase } from '../../../../../../application/vaults/UseCases';
-import { vaultValidator } from '../../../../../../application/vaults/VaultValidator';
+import {
+  CreateVaultUseCase,
+  DeleteVaultUseCase,
+  GetAllVaultsUseCase,
+  GetVaultByIdUseCase,
+  UpdateVaultUseCase,
+} from '../../../../../../application/vaults/UseCases';
+import { vaultUpdateValidator, vaultValidator } from '../../../../../../application/vaults/VaultValidator';
 import { validate } from '../../../../../../application/shared';
 
+/** Every operation is scoped to the authenticated user (ownerId comes from the access token). */
 @Route('/api/v1/vaults')
 @Tags('VaultController')
+@Security('bearer')
 @injectable()
 export class VaultController {
-  private vaultRepository;
-  constructor(@inject(TYPES.IVaultRepository) vaultRepository: IVaultRepository){
-    this.vaultRepository = vaultRepository;
-  }
+  constructor(
+    @inject(TYPES.IVaultRepository) private readonly vaultRepository: IVaultRepository,
+    @inject(TYPES.IFieldValueRepository) private readonly fieldValueRepository: IFieldValueRepository,
+  ) {}
+
   /**
-   * Endpoint to retrieve all vaults paginated
-   * @param especific number of page to show
-   * @param limit per page to show vaults
-   * @returns A group of vaults
+   * Vaults of the authenticated user, newest first.
+   * @param page Page number, starting at 1
+   * @param limit Vaults per page (max 50)
    */
   @Get('/')
-  async getAllVaults(@Query()page: number, @Query()limit: number): Promise<AllVaultsResponseType>{
-    const getAllVaultsUseCase = new GetAllVaultsUseCase(this.vaultRepository);
-    const vaults = await getAllVaultsUseCase.exec(page, limit);
-    return vaults;
+  async getAllVaults(
+    @Query() page: number,
+    @Query() limit: number,
+    @Inject() ownerId: string,
+  ): Promise<AllVaultsResponseType> {
+    return new GetAllVaultsUseCase(this.vaultRepository).exec(ownerId, page, limit);
   }
-  @Post('/')
-  async createVault(@Body()vaultData: IVaultModel){
-    const createVaultUseCase = new CreateVaultUseCase(this.vaultRepository);
-    const vault = validate(vaultValidator, vaultData) as IVaultModel;
 
-    return createVaultUseCase.exec(vault);
+  @Get('/{id}')
+  async getVaultById(@Path() id: string, @Inject() ownerId: string): Promise<IVaultModel> {
+    return new GetVaultByIdUseCase(this.vaultRepository).exec(ownerId, id);
+  }
+
+  @Post('/')
+  async createVault(@Body() vaultData: Partial<IVaultModel>, @Inject() ownerId: string): Promise<IVaultModel> {
+    const vault = validate(vaultValidator, vaultData);
+    return new CreateVaultUseCase(this.vaultRepository).exec(ownerId, vault);
+  }
+
+  @Put('/{id}')
+  async updateVault(
+    @Path() id: string,
+    @Body() vaultData: Partial<IVaultModel>,
+    @Inject() ownerId: string,
+  ): Promise<IVaultModel> {
+    const changes = validate(vaultUpdateValidator, vaultData);
+    return new UpdateVaultUseCase(this.vaultRepository).exec(ownerId, id, changes);
+  }
+
+  /** Deletes the vault and all its field values. */
+  @Delete('/{id}')
+  async deleteVault(@Path() id: string, @Inject() ownerId: string): Promise<void> {
+    return new DeleteVaultUseCase(this.vaultRepository, this.fieldValueRepository).exec(ownerId, id);
   }
 }
