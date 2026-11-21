@@ -12,7 +12,7 @@ export class OAuthHandler {
   });
 
   public googleCallbackHandler = passport.authenticate('google', {
-    failureRedirect: '/api/auth/oauth/failure',
+    failureRedirect: '/api/v1/auth/oauth/failure',
     session: false,
   });
 

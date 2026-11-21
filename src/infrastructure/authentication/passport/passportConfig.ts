@@ -10,7 +10,7 @@ const config = {
 };
 
 const AUTH_OPTIONS = {
-  callbackURL: '/api/auth/oauth/google/callback',
+  callbackURL: '/api/v1/auth/oauth/google/callback',
   clientID: config.CLIENT_ID,
   clientSecret: config.CLIENT_SECRET,
   proxy: config.PROXY
