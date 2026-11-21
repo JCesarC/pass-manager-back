@@ -1,5 +1,5 @@
 import { inject, injectable } from 'inversify';
-import { Get, Query, Route, Tags, Post, Body, Path, Example, Put, Delete } from 'tsoa';
+import { Get, Query, Route, Tags, Post, Body, Path, Put, Delete } from 'tsoa';
 
 import { TYPES } from '../../../../../../domain/types';
 

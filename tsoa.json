@@ -5,9 +5,5 @@
   "spec": {
     "outputDirectory": "public",
     "specVersion": 3
-  },
-  "routes": {
-    "routesDir": "public",
-    "iocModule": "src/ioc"
   }
 }

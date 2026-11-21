@@ -22,12 +22,4 @@ export class VaultRepository extends BaseRepository<IVaultModel> implements IVau
     return this.model.find({ user: userId });
   }
 
-  async query(query: Record<string, unknown>): Promise<IVaultModel[]> {
-    return this.model.find({ query });
-  }
-
-  async queryOne(query: Record<string, unknown>): Promise<IVaultModel | null> {
-    return this.model.findOne({ query });
-  }
-
 }

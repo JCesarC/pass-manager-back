@@ -1,14 +1,8 @@
-// import { readPackageSync } from 'read-pkg';
-import { getEnnvironmentNumber, getEnvironmentString } from '../../../infrastructure/shared/config';
-
-const AppInfo = Object.freeze({
-  APP_VERSION: getEnvironmentString('APP_VERSION', '1'),
-  APP_NAME: getEnvironmentString('APP_NAME', 'Example'),
+export const AppInfo = Object.freeze({
+  APP_NAME: 'pass-manager-api',
 });
 
-const AppConfig = Object.freeze({
-  PORT: getEnnvironmentNumber('PORT', 8031),
-  BASE_PATH: getEnvironmentString('BASE_PATH', '/api/v1'),
+export const AppConfig = Object.freeze({
+  BASE_PATH: '/api/v1',
+  DOCS_PATH: '/api/docs',
 });
-
-export { AppInfo, AppConfig };

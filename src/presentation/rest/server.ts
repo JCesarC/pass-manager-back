@@ -1,4 +1,3 @@
-import path from 'path';
 import http, { Server as ServerInstance } from 'http';
 
 import express from 'express';
@@ -10,6 +9,7 @@ import compression from 'compression';
 import swaggerUi from 'swagger-ui-express';
 
 import { AppInfo, AppConfig } from './config';
+import { env } from '../../infrastructure/shared/config';
 
 import mainRouter from './router';
 
@@ -43,22 +43,19 @@ class Server{
     this.app.use(express.urlencoded({ extended: true, limit: '50mb'}));
     this.app.use(compression({}));
     this.app.use(passportConfig.initialize());
-    this.app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDoc, this.swaggerOptions));
+    this.app.use(AppConfig.DOCS_PATH, swaggerUi.serve, swaggerUi.setup(swaggerDoc, this.swaggerOptions));
     this.app.use('/api', mainRouter);
-    this.app.use(express.static(path.join(__dirname, '..','..','..', 'public', 'docs')));
-    this.app.use('/', (req, res) => {
-      res.sendFile(path.join(__dirname, '..','..','..', 'public', 'docs', 'index.html'));
-    });
     // * TODO: Add Error handling with tsoa
   }
 
   private showBanner(): void {
     const banner = `
-      Application starrted successssssssfully!
+      Application started successfully!
       Name: ${AppInfo.APP_NAME}
-      Port: ${AppConfig.PORT}
+      Environment: ${env.NODE_ENV}
+      Port: ${env.PORT}
       BasePath: ${AppConfig.BASE_PATH}
-      OpenApi Spec Path: /api/docs
+      OpenApi Spec Path: ${AppConfig.DOCS_PATH}
     `;
     // this.logger.log({
     //   level: 'info',
@@ -71,7 +68,7 @@ class Server{
     await startDBConnection();
     this.configureExpress();
     this.httpServer = http.createServer(this.app);
-    this.httpServer.listen(process.env.PORT || 3000, () => {
+    this.httpServer.listen(env.PORT, () => {
       this.showBanner();
     });
   }
@@ -79,10 +76,10 @@ class Server{
   public async exec(): Promise<void> {
     await this.startServer();
   }
-  public async stopServer(message = '') {
+  public async stopServer(message = '', exitCode = 0) {
     await closeDBConnection();
     console.log(message);
-    process.exit();
+    process.exit(exitCode);
   }
 
   public forceStopServer(message = ''){
@@ -91,8 +88,9 @@ class Server{
     process.exit(1);
   }
 
-  public logErrorAndTerminate(error: string){
-    this.stopServer(`shutting down the server...${error}`);
+  public async logErrorAndTerminate(error: string){
+    console.error(error);
+    await this.stopServer('Shutting down the server after a fatal error...', 1);
   }
 }
 

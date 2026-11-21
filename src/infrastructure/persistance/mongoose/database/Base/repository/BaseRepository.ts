@@ -1,4 +1,4 @@
-import { Document, Model } from 'mongoose';
+import { Document, FilterQuery, Model } from 'mongoose';
 
 import { IBaseRepository } from '../../../../../../domain/base/repository/IBaseRepository';
 
@@ -34,11 +34,11 @@ export abstract class BaseRepository<T extends Document> implements IBaseReposit
   }
 
   async query(query: Record<string, unknown>): Promise<T[]> {
-    return this.model.find({ query });
+    return this.model.find(query as FilterQuery<T>);
   }
 
   async queryOne(query: Record<string, unknown>): Promise<T | null> {
-    return this.model.findOne({ query });
+    return this.model.findOne(query as FilterQuery<T>);
   }
 
   async getDocumentsPaginated(page: number, limit: number): Promise<T[] | null> {

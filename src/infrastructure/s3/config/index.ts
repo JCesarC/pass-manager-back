@@ -1,16 +1,12 @@
 import { S3Client } from '@aws-sdk/client-s3';
 
-const {
-  AWS_ACCESS_KEY_ID = '',
-  AWS_SECRET_ACCESS_KEY = '',
-  MACRO_SPACE_ENDPOINT_URL = '',
-} = process.env;
+import { env } from '../../shared/config';
 
 export const s3Config = new S3Client({
-  endpoint: MACRO_SPACE_ENDPOINT_URL,
-  region: 'sfo3',
+  endpoint: env.S3_ENDPOINT_URL || undefined,
+  region: env.S3_REGION || undefined,
   credentials: {
-    accessKeyId: AWS_ACCESS_KEY_ID, // Access key pair. You can create access key pairs using the control panel or API.
-    secretAccessKey: AWS_SECRET_ACCESS_KEY // Secret access key defined through an environment variable.
+    accessKeyId: env.S3_ACCESS_KEY_ID,
+    secretAccessKey: env.S3_SECRET_ACCESS_KEY,
   }
 });

@@ -1,6 +1,9 @@
 import mongoose, { ConnectOptions } from 'mongoose';
 
-const MONGODB_URL = process.env.MONGODB_URL as string;
+import { env } from '../../../shared/config';
+
+// Drop filter fields that are not in the schema (explicit; Mongoose 7+ flips the default).
+mongoose.set('strictQuery', true);
 
 mongoose.connection.once('open', () => {
   console.log('MongoDB Connection ready!');
@@ -32,7 +35,7 @@ export const startDBConnection = async () => {
     useNewUrlParser: true,
     useUnifiedTopology: true
   } as ConnectOptions;
-  await mongoose.connect(MONGODB_URL, options);
+  await mongoose.connect(env.MONGODB_URL, options);
 };
 
 export const closeDBConnection = async () => {

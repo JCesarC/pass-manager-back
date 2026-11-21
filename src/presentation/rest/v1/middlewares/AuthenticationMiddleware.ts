@@ -17,7 +17,7 @@ export const checkLoggedIn = (req: Request, res: Response, next: NextFunction) =
     const decodedToken = authService.validateToken(token);
     req.user = { _id: decodedToken._id };
     next();
-  } catch (error) {
+  } catch {
     return res.status(401).json({
       error: true,
       errorMessage: 'The session is over, please log in again!',

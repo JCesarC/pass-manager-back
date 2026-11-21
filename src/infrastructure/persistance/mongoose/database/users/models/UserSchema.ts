@@ -1,12 +1,14 @@
 import mongoose, { Schema } from 'mongoose';
 import { IUserModel } from '../../../../../../domain/users/interfaces';
-import RolesSchema from '../../roles/models/RolesSchema';
 
 const userSchema: Schema = new Schema<IUserModel>(
   {
     email: {
       type: String,
       required: true,
+      unique: true,
+      lowercase: true,
+      trim: true,
     },
     firstName: {
       type: String,
@@ -21,9 +23,8 @@ const userSchema: Schema = new Schema<IUserModel>(
       required: false
     },
     roles: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: RolesSchema,
-      required: false
+      type: [{ type: Schema.Types.ObjectId, ref: 'Role' }],
+      default: []
     },
     phone: {
       type: String,
@@ -58,4 +59,4 @@ const userSchema: Schema = new Schema<IUserModel>(
   },
 );
 
-export default mongoose.model<IUserModel>('Users', userSchema);
+export default mongoose.model<IUserModel>('User', userSchema);
