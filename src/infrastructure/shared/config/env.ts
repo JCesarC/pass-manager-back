@@ -15,6 +15,7 @@ if (process.env.NODE_ENV !== 'test') {
  */
 export interface Env {
   NODE_ENV: 'development' | 'test' | 'production';
+  LOG_LEVEL: 'fatal' | 'error' | 'warn' | 'info' | 'debug' | 'trace' | 'silent';
   PORT: number;
   MONGODB_URL: string;
   JWT_SECRET: string;
@@ -27,6 +28,9 @@ const optionalString = Joi.string().allow('').default('');
 
 const envSchema = Joi.object<Env>({
   NODE_ENV: Joi.string().valid('development', 'test', 'production').default('development'),
+  LOG_LEVEL: Joi.string()
+    .valid('fatal', 'error', 'warn', 'info', 'debug', 'trace', 'silent')
+    .when('NODE_ENV', { is: 'test', then: Joi.optional().default('silent'), otherwise: Joi.optional().default('info') }),
   PORT: Joi.number().port().default(3000),
   MONGODB_URL: Joi.string()
     .pattern(/^mongodb(\+srv)?:\/\//)

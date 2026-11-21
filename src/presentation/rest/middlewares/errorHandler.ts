@@ -55,7 +55,7 @@ export const errorHandler: ErrorRequestHandler = (err, req, res, _next) => {
   const appError = toAppError(err);
 
   if (!appError) {
-    console.error('Unhandled error', err);
+    req.log.error({ err }, 'Unhandled error');
     const body: ErrorResponseBody = {
       error: { code: 'INTERNAL_ERROR', message: 'An unexpected error occurred.' },
     };

@@ -9,7 +9,6 @@ export class DeleteNoteByIdUseCase implements IDeleteNoteById {
   }
   async exec(id: string): Promise<unknown> {
     const response = await this.noteRepository.delete(id);
-    console.log('🚀 ~ exec ~ response:', response);
     return response;
   }
 

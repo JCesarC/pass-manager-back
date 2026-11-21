@@ -3,6 +3,7 @@ import { Strategy } from 'passport-google-oauth20';
 import { AuthController } from '../../../presentation/rest/v1/web/auth/controller/AuthController';
 import { UserRepository } from '../../persistance/mongoose/database/users/repository/UserRepository';
 import { env, isGoogleAuthEnabled } from '../../shared/config';
+import { logger } from '../../shared/logger';
 
 const AUTH_OPTIONS = {
   callbackURL: '/api/v1/auth/oauth/google/callback',
@@ -26,7 +27,7 @@ const verifyCallback = async (accessToken: any, refreshToken: any, profile: any,
 if (isGoogleAuthEnabled) {
   passport.use(new Strategy(AUTH_OPTIONS, verifyCallback));
 } else {
-  console.warn('Google OAuth is disabled: GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET are not set.');
+  logger.warn('Google OAuth is disabled: GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET are not set.');
 }
 
 export default passport;
