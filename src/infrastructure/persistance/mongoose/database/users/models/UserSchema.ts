@@ -1,6 +1,5 @@
 import mongoose, { Schema } from 'mongoose';
 import { IUserModel } from '../../../../../../domain/users/interfaces';
-import RolesSchema from '../../roles/models/RolesSchema';
 
 const userSchema: Schema = new Schema<IUserModel>(
   {
@@ -21,9 +20,8 @@ const userSchema: Schema = new Schema<IUserModel>(
       required: false
     },
     roles: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: RolesSchema,
-      required: false
+      type: [{ type: Schema.Types.ObjectId, ref: 'Role' }],
+      default: []
     },
     phone: {
       type: String,
