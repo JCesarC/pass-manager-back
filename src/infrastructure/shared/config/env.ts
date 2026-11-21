@@ -20,13 +20,18 @@ export interface Env {
   MONGODB_URL: string;
   JWT_SECRET: string;
   USE_PROXY: boolean;
+  FRONTEND_URL: string;
+  CORS_ORIGINS: string[];
   GOOGLE_CLIENT_ID: string;
   GOOGLE_CLIENT_SECRET: string;
 }
 
+/** Shape of process.env after validation, before list values are split. */
+type RawEnv = Omit<Env, 'CORS_ORIGINS'> & { CORS_ORIGINS: string };
+
 const optionalString = Joi.string().allow('').default('');
 
-const envSchema = Joi.object<Env>({
+const envSchema = Joi.object<RawEnv>({
   NODE_ENV: Joi.string().valid('development', 'test', 'production').default('development'),
   LOG_LEVEL: Joi.string()
     .valid('fatal', 'error', 'warn', 'info', 'debug', 'trace', 'silent')
@@ -38,6 +43,9 @@ const envSchema = Joi.object<Env>({
     .messages({ 'string.pattern.base': '"MONGODB_URL" must start with mongodb:// or mongodb+srv://' }),
   JWT_SECRET: Joi.string().min(32).required(),
   USE_PROXY: Joi.boolean().default(false),
+  FRONTEND_URL: Joi.string().uri({ scheme: ['http', 'https'] }).default('http://localhost:5173'),
+  // Comma-separated list of allowed browser origins; defaults to FRONTEND_URL.
+  CORS_ORIGINS: Joi.string().allow('').default(''),
   GOOGLE_CLIENT_ID: optionalString,
   GOOGLE_CLIENT_SECRET: optionalString,
 }).unknown(true);
@@ -50,7 +58,13 @@ const loadEnv = (): Env => {
     throw new Error(`Invalid environment configuration:\n${problems}`);
   }
 
-  return Object.freeze(value as Env);
+  const raw = value as RawEnv;
+  const corsOrigins = raw.CORS_ORIGINS.split(',').map((origin) => origin.trim()).filter(Boolean);
+
+  return Object.freeze({
+    ...raw,
+    CORS_ORIGINS: corsOrigins.length > 0 ? corsOrigins : [raw.FRONTEND_URL],
+  });
 };
 
 export const env = loadEnv();

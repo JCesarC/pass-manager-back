@@ -6,6 +6,7 @@ import compression from 'compression';
 import swaggerUi from 'swagger-ui-express';
 
 import { AppConfig } from './config';
+import { env } from '../../infrastructure/shared/config';
 import mainRouter from './router';
 import { errorHandler, notFoundHandler, requestLogger } from './middlewares';
 
@@ -20,11 +21,16 @@ import swaggerDoc from '../../../public/swagger.json';
 export const createApp = (): Express => {
   const app = express();
 
+  // Needed for correct client IPs (rate limiting, logs) behind a reverse proxy.
+  if (env.USE_PROXY) app.set('trust proxy', 1);
+
   app.use(requestLogger);
   app.use(helmet());
-  app.use(cors());
-  app.use(express.json());
-  app.use(express.urlencoded({ extended: true, limit: '50mb' }));
+  // Only the configured front-end origins may call the API from a browser,
+  // and they may send credentials (the refresh-token cookie).
+  app.use(cors({ origin: env.CORS_ORIGINS, credentials: true }));
+  // The API only accepts JSON. Vault items are small; anything larger is rejected.
+  app.use(express.json({ limit: AppConfig.JSON_BODY_LIMIT }));
   app.use(compression());
   app.use(passportConfig.initialize());
   app.use(AppConfig.DOCS_PATH, swaggerUi.serve, swaggerUi.setup(swaggerDoc, { explorer: true }));
