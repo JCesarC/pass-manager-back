@@ -50,7 +50,7 @@ class Server{
 
   private showBanner(): void {
     const banner = `
-      Application starrted successssssssfully!
+      Application started successfully!
       Name: ${AppInfo.APP_NAME}
       Environment: ${env.NODE_ENV}
       Port: ${env.PORT}
