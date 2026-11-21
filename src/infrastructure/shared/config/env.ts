@@ -21,11 +21,6 @@ export interface Env {
   USE_PROXY: boolean;
   GOOGLE_CLIENT_ID: string;
   GOOGLE_CLIENT_SECRET: string;
-  S3_ENDPOINT_URL: string;
-  S3_REGION: string;
-  S3_BUCKET: string;
-  S3_ACCESS_KEY_ID: string;
-  S3_SECRET_ACCESS_KEY: string;
 }
 
 const optionalString = Joi.string().allow('').default('');
@@ -41,11 +36,6 @@ const envSchema = Joi.object<Env>({
   USE_PROXY: Joi.boolean().default(false),
   GOOGLE_CLIENT_ID: optionalString,
   GOOGLE_CLIENT_SECRET: optionalString,
-  S3_ENDPOINT_URL: optionalString,
-  S3_REGION: optionalString,
-  S3_BUCKET: optionalString,
-  S3_ACCESS_KEY_ID: optionalString,
-  S3_SECRET_ACCESS_KEY: optionalString,
 }).unknown(true);
 
 const loadEnv = (): Env => {

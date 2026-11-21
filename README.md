@@ -66,7 +66,6 @@ problems if anything is missing or malformed. See [.env.template](.env.template)
 | `PORT` | no | `3000` | HTTP port |
 | `USE_PROXY` | no | `false` | Trust `X-Forwarded-*` headers from a reverse proxy |
 | `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | no | empty | Enable "Sign in with Google" when both are set |
-| `S3_ENDPOINT_URL`, `S3_REGION`, `S3_BUCKET`, `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY` | no | empty | S3-compatible storage for uploads |
 
 ## Scripts
 
@@ -87,7 +86,7 @@ problems if anything is missing or malformed. See [.env.template](.env.template)
 src/
 ├── domain/          # Entities, repository and use-case interfaces
 ├── application/     # Use cases, validators and application services
-├── infrastructure/  # Mongoose models/repositories, config, Passport, S3
+├── infrastructure/  # Mongoose models/repositories, config, Passport
 ├── presentation/    # Express server, routers, handlers and controllers
 ├── ioc.ts           # Inversify container
 └── index.ts         # Entry point and process signal handling
