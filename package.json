@@ -2,25 +2,20 @@
   "name": "pass-manager-back",
   "version": "1.1.0",
   "description": "Node.js + Express + Typescript + Mongodb + Swagger ",
-  "main": "src/index.js",
+  "main": "dist/src/index.js",
   "scripts": {
+    "dev": "concurrently -r \"tsnd --respawn --clear src/index.ts\" \"npm run swagger:watch\"",
+    "build": "npm run clean && npm run swagger && tsc -p tsconfig.build.json",
+    "start": "node dist/src/index.js",
+    "clean": "rimraf ./dist",
     "swagger": "tsoa spec-and-routes",
-    "cleanDist": "rimraf ./dist",
-    "build": "npm run cleanDist && npm run swagger && npx webpack --mode production",
-    "build-dev": "npm run cleanDist && npm run swagger && npx webpack --mode development",
-    "tsoaWatch": "nodemon -x tsoa spec-and-routes",
-    "test": "jest",
-    "dev": "concurrently -r \"tsnd --respawn --clear src/index.ts\" \"npm run tsoaWatch\"",
-    "dev:watch": "concurrently -r \"rimraf ./dist\" \"tsc --watch\" \"npm run tsoaWatch\" \"nodemon -q dist/src/index.js\"",
-    "dev:nowatch": "concurrently -r \"nodemon -q\" \"npm run tsoaWatch\"",
-    "server": "node dist/index.js",
-    "start": "npm run build && npm run server ",
-    "start:dev": "npm run build-dev && npm run server ",
+    "swagger:watch": "nodemon -x tsoa spec-and-routes",
+    "typecheck": "tsc --noEmit",
     "lint": "eslint . --ext .ts",
-    "lint-fix": "eslint . --ext .ts --fix",
-    "serve:coverage": "npm run test && cd coverage/lcov-report && npx serve",
+    "lint:fix": "eslint . --ext .ts --fix",
     "format": "prettier --write .",
-    "deploy": "npm run build --prefix ../pass-manager && npm run build && npm start"
+    "test": "jest",
+    "test:coverage": "jest --coverage"
   },
   "repository": {
     "type": "git",
@@ -79,16 +74,10 @@
     "nodemon": "^2.0.20",
     "prettier": "^2.7.1",
     "rimraf": "^5.0.1",
-    "serve": "^14.2.0",
     "supertest": "^6.3.0",
     "ts-jest": "^29.0.3",
-    "ts-loader": "^9.4.1",
     "ts-node": "^10.9.1",
     "ts-node-dev": "^2.0.0",
-    "tsconfig-paths-webpack-plugin": "^4.0.1",
-    "typescript": "^4.8.4",
-    "webpack": "^5.74.0",
-    "webpack-cli": "^4.10.0",
-    "webpack-node-externals": "^3.0.0"
+    "typescript": "^4.8.4"
   }
 }
