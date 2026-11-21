@@ -4,7 +4,8 @@ import { AuthService } from '../services/AuthService';
 import { IAuthCredentials } from '../../../domain/auth/interfaces';
 import { IUserRepository } from '../../../domain/users/repository/IUserRepository';
 
-import { AUTH_ERRORS, USER_EXISTS_TYPES } from '../../../domain/shared/constants/AuthContants';
+import { USER_EXISTS_TYPES } from '../../../domain/shared/constants/AuthContants';
+import { InvalidCredentialsError } from '../../shared';
 
 export class LoginUserUseCase {
   private authService;
@@ -28,16 +29,15 @@ export class LoginUserUseCase {
       USER_EXISTS_TYPES.EXIST_ON_LOGIN,
     );
 
-    if (!userFound) throw new Error(`Cannot find user with email: ${email}`);
+    if (!userFound) throw new InvalidCredentialsError();
 
     const validPassword = this.authService.comparePassword(password, userFound.password);
-    if (!validPassword) throw new Error(AUTH_ERRORS.INVALID_CREDENTIALS);
+    if (!validPassword) throw new InvalidCredentialsError();
 
     const token = this.authService.generateToken(userFound._id, userFound.email);
     const userData = await getFilteredUserDataUseCase.execute(userFound._id);
 
     return {
-      error: false,
       user: userData,
       token,
     };

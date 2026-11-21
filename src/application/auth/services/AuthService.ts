@@ -2,7 +2,8 @@ import bcrypt from 'bcrypt';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 
 import { env } from '../../../infrastructure/shared/config';
-import { AUTH_ERRORS, USER_EXISTS_TYPES } from '../../../domain/shared/constants/AuthContants';
+import { USER_EXISTS_TYPES } from '../../../domain/shared/constants/AuthContants';
+import { ConflictError, InvalidCredentialsError, NotFoundError } from '../../shared';
 
 import { IUserResponseModel } from '../../../domain/users/interfaces';
 
@@ -18,14 +19,13 @@ export class AuthService {
 
     switch (validationType) {
     case USER_EXISTS_TYPES.EXIST_ON_LOGIN:
-      if (!foundUser) throw new Error(AUTH_ERRORS.INVALID_CREDENTIALS);
+      if (!foundUser) throw new InvalidCredentialsError();
       return foundUser;
     case USER_EXISTS_TYPES.EXISTS:
-      if (!foundUser) throw new Error(`User with email: ${email} ${AUTH_ERRORS.NOT_FOUND}`);
+      if (!foundUser) throw new NotFoundError('User');
       return foundUser;
     case USER_EXISTS_TYPES.NOT_EXISTS:
-      if (foundUser)
-        throw new Error(`User with email: ${email} ${AUTH_ERRORS.EMAIL_ALREADY_EXISTS}`);
+      if (foundUser) throw new ConflictError('This email is already registered.');
       return null;
     default:
       return null;

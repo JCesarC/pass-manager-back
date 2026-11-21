@@ -9,7 +9,7 @@ import { IVaultRepository } from '../../../../../../domain/vaults/repository/IVa
 
 import { CreateVaultUseCase, GetAllVaultsUseCase } from '../../../../../../application/vaults/UseCases';
 import { vaultValidator } from '../../../../../../application/vaults/VaultValidator';
-import { ThrowValidatorError } from '../../../../../../application/shared';
+import { validate } from '../../../../../../application/shared';
 
 @Route('/api/v1/vaults')
 @Tags('VaultController')
@@ -34,10 +34,8 @@ export class VaultController {
   @Post('/')
   async createVault(@Body()vaultData: IVaultModel){
     const createVaultUseCase = new CreateVaultUseCase(this.vaultRepository);
+    const vault = validate(vaultValidator, vaultData) as IVaultModel;
 
-    const { error, value } = vaultValidator.validate(vaultData);
-    if (error) return ThrowValidatorError(error);
-
-    return createVaultUseCase.exec(value as IVaultModel);
+    return createVaultUseCase.exec(vault);
   }
 }

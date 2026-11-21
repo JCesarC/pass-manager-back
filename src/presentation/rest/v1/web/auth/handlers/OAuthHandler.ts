@@ -2,6 +2,9 @@ import { Request, Response } from 'express';
 import passport from 'passport';
 
 import { UserRepository } from '../../../../../../infrastructure/persistance/mongoose/database/users/repository/UserRepository';
+import { IGoogleProfile } from '../../../../../../domain/auth/models/IGoogleProfileModel';
+import { UnauthorizedError } from '../../../../../../application/shared';
+import { asyncHandler } from '../../../../shared';
 
 import { AuthController } from '../controller/AuthController';
 
@@ -16,42 +19,21 @@ export class OAuthHandler {
     session: false,
   });
 
-  public async googleSuccessCallbackHandler(req: any, res: Response) {
-    try {
-      const userRepository = new UserRepository();
-      const authController = new AuthController(userRepository);
+  public googleSuccessCallbackHandler = asyncHandler(async (req, res) => {
+    const authController = new AuthController(new UserRepository());
+    const profile = req.user as IGoogleProfile;
 
-      const token = await authController.generateAuthToken(req.user._json.email);
+    const token = await authController.generateAuthToken(profile._json.email);
 
-      res.redirect(`http://localhost:3000/auth/login?token=${token}`);
-    } catch (error: any) {
-      return res.status(400).send({
-        error: true,
-        errorMessage: `${error?.message}`,
-      });
-    }
-  };
+    res.redirect(`http://localhost:3000/auth/login?token=${token}`);
+  });
 
-  public async googleFailureHandler(req: Request, res: Response){
-    try {
-      return res.send('Failed to log in!');
-    } catch (error) {
-      return res.status(400).send({
-        error: true,
-        errorMessage: `${error}`,
-      });
-    }
-  };
+  public googleFailureHandler(_req: Request, _res: Response) {
+    throw new UnauthorizedError('Google sign-in failed.');
+  }
 
-  public googleLogoutHandler(req: Request, res: Response) {
-    try {
-      return res.redirect('/');
-    } catch (error) {
-      return res.status(400).send({
-        error: true,
-        errorMessage: `${error}`,
-      });
-    }
-  };
+  public googleLogoutHandler(_req: Request, res: Response) {
+    res.redirect('/');
+  }
 
 }

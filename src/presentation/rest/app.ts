@@ -8,6 +8,7 @@ import swaggerUi from 'swagger-ui-express';
 
 import { AppConfig } from './config';
 import mainRouter from './router';
+import { errorHandler, notFoundHandler } from './middlewares';
 
 import passportConfig from '../../infrastructure/authentication/passport/passportConfig';
 
@@ -29,6 +30,9 @@ export const createApp = (): Express => {
   app.use(passportConfig.initialize());
   app.use(AppConfig.DOCS_PATH, swaggerUi.serve, swaggerUi.setup(swaggerDoc, { explorer: true }));
   app.use('/api', mainRouter);
+
+  app.use(notFoundHandler);
+  app.use(errorHandler);
 
   return app;
 };

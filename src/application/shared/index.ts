@@ -1,1 +1,2 @@
-export * from './ThrowValidatorError';
+export * from './errors';
+export * from './validate';

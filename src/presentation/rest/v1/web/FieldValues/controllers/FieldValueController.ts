@@ -6,6 +6,8 @@ import { IFieldValueRepository } from '../../../../../../domain/fieldValues/repo
 import { IFieldValueModel } from '../../../../../../domain/fieldValues/interfaces';
 
 import { CreateFieldValueUseCase, GetAllFieldValuesUseCase } from '../../../../../../application/FieldValues/UseCases';
+import { fieldValueValidator } from '../../../../../../application/FieldValues/FieldValueValidator';
+import { validate } from '../../../../../../application/shared';
 
 @Route('/api/v1/fieldvalues')
 @Tags('FieldValueController')
@@ -26,7 +28,8 @@ export class FieldValueController{
   @Post('/')
   async createFieldValue(@Body()fieldValueData: IFieldValueModel ){
     const createFieldValueUseCase = new CreateFieldValueUseCase(this.fieldValueRepository);
-    const response = await createFieldValueUseCase.exec(fieldValueData);
+    const fieldValue = validate(fieldValueValidator, fieldValueData) as IFieldValueModel;
+    const response = await createFieldValueUseCase.exec(fieldValue);
     return response;
   }
 }

@@ -5,8 +5,6 @@ import { IAuthCredentials, IAuthController } from '../../../../../../domain/auth
 import { IUserModel } from '../../../../../../domain/users/interfaces';
 import { IUserRepository } from '../../../../../../domain/users/repository/IUserRepository';
 
-import { AUTH_ERRORS } from '../../../../../../domain/shared/constants/AuthContants';
-
 import { LoginUserUseCase, RegisterUserUseCase } from '../../../../../../application/auth/UseCases';
 import {
   CreateUserUseCase,
@@ -14,6 +12,9 @@ import {
   GetUserByEmailUseCase,
 } from '../../../../../../application/users/UseCases';
 import { AuthService } from '../../../../../../application/auth/services/AuthService';
+import { loginValidator } from '../../../../../../application/auth/AuthValidator';
+import { userModelValidator } from '../../../../../../application/users/UserValidator';
+import { NotFoundError, validate } from '../../../../../../application/shared';
 
 @Route('/api/v1/auth')
 @Tags('AuthController')
@@ -31,28 +32,19 @@ export class AuthController implements IAuthController {
   async registerUser(@Body()user: IUserModel): Promise<unknown> {
     const registerUserUseCase = new RegisterUserUseCase(this.userRepository);
 
-    const { firstName, lastName, email, password, displayName } = user;
-    const displayNameToSet = displayName || firstName;
-    if(firstName && lastName && email && password ) {
-      const response = await registerUserUseCase.execute({
-        ...user,
-        displayName: displayNameToSet
-      });
-      return response;
-    }
-    throw new Error(AUTH_ERRORS.DATA_NOT_FOUND);
+    const newUser = validate(userModelValidator, user) as IUserModel;
+    return registerUserUseCase.execute({
+      ...newUser,
+      displayName: newUser.displayName || newUser.firstName,
+    });
   }
 
   @Post('/login')
   async loginUser(@Body()authCredentials: IAuthCredentials): Promise<unknown> {
     const loginUserUseCase = new LoginUserUseCase(this.userRepository);
 
-    const { email, password } = authCredentials;
-    if(email && password ) {
-      const response = await loginUserUseCase.execute(authCredentials);
-      return response;
-    }
-    throw new Error(AUTH_ERRORS.CREDENTIALS_NOT_FOUND);
+    const credentials = validate(loginValidator, authCredentials);
+    return loginUserUseCase.execute(credentials);
   }
 
   async signInByGoogle(user: IGoogleProfile): Promise<unknown> {
@@ -85,7 +77,7 @@ export class AuthController implements IAuthController {
     const getUserByEmailUseCase = new GetUserByEmailUseCase(this.userRepository);
 
     const existingUser = await getUserByEmailUseCase.execute(email);
-    if (!existingUser) throw new Error(`Cannot find user with email: ${email} in DB`);
+    if (!existingUser) throw new NotFoundError('User');
 
     const token = this.authService.generateToken(existingUser._id, existingUser.email);
     return token;
@@ -100,7 +92,7 @@ export class AuthController implements IAuthController {
 
     const existingUser = await getFilteredUserDataUseCase.execute(id);
 
-    if (!existingUser) throw new Error(`Cannot find user with id: ${id}`);
+    if (!existingUser) throw new NotFoundError('User');
     return existingUser;
   }
 

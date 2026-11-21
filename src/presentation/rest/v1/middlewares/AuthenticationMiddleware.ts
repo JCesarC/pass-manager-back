@@ -1,15 +1,13 @@
 import { NextFunction, Request, Response } from 'express';
 
 import { AuthService } from '../../../../application/auth/services/AuthService';
+import { UnauthorizedError } from '../../../../application/shared';
 
-export const checkLoggedIn = (req: Request, res: Response, next: NextFunction) => {
+export const checkLoggedIn = (req: Request, _res: Response, next: NextFunction) => {
   const token = req.headers.authorization;
 
   if (!token) {
-    return res.status(401).json({
-      error: true,
-      errorMessage: 'You must log in!',
-    });
+    return next(new UnauthorizedError());
   }
 
   try {
@@ -18,9 +16,6 @@ export const checkLoggedIn = (req: Request, res: Response, next: NextFunction) =
     req.user = { _id: decodedToken._id };
     next();
   } catch {
-    return res.status(401).json({
-      error: true,
-      errorMessage: 'The session is over, please log in again!',
-    });
+    next(new UnauthorizedError('The session is invalid or has expired.'));
   }
 };

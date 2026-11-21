@@ -1,70 +1,25 @@
-import { Request, Response } from 'express';
-import { userModelValidator } from '../../../../../../application/users/UserValidator';
 import { AuthController } from '../controller/AuthController';
-import { IUserModel, IUserResponseModel } from '../../../../../../domain/users/interfaces';
 import { UserRepository } from '../../../../../../infrastructure/persistance/mongoose/database/users/repository/UserRepository';
+import { asyncHandler } from '../../../../shared';
+
+const buildController = () => new AuthController(new UserRepository());
 
 export class AuthHandler {
 
-  public async registerHandler(req: Request, res: Response) {
-    try {
-      const userRepository = new UserRepository();
-      const authController = new AuthController(userRepository);
+  public registerHandler = asyncHandler(async (req, res) => {
+    const response = await buildController().registerUser(req.body);
+    res.status(201).json(response);
+  });
 
-      const { error, value } = userModelValidator.validate(req.body);
-      if (error) {
-        // Si hay errores de validación, devolver una respuesta de error
-        return res.status(400).send({
-          hasError: true,
-          error: error.details[0].message,
-        });
-      }
+  public loginHandler = asyncHandler(async (req, res) => {
+    const response = await buildController().loginUser(req.body);
+    res.status(200).json(response);
+  });
 
-      // Los datos son válidos, crear un objeto con las propiedades validadas
-      const user: IUserModel = value as IUserModel;
-      const response = await authController.registerUser(user);
-      return res.status(201).send(response);
-    } catch (error) {
-      return res.status(400).send({
-        hasError: true,
-        error: `${error}`
-      });
-    }
-  };
-
-  public async loginHandler(req: Request, res: Response) {
-    try {
-      const userRepository = new UserRepository();
-      const authController = new AuthController(userRepository);
-
-      const response = await authController.loginUser(req.body);
-      return res.status(201).send(response);
-    } catch (error) {
-      return res.status(400).send({
-        hasError: true,
-        error: `${error}`
-      });
-    }
-  };
-
-  public async getauthUserDataHandler(req: Request, res: Response){
-    try {
-      const userRepository = new UserRepository();
-      const authController = new AuthController(userRepository);
-
-      const { _id = '' } = req.user as IUserResponseModel;
-
-      const user = await authController.getAuthenticatedUserData(_id);
-      return res.status(200).send({
-        hasError: false,
-        user
-      });
-    } catch (error: any) {
-      return res.status(500).send({
-        hasError: true,
-        error: `${error}`
-      });
-    }
-  };
+  public getauthUserDataHandler = asyncHandler(async (req, res) => {
+    const { _id = '' } = (req.user ?? {}) as { _id?: string };
+    const user = await buildController().getAuthenticatedUserData(_id);
+    res.status(200).json({ user });
+  });
 
 }

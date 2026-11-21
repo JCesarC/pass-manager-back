@@ -1,39 +1,21 @@
-import { Request, Response } from 'express';
-
 import { iocContainer } from '../../../../../../ioc';
 import { TYPES } from '../../../../../../domain/types';
-
 import { IFieldRepository } from '../../../../../../domain/fields/repository';
 
 import { FieldController } from '../controllers/FieldController';
+import { asyncHandler } from '../../../../shared';
+
+const buildController = () =>
+  new FieldController(iocContainer.get<IFieldRepository>(TYPES.IFieldRepository));
 
 export class FieldHandler {
-  async getAllFields(req: Request, res: Response) {
-    try {
-      const fieldRepository = iocContainer.get<IFieldRepository>(TYPES.IFieldRepository);
-      const fieldController = new FieldController(fieldRepository);
-      const response = await fieldController.getAllFields();
-      return res.send(response);
-    } catch (error) {
-      return res.status(500).send({
-        error: true,
-        errorMessage: `${error}`,
-      });
-    }
-  }
+  getAllFields = asyncHandler(async (_req, res) => {
+    const response = await buildController().getAllFields();
+    res.status(200).json(response);
+  });
 
-  async createField(req: Request, res: Response) {
-    try {
-      const fieldRepository = iocContainer.get<IFieldRepository>(TYPES.IFieldRepository);
-      const fieldController = new FieldController(fieldRepository);
-      // * TODO: Add field validator like fieldValue validator
-      const response = await fieldController.createField(req.body);
-      return res.status(201).send(response);
-    } catch (error) {
-      return res.status(500).send({
-        error: true,
-        errorMessage: `${error}`,
-      });
-    }
-  }
+  createField = asyncHandler(async (req, res) => {
+    const response = await buildController().createField(req.body);
+    res.status(201).json(response);
+  });
 }

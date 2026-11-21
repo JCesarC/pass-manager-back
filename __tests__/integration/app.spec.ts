@@ -20,5 +20,6 @@ describe('app', () => {
     const response = await request(app).get('/does-not-exist');
 
     expect(response.status).toBe(404);
+    expect(response.headers['content-type']).toMatch(/json/);
   });
 });

@@ -5,6 +5,8 @@ import { Body, Get, Post, Route, Tags } from 'tsoa';
 import { IFieldModel } from '../../../../../../domain/fields/interfaces';
 import { GetAllFieldsUseCase } from '../../../../../../application/Fields/Usecases';
 import { CreateFieldUseCase } from '../../../../../../application/Fields/Usecases';
+import { fieldValidator } from '../../../../../../application/Fields/FieldValidator';
+import { validate } from '../../../../../../application/shared';
 
 @Route('/api/v1/fields')
 @Tags('FieldController')
@@ -24,7 +26,8 @@ export class FieldController{
   @Post('/')
   async createField(@Body() fieldData: IFieldModel){
     const createFieldUseCase = new CreateFieldUseCase(this.fieldRepository);
-    const response = await createFieldUseCase.exec(fieldData);
+    const field = validate(fieldValidator, fieldData) as IFieldModel;
+    const response = await createFieldUseCase.exec(field);
     return response;
   }
 

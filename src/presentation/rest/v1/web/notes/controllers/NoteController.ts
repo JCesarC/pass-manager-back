@@ -14,7 +14,7 @@ import {
   UpdateNoteByIdUseCase,
 } from '../../../../../../application/notes/UseCases';
 
-import { ThrowValidatorError } from '../../../../../../application/shared';
+import { NotFoundError, validate } from '../../../../../../application/shared';
 import { noteValidator } from '../../../../../../application/notes/NoteValidator';
 
 @Route('/api/v1/notes')
@@ -36,22 +36,24 @@ export class NoteController implements INoteController{
   async createNote(@Body()noteData: INoteModel): Promise<INoteModel> {
     const createNoteUseCase = new CreateNoteUseCase(this.noteRepository);
 
-    const { error, value } = noteValidator.validate(noteData);
+    const note = validate(noteValidator, noteData) as INoteModel;
 
-    if (error) return ThrowValidatorError(error);
-    return createNoteUseCase.exec(value);
+    return createNoteUseCase.exec(note);
   }
 
   @Delete('/:id')
-  async deleteNoteById(@Path() id: string){
+  async deleteNoteById(@Path() id: string): Promise<void> {
     const deleteNoteByIdUseCase = new DeleteNoteByIdUseCase(this.noteRepository);
-    return deleteNoteByIdUseCase.exec(id);
+    const deleted = await deleteNoteByIdUseCase.exec(id);
+    if (!deleted) throw new NotFoundError('Note');
   }
 
   @Put('/:id')
   async updateNoteById(@Path() id: string, @Body()noteData: INoteModel){
     const updateNoteById = new UpdateNoteByIdUseCase(this.noteRepository);
-    return updateNoteById.exec(id, noteData);
+    const note = await updateNoteById.exec(id, noteData);
+    if (!note) throw new NotFoundError('Note');
+    return note;
   }
 
   @Get('/user/:userId')

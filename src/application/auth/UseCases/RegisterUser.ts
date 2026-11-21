@@ -47,7 +47,6 @@ export class RegisterUserUseCase {
     console.log('🚀 ~ execute ~ userData:', userData);
 
     return {
-      error: false,
       user: userData,
     };
   }

@@ -1,93 +1,39 @@
-import { Request, Response } from 'express';
-
 import { iocContainer } from '../../../../../../ioc';
 
 import { TYPES } from '../../../../../../domain/types';
+import { INoteRepository } from '../../../../../../domain/notes/repository/INoteRepository';
 
 import { NoteController } from '../controllers';
+import { asyncHandler, getPaginationQueries } from '../../../../shared';
 
-import { INoteRepository } from '../../../../../../domain/notes/repository/INoteRepository';
-import { getPaginationQueries } from '../../../../shared';
+const buildController = () =>
+  new NoteController(iocContainer.get<INoteRepository>(TYPES.INoteRepository));
 
 export class NoteHandler {
 
-  async getAllNotes(req: Request, res: Response) {
-    try {
-      const noteRepository = iocContainer.get<INoteRepository>(TYPES.INoteRepository);
-      const noteController = new NoteController(noteRepository);
+  getAllNotes = asyncHandler(async (req, res) => {
+    const { page, limit } = getPaginationQueries(req);
+    const response = await buildController().getAllNotes(page, limit);
+    res.status(200).json(response);
+  });
 
-      const { page, limit } = getPaginationQueries(req);
+  getNotesByUser = asyncHandler(async (req, res) => {
+    const userNotes = await buildController().getNotesByUser(req.params.userId);
+    res.status(200).json(userNotes);
+  });
 
-      const response = await noteController.getAllNotes(page, limit);
-      return res.send(response);
-    } catch (error) {
-      return res.status(500).send({
-        error: true,
-        errorMessage: `${error}`,
-      });
-    }
-  }
+  createNote = asyncHandler(async (req, res) => {
+    const response = await buildController().createNote(req.body);
+    res.status(201).json(response);
+  });
 
-  async getNotesByUser(req: Request, res: Response) {
-    try {
-      const noteRepository = iocContainer.get<INoteRepository>(TYPES.INoteRepository);
-      const { userId } = req.params;
-      console.log('userId: ', userId);
-      const noteController = new NoteController(noteRepository);
-      const userNotes = await noteController.getNotesByUser(userId);
-      return res.send(userNotes);
-    } catch (error) {
-      return res.status(500).send({
-        error: true,
-        errorMessage: `${error}`,
-      });
-    }
-  }
+  deleteNoteById = asyncHandler(async (req, res) => {
+    await buildController().deleteNoteById(req.params.id);
+    res.status(204).end();
+  });
 
-  async createNote(req: Request, res: Response) {
-    try {
-      const noteRepository = iocContainer.get<INoteRepository>(TYPES.INoteRepository);
-      const noteController = new NoteController(noteRepository);
-      const response = await noteController.createNote(req.body);
-      return res.send(response);
-    } catch (error) {
-      return res.status(500).send({
-        error: true,
-        errorMessage: `${error}`,
-      });
-    }
-  }
-
-  async deleteNoteById(req: Request, res: Response) {
-    try {
-      const noteRepository = iocContainer.get<INoteRepository>(TYPES.INoteRepository);
-      const noteController = new NoteController(noteRepository);
-      const { id } = req.params;
-      await noteController.deleteNoteById(id);
-
-      return res.status(204).send({ error: false, message: 'Note deleted successfully' });
-    } catch (error) {
-      return res.status(500).send({
-        error: true,
-        errorMessage: `${error}`,
-      });
-    }
-  }
-
-  async updateNoteById(req: Request, res: Response) {
-    try {
-      const noteRepository = iocContainer.get<INoteRepository>(TYPES.INoteRepository);
-      const noteController = new NoteController(noteRepository);
-      const { id } = req.params;
-      const noteData = req.body;
-
-      const response = await noteController.updateNoteById(id, noteData);
-      return res.send(response);
-    } catch (error) {
-      return res.status(500).send({
-        error: true,
-        errorMessage: `${error}`,
-      });
-    }
-  }
+  updateNoteById = asyncHandler(async (req, res) => {
+    const response = await buildController().updateNoteById(req.params.id, req.body);
+    res.status(200).json(response);
+  });
 }

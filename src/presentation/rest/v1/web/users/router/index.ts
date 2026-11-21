@@ -1,25 +1,13 @@
-import express, { Request, Response } from 'express';
+import express from 'express';
 import { UserController } from '../controllers';
+import { asyncHandler, getPaginationQueries } from '../../../../shared';
 
 const userRouter = express.Router();
-//* TODO: Refactor to userHandler...
-userRouter.route('/').get(async (req: Request, res: Response) => {
-  try {
-    const userController = new UserController();
 
-    const page = req?.query?.page as string || '1';
-    const limit = req?.query?.limit as string || '5';
-
-    const intPage = parseInt(page);
-    const intLimit = parseInt(limit);
-
-    const dataUsers = await userController.getUsers(intPage, intLimit);
-
-    return res.send(dataUsers);
-
-  } catch (error) {
-    return res.status(500).send({ Error: error });
-  }
-});
+userRouter.get('/', asyncHandler(async (req, res) => {
+  const { page, limit } = getPaginationQueries(req);
+  const dataUsers = await new UserController().getUsers(page, limit);
+  res.status(200).json(dataUsers);
+}));
 
 export default userRouter;
