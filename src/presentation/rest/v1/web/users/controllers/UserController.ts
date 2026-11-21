@@ -82,10 +82,10 @@ export class UserController implements IUserController {
     return user;
   }
 
-  deleteUserById(id: string): Promise<unknown> {
+  deleteUserById(_id: string): Promise<unknown> {
     throw new Error('Method not implemented.');
   }
-  updateUser(id: string, user: unknown): Promise<unknown> {
+  updateUser(_id: string, _user: unknown): Promise<unknown> {
     throw new Error('Method not implemented.');
   }
 };
