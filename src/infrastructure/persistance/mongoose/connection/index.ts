@@ -2,6 +2,9 @@ import mongoose, { ConnectOptions } from 'mongoose';
 
 import { env } from '../../../shared/config';
 
+// Drop filter fields that are not in the schema (explicit; Mongoose 7+ flips the default).
+mongoose.set('strictQuery', true);
+
 mongoose.connection.once('open', () => {
   console.log('MongoDB Connection ready!');
 });
