@@ -12,7 +12,16 @@ export interface TestUser {
   accessToken: string;
   /** Ready-to-use Authorization header value. */
   authHeader: string;
+  /** Set-Cookie header with the refresh token, ready to send back as Cookie. */
+  refreshCookie: string;
 }
+
+/** Extracts the 'name=value' part of the refresh token Set-Cookie header. */
+export const getRefreshCookie = (setCookie: string[] | string | undefined): string => {
+  const cookies = Array.isArray(setCookie) ? setCookie : setCookie ? [setCookie] : [];
+  const cookie = cookies.find((value) => value.startsWith('pm_refresh_token='));
+  return cookie ? cookie.split(';')[0] : '';
+};
 
 /** Registers a fresh user and signs in, returning its credentials and token. */
 export const createAuthenticatedUser = async (app: Express, name = 'user'): Promise<TestUser> => {
@@ -31,7 +40,8 @@ export const createAuthenticatedUser = async (app: Express, name = 'user'): Prom
     id: login.body.user._id,
     email,
     password,
-    accessToken: login.body.token,
-    authHeader: `Bearer ${login.body.token}`,
+    accessToken: login.body.accessToken,
+    authHeader: `Bearer ${login.body.accessToken}`,
+    refreshCookie: getRefreshCookie(login.headers['set-cookie']),
   };
 };

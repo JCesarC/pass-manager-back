@@ -6,10 +6,16 @@ import { UnauthorizedError } from '../../shared';
 const ALGORITHM = 'HS256';
 const ISSUER = 'pass-manager-api';
 const AUDIENCE = 'pass-manager';
-const ACCESS_TOKEN_TTL = '1h';
 
 export interface AccessTokenClaims {
   userId: string;
+}
+
+export interface IssuedAccessToken {
+  accessToken: string;
+  tokenType: 'Bearer';
+  /** Lifetime in seconds. */
+  expiresIn: number;
 }
 
 /**
@@ -18,14 +24,27 @@ export interface AccessTokenClaims {
  * another service are rejected.
  */
 export class TokenService {
+  /** Access tokens are short-lived; sessions are extended with refresh tokens. */
+  get accessTokenTtlSeconds(): number {
+    return env.ACCESS_TOKEN_TTL_MINUTES * 60;
+  }
+
   signAccessToken(userId: string): string {
     return jwt.sign({}, env.JWT_SECRET, {
       algorithm: ALGORITHM,
       subject: userId,
       issuer: ISSUER,
       audience: AUDIENCE,
-      expiresIn: ACCESS_TOKEN_TTL,
+      expiresIn: this.accessTokenTtlSeconds,
     });
+  }
+
+  issueAccessToken(userId: string): IssuedAccessToken {
+    return {
+      accessToken: this.signAccessToken(userId),
+      tokenType: 'Bearer',
+      expiresIn: this.accessTokenTtlSeconds,
+    };
   }
 
   verifyAccessToken(token: string): AccessTokenClaims {

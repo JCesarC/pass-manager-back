@@ -1,6 +1,9 @@
 import { Request, Response } from 'express';
 import passport from 'passport';
 
+import { iocContainer } from '../../../../../../ioc';
+import { TYPES } from '../../../../../../domain/types';
+import { IRefreshTokenRepository } from '../../../../../../domain/auth/repository/IRefreshTokenRepository';
 import { UserRepository } from '../../../../../../infrastructure/persistance/mongoose/database/users/repository/UserRepository';
 import { IGoogleProfile } from '../../../../../../domain/auth/models/IGoogleProfileModel';
 import { UnauthorizedError } from '../../../../../../application/shared';
@@ -20,7 +23,10 @@ export class OAuthHandler {
   });
 
   public googleSuccessCallbackHandler = asyncHandler(async (req, res) => {
-    const authController = new AuthController(new UserRepository());
+    const authController = new AuthController(
+      new UserRepository(),
+      iocContainer.get<IRefreshTokenRepository>(TYPES.IRefreshTokenRepository),
+    );
     const profile = req.user as IGoogleProfile;
 
     const token = await authController.generateAuthToken(profile._json.email);

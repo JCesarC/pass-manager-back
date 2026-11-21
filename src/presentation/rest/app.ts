@@ -3,6 +3,7 @@ import express, { Express } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import compression from 'compression';
+import cookieParser from 'cookie-parser';
 import swaggerUi from 'swagger-ui-express';
 
 import { AppConfig } from './config';
@@ -31,6 +32,7 @@ export const createApp = (): Express => {
   app.use(cors({ origin: env.CORS_ORIGINS, credentials: true }));
   // The API only accepts JSON. Vault items are small; anything larger is rejected.
   app.use(express.json({ limit: AppConfig.JSON_BODY_LIMIT }));
+  app.use(cookieParser());
   app.use(compression());
   app.use(passportConfig.initialize());
   app.use(AppConfig.DOCS_PATH, swaggerUi.serve, swaggerUi.setup(swaggerDoc, { explorer: true }));

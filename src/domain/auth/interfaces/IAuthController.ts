@@ -5,5 +5,5 @@ export interface IAuthController {
   registerUser(user: unknown): Promise<unknown>;
   loginUser(authCredentials: IAuthCredentials): Promise<unknown>;
   signInByGoogle(user: IGoogleProfile): Promise<unknown>;
-  logoutUser(): Promise<unknown>;
+  logoutUser(refreshToken: string | undefined): Promise<void>;
 };

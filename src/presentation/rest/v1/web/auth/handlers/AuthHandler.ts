@@ -1,8 +1,17 @@
-import { AuthController } from '../controller/AuthController';
+import { iocContainer } from '../../../../../../ioc';
+import { TYPES } from '../../../../../../domain/types';
+import { IRefreshTokenRepository } from '../../../../../../domain/auth/repository/IRefreshTokenRepository';
 import { UserRepository } from '../../../../../../infrastructure/persistance/mongoose/database/users/repository/UserRepository';
-import { asyncHandler } from '../../../../shared';
 
-const buildController = () => new AuthController(new UserRepository());
+import { AuthController } from '../controller/AuthController';
+import { asyncHandler } from '../../../../shared';
+import { clearRefreshTokenCookie, readRefreshTokenCookie, setRefreshTokenCookie } from '../refreshTokenCookie';
+
+const buildController = () =>
+  new AuthController(
+    new UserRepository(),
+    iocContainer.get<IRefreshTokenRepository>(TYPES.IRefreshTokenRepository),
+  );
 
 export class AuthHandler {
 
@@ -12,8 +21,27 @@ export class AuthHandler {
   });
 
   public loginHandler = asyncHandler(async (req, res) => {
-    const response = await buildController().loginUser(req.body);
-    res.status(200).json(response);
+    const { refreshToken, ...session } = await buildController().loginUser(req.body);
+    setRefreshTokenCookie(res, refreshToken.token, refreshToken.expiresAt);
+    res.status(200).json(session);
+  });
+
+  public refreshHandler = asyncHandler(async (req, res) => {
+    try {
+      const { refreshToken, ...session } = await buildController().refreshSession(readRefreshTokenCookie(req));
+      setRefreshTokenCookie(res, refreshToken.token, refreshToken.expiresAt);
+      res.status(200).json(session);
+    } catch (error) {
+      // A rejected refresh token is useless to the client; remove it.
+      clearRefreshTokenCookie(res);
+      throw error;
+    }
+  });
+
+  public logoutHandler = asyncHandler(async (req, res) => {
+    await buildController().logoutUser(readRefreshTokenCookie(req));
+    clearRefreshTokenCookie(res);
+    res.status(204).end();
   });
 
 }

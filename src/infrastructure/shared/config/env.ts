@@ -19,6 +19,10 @@ export interface Env {
   PORT: number;
   MONGODB_URL: string;
   JWT_SECRET: string;
+  ACCESS_TOKEN_TTL_MINUTES: number;
+  REFRESH_TOKEN_TTL_DAYS: number;
+  COOKIE_SECURE: boolean;
+  COOKIE_SAME_SITE: 'strict' | 'lax' | 'none';
   USE_PROXY: boolean;
   FRONTEND_URL: string;
   CORS_ORIGINS: string[];
@@ -42,6 +46,16 @@ const envSchema = Joi.object<RawEnv>({
     .required()
     .messages({ 'string.pattern.base': '"MONGODB_URL" must start with mongodb:// or mongodb+srv://' }),
   JWT_SECRET: Joi.string().min(32).required(),
+  ACCESS_TOKEN_TTL_MINUTES: Joi.number().integer().min(1).max(60).default(15),
+  REFRESH_TOKEN_TTL_DAYS: Joi.number().integer().min(1).max(90).default(7),
+  // Secure cookies require HTTPS; only production is assumed to have it.
+  COOKIE_SECURE: Joi.boolean().when('NODE_ENV', {
+    is: 'production',
+    then: Joi.optional().default(true),
+    otherwise: Joi.optional().default(false),
+  }),
+  // 'strict' when the front end and the API share a site; 'none' for cross-site deployments.
+  COOKIE_SAME_SITE: Joi.string().valid('strict', 'lax', 'none').default('strict'),
   USE_PROXY: Joi.boolean().default(false),
   FRONTEND_URL: Joi.string().uri({ scheme: ['http', 'https'] }).default('http://localhost:5173'),
   // Comma-separated list of allowed browser origins; defaults to FRONTEND_URL.
@@ -52,6 +66,10 @@ const envSchema = Joi.object<RawEnv>({
 
 const loadEnv = (): Env => {
   const { error, value } = envSchema.validate(process.env, { abortEarly: false, convert: true });
+
+  if (!error && value.COOKIE_SAME_SITE === 'none' && !value.COOKIE_SECURE) {
+    throw new Error('Invalid environment configuration:\n  - COOKIE_SAME_SITE=none requires COOKIE_SECURE=true');
+  }
 
   if (error) {
     const problems = error.details.map((detail) => `  - ${detail.message}`).join('\n');

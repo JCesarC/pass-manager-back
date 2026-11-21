@@ -5,6 +5,7 @@ import {
   setupFieldTypeRepository,
   setupFieldValueRepository,
   setupNoteRepository,
+  setupRefreshTokenRepository,
   setupVaultRepository,
 } from './infrastructure/config/ioc/iocSetups/repositories';
 
@@ -15,5 +16,6 @@ setupFieldTypeRepository(iocContainer);
 setupFieldRepository(iocContainer);
 setupVaultRepository(iocContainer);
 setupNoteRepository(iocContainer);
+setupRefreshTokenRepository(iocContainer);
 
 export { iocContainer };

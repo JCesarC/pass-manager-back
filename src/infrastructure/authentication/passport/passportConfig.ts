@@ -1,6 +1,9 @@
 import passport from 'passport';
 import { Strategy } from 'passport-google-oauth20';
 import { AuthController } from '../../../presentation/rest/v1/web/auth/controller/AuthController';
+import { iocContainer } from '../../../ioc';
+import { TYPES } from '../../../domain/types';
+import { IRefreshTokenRepository } from '../../../domain/auth/repository/IRefreshTokenRepository';
 import { UserRepository } from '../../persistance/mongoose/database/users/repository/UserRepository';
 import { env, isGoogleAuthEnabled } from '../../shared/config';
 import { logger } from '../../shared/logger';
@@ -16,7 +19,10 @@ const verifyCallback = async (accessToken: any, refreshToken: any, profile: any,
   try {
     const userRepository = new UserRepository();
 
-    const authController = new AuthController(userRepository);
+    const authController = new AuthController(
+      userRepository,
+      iocContainer.get<IRefreshTokenRepository>(TYPES.IRefreshTokenRepository),
+    );
     await authController.signInByGoogle(profile);
     return done(null, profile);
   } catch (error) {

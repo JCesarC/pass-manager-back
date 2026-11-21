@@ -13,6 +13,9 @@ import { authenticate, PublicRoute } from '../../middlewares';
 export const PUBLIC_ROUTES: PublicRoute[] = [
   { method: 'POST', path: '/auth/register' },
   { method: 'POST', path: '/auth/login' },
+  // Authenticated by the refresh-token cookie; the access token may already be expired.
+  { method: 'POST', path: '/auth/refresh' },
+  { method: 'POST', path: '/auth/logout' },
   { method: 'GET', path: '/auth/oauth/*' },
 ];
 
