@@ -1,6 +1,6 @@
 import mongoose, { ConnectOptions } from 'mongoose';
 
-const MONGODB_URL = process.env.MONGODB_URL as string;
+import { env } from '../../../shared/config';
 
 mongoose.connection.once('open', () => {
   console.log('MongoDB Connection ready!');
@@ -32,7 +32,7 @@ export const startDBConnection = async () => {
     useNewUrlParser: true,
     useUnifiedTopology: true
   } as ConnectOptions;
-  await mongoose.connect(MONGODB_URL, options);
+  await mongoose.connect(env.MONGODB_URL, options);
 };
 
 export const closeDBConnection = async () => {

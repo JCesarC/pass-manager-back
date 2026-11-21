@@ -1,13 +1,13 @@
 import bcrypt from 'bcrypt';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 
+import { env } from '../../../infrastructure/shared/config';
 import { AUTH_ERRORS, USER_EXISTS_TYPES } from '../../../domain/shared/constants/AuthContants';
 
 import { IUserResponseModel } from '../../../domain/users/interfaces';
 
 const SALTS = 10;
 const EXPIRATION_TIME = '1h';
-const JWT_SECRET = process.env.JWT_SECRET as string;
 export class AuthService {
 
   validateUserExistsByEmail(
@@ -43,14 +43,14 @@ export class AuthService {
   }
 
   generateToken(_id: string, email: string): string {
-    const token = jwt.sign({ _id, email }, JWT_SECRET, {
+    const token = jwt.sign({ _id, email }, env.JWT_SECRET, {
       expiresIn: EXPIRATION_TIME,
     });
     return token;
   }
 
   validateToken = (token: string) => {
-    const decodedToken: JwtPayload = jwt.verify(token, JWT_SECRET) as JwtPayload;
+    const decodedToken: JwtPayload = jwt.verify(token, env.JWT_SECRET) as JwtPayload;
     return decodedToken;
   };
 }

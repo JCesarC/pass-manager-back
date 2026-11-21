@@ -4,6 +4,7 @@ import multer from 'multer';
 import multerS3 from 'multer-s3';
 
 import { s3Config } from '../s3/config';
+import { env } from '../shared/config';
 
 import { generateUniqueId } from '../shared/utils/uniqueIdGenerator';
 
@@ -11,13 +12,13 @@ import { generateUniqueId } from '../shared/utils/uniqueIdGenerator';
 const createMulterStorage = (folder: string) => {
   const storage = multerS3({
     s3: s3Config,
-    bucket: 'macrodstorage',
+    bucket: env.S3_BUCKET,
     acl: 'public-read',
     contentType: multerS3.AUTO_CONTENT_TYPE,
     key: (request, file, cb) => {
       const ext = path.extname(file.originalname);
       const fileName = generateUniqueId() + ext;
-      cb(null, `macrodetails/${folder}/${fileName}`);
+      cb(null, `${folder}/${fileName}`);
     }
   });
   return storage;

@@ -1,6 +1,3 @@
-import dotenv from 'dotenv';
-dotenv.config();
-
 import { Server } from './presentation/rest/server';
 import { SIGS_SERVER_EXIT } from './infrastructure/shared/config';
 

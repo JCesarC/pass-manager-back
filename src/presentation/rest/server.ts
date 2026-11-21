@@ -9,6 +9,7 @@ import compression from 'compression';
 import swaggerUi from 'swagger-ui-express';
 
 import { AppInfo, AppConfig } from './config';
+import { env } from '../../infrastructure/shared/config';
 
 import mainRouter from './router';
 
@@ -42,7 +43,7 @@ class Server{
     this.app.use(express.urlencoded({ extended: true, limit: '50mb'}));
     this.app.use(compression({}));
     this.app.use(passportConfig.initialize());
-    this.app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDoc, this.swaggerOptions));
+    this.app.use(AppConfig.DOCS_PATH, swaggerUi.serve, swaggerUi.setup(swaggerDoc, this.swaggerOptions));
     this.app.use('/api', mainRouter);
     // * TODO: Add Error handling with tsoa
   }
@@ -51,9 +52,10 @@ class Server{
     const banner = `
       Application starrted successssssssfully!
       Name: ${AppInfo.APP_NAME}
-      Port: ${AppConfig.PORT}
+      Environment: ${env.NODE_ENV}
+      Port: ${env.PORT}
       BasePath: ${AppConfig.BASE_PATH}
-      OpenApi Spec Path: /api/docs
+      OpenApi Spec Path: ${AppConfig.DOCS_PATH}
     `;
     // this.logger.log({
     //   level: 'info',
@@ -66,7 +68,7 @@ class Server{
     await startDBConnection();
     this.configureExpress();
     this.httpServer = http.createServer(this.app);
-    this.httpServer.listen(process.env.PORT || 3000, () => {
+    this.httpServer.listen(env.PORT, () => {
       this.showBanner();
     });
   }
