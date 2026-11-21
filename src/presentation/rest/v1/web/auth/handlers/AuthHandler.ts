@@ -1,6 +1,7 @@
 import { AuthController } from '../controller/AuthController';
 import { UserRepository } from '../../../../../../infrastructure/persistance/mongoose/database/users/repository/UserRepository';
 import { asyncHandler } from '../../../../shared';
+import { getAuthUserId } from '../../../../middlewares';
 
 const buildController = () => new AuthController(new UserRepository());
 
@@ -17,8 +18,7 @@ export class AuthHandler {
   });
 
   public getauthUserDataHandler = asyncHandler(async (req, res) => {
-    const { _id = '' } = (req.user ?? {}) as { _id?: string };
-    const user = await buildController().getAuthenticatedUserData(_id);
+    const user = await buildController().getAuthenticatedUserData(getAuthUserId(req));
     res.status(200).json({ user });
   });
 

@@ -2,8 +2,7 @@ import request from 'supertest';
 
 import { createApp } from '../../src/presentation/rest/app';
 import { clearTestDb, connectTestDb, disconnectTestDb } from '../helpers/db';
-
-const API = '/api/v1';
+import { API, createAuthenticatedUser } from '../helpers/auth';
 
 const newUser = {
   firstName: 'Jane',
@@ -85,7 +84,10 @@ describe('error handling', () => {
   });
 
   it('never leaks internal error details', async () => {
-    const response = await request(app).delete(`${API}/notes/not-an-object-id`);
+    const user = await createAuthenticatedUser(app);
+    const response = await request(app)
+      .delete(`${API}/notes/not-an-object-id`)
+      .set('Authorization', user.authHeader);
 
     expect(response.status).toBe(400);
     expect(response.body.error.code).toBe('VALIDATION_ERROR');
@@ -93,7 +95,10 @@ describe('error handling', () => {
   });
 
   it('returns 404 when deleting a note that does not exist', async () => {
-    const response = await request(app).delete(`${API}/notes/64b7f0f0f0f0f0f0f0f0f0f0`);
+    const user = await createAuthenticatedUser(app);
+    const response = await request(app)
+      .delete(`${API}/notes/64b7f0f0f0f0f0f0f0f0f0f0`)
+      .set('Authorization', user.authHeader);
 
     expect(response.status).toBe(404);
     expect(response.body.error.code).toBe('NOT_FOUND');

@@ -12,6 +12,7 @@ import {
   GetUserByEmailUseCase,
 } from '../../../../../../application/users/UseCases';
 import { AuthService } from '../../../../../../application/auth/services/AuthService';
+import { TokenService } from '../../../../../../application/auth/services/TokenService';
 import { loginValidator, RegisterUserInput, registerUserValidator } from '../../../../../../application/auth/AuthValidator';
 import { NotFoundError, validate } from '../../../../../../application/shared';
 
@@ -79,7 +80,7 @@ export class AuthController implements IAuthController {
     const existingUser = await getUserByEmailUseCase.execute(email);
     if (!existingUser) throw new NotFoundError('User');
 
-    const token = this.authService.generateToken(existingUser._id, existingUser.email);
+    const token = new TokenService().signAccessToken(existingUser._id.toString());
     return token;
   }
 

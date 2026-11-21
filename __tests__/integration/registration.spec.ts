@@ -3,8 +3,7 @@ import request from 'supertest';
 import { createApp } from '../../src/presentation/rest/app';
 import UserModel from '../../src/infrastructure/persistance/mongoose/database/users/models/UserSchema';
 import { clearTestDb, connectTestDb, disconnectTestDb } from '../helpers/db';
-
-const API = '/api/v1';
+import { API } from '../helpers/auth';
 
 const validUser = {
   firstName: 'Jane',

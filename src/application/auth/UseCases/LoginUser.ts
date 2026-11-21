@@ -1,5 +1,6 @@
 import { GetFilteredUserDataUseCase, GetUserByEmailUseCase } from '../../users/UseCases';
 import { AuthService } from '../services/AuthService';
+import { TokenService } from '../services/TokenService';
 
 import { IAuthCredentials } from '../../../domain/auth/interfaces';
 import { IUserRepository } from '../../../domain/users/repository/IUserRepository';
@@ -37,7 +38,7 @@ export class LoginUserUseCase {
     const validPassword = this.authService.comparePassword(password, userFound.password);
     if (!validPassword) throw new InvalidCredentialsError();
 
-    const token = this.authService.generateToken(userFound._id, userFound.email);
+    const token = new TokenService().signAccessToken(userFound._id.toString());
     const userData = await getFilteredUserDataUseCase.execute(userFound._id);
 
     return {
