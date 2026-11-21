@@ -5,7 +5,7 @@ export interface IUserModel {
   lastName: string;
   active: boolean;
   displayName: string,
-  password: string,
+  password?: string,
   roles?: string [];
   phone? : string;
   photoURL?: string,

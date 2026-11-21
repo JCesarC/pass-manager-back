@@ -20,7 +20,7 @@ export class RegisterUserUseCase {
     this.userRepository = userRepository;
   }
 
-  async execute(newUserData: IUserModel) {
+  async execute(newUserData: IUserModel & { password: string }) {
     const createUserUseCase = new CreateUserUseCase(this.userRepository);
     const getUserByEmailUseCase = new GetUserByEmailUseCase(this.userRepository);
     const getFilteredUserDataUseCase = new GetFilteredUserDataUseCase(this.userRepository);

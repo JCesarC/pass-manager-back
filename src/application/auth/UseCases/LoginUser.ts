@@ -31,6 +31,9 @@ export class LoginUserUseCase {
 
     if (!userFound) throw new InvalidCredentialsError();
 
+    // Accounts created through Google have no password and cannot sign in with one.
+    if (!userFound.password) throw new InvalidCredentialsError();
+
     const validPassword = this.authService.comparePassword(password, userFound.password);
     if (!validPassword) throw new InvalidCredentialsError();
 

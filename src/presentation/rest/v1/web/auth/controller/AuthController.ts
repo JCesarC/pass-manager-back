@@ -12,8 +12,7 @@ import {
   GetUserByEmailUseCase,
 } from '../../../../../../application/users/UseCases';
 import { AuthService } from '../../../../../../application/auth/services/AuthService';
-import { loginValidator } from '../../../../../../application/auth/AuthValidator';
-import { userModelValidator } from '../../../../../../application/users/UserValidator';
+import { loginValidator, RegisterUserInput, registerUserValidator } from '../../../../../../application/auth/AuthValidator';
 import { NotFoundError, validate } from '../../../../../../application/shared';
 
 @Route('/api/v1/auth')
@@ -29,13 +28,14 @@ export class AuthController implements IAuthController {
   }
 
   @Post('/register')
-  async registerUser(@Body()user: IUserModel): Promise<unknown> {
+  async registerUser(@Body()user: RegisterUserInput): Promise<unknown> {
     const registerUserUseCase = new RegisterUserUseCase(this.userRepository);
 
-    const newUser = validate(userModelValidator, user) as IUserModel;
+    const newUser = validate(registerUserValidator, user);
     return registerUserUseCase.execute({
       ...newUser,
       displayName: newUser.displayName || newUser.firstName,
+      active: false,
     });
   }
 
@@ -66,7 +66,7 @@ export class AuthController implements IAuthController {
       verified: user._json.email_verified,
       displayName: user.displayName,
       photoURL: user._json.picture,
-      password: ''
+      provider: 'google',
     };
 
     await createUserUseCase.execute(newUser);
