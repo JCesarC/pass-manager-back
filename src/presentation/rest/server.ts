@@ -79,10 +79,10 @@ class Server{
   public async exec(): Promise<void> {
     await this.startServer();
   }
-  public async stopServer(message = '') {
+  public async stopServer(message = '', exitCode = 0) {
     await closeDBConnection();
     console.log(message);
-    process.exit();
+    process.exit(exitCode);
   }
 
   public forceStopServer(message = ''){
@@ -91,8 +91,9 @@ class Server{
     process.exit(1);
   }
 
-  public logErrorAndTerminate(error: string){
-    this.stopServer(`shutting down the server...${error}`);
+  public async logErrorAndTerminate(error: string){
+    console.error(error);
+    await this.stopServer('Shutting down the server after a fatal error...', 1);
   }
 }
 
