@@ -1,4 +1,3 @@
-import path from 'path';
 import http, { Server as ServerInstance } from 'http';
 
 import express from 'express';
@@ -45,10 +44,6 @@ class Server{
     this.app.use(passportConfig.initialize());
     this.app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDoc, this.swaggerOptions));
     this.app.use('/api', mainRouter);
-    this.app.use(express.static(path.join(__dirname, '..','..','..', 'public', 'docs')));
-    this.app.use('/', (req, res) => {
-      res.sendFile(path.join(__dirname, '..','..','..', 'public', 'docs', 'index.html'));
-    });
     // * TODO: Add Error handling with tsoa
   }
 
