@@ -1,7 +1,7 @@
 import { inject, injectable } from 'inversify';
 import { TYPES } from '../../../../../../domain/types';
 import { IFieldRepository } from '../../../../../../domain/fields/repository';
-import { Body, Get, Post, Route, Tags } from 'tsoa';
+import { Body, Get, Post, Route, Security, Tags } from 'tsoa';
 import { IFieldModel } from '../../../../../../domain/fields/interfaces';
 import { GetAllFieldsUseCase } from '../../../../../../application/Fields/Usecases';
 import { CreateFieldUseCase } from '../../../../../../application/Fields/Usecases';
@@ -10,6 +10,7 @@ import { validate } from '../../../../../../application/shared';
 
 @Route('/api/v1/fields')
 @Tags('FieldController')
+@Security('bearer')
 @injectable()
 export class FieldController{
   private fieldRepository;

@@ -6,55 +6,57 @@
 		"requestBodies": {},
 		"responses": {},
 		"schemas": {
-			"IUserModel": {
+			"RegisterUserInput": {
 				"properties": {
-					"email": {
-						"type": "string"
-					},
 					"firstName": {
 						"type": "string"
 					},
 					"lastName": {
 						"type": "string"
 					},
-					"active": {
-						"type": "boolean"
-					},
-					"displayName": {
+					"email": {
 						"type": "string"
 					},
 					"password": {
 						"type": "string"
 					},
-					"roles": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array"
-					},
-					"phone": {
+					"displayName": {
 						"type": "string"
-					},
-					"photoURL": {
-						"type": "string"
-					},
-					"provider": {
-						"type": "string"
-					},
-					"verified": {
-						"type": "boolean"
 					}
 				},
 				"required": [
-					"email",
 					"firstName",
 					"lastName",
-					"active",
-					"displayName",
+					"email",
 					"password"
 				],
 				"type": "object",
 				"additionalProperties": false
+			},
+			"IssuedRefreshToken": {
+				"properties": {
+					"token": {
+						"type": "string",
+						"description": "Raw token. Only ever sent to the client in an httpOnly cookie."
+					},
+					"expiresAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"token",
+					"expiresAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"FlattenMaps_T_": {
+				"properties": {},
+				"type": "object"
+			},
+			"IUserResponseModel": {
+				"$ref": "#/components/schemas/FlattenMaps_T_"
 			},
 			"IAuthCredentials": {
 				"properties": {
@@ -72,15 +74,44 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"FlattenMaps_T_": {
-				"properties": {},
-				"type": "object"
-			},
 			"IFieldModel": {
 				"$ref": "#/components/schemas/FlattenMaps_T_"
 			},
 			"IFieldValueModel": {
 				"$ref": "#/components/schemas/FlattenMaps_T_"
+			},
+			"FieldValueInput": {
+				"description": "Request body to add a field value to one of the caller's vaults.",
+				"properties": {
+					"field": {
+						"type": "string",
+						"description": "Id of the field definition."
+					},
+					"value": {
+						"anyOf": [
+							{
+								"type": "string"
+							},
+							{
+								"items": {
+									"type": "string"
+								},
+								"type": "array"
+							}
+						]
+					},
+					"vault": {
+						"type": "string",
+						"description": "Id of a vault owned by the caller."
+					}
+				},
+				"required": [
+					"field",
+					"value",
+					"vault"
+				],
+				"type": "object",
+				"additionalProperties": false
 			},
 			"INoteModel": {
 				"$ref": "#/components/schemas/FlattenMaps_T_"
@@ -109,134 +140,70 @@
 				],
 				"type": "object"
 			},
-			"Pick_IUserModel.Exclude_keyofIUserModel.password__": {
+			"NoteInput": {
+				"description": "Request body to create a note. The owner is always the authenticated user.",
 				"properties": {
-					"email": {
+					"title": {
 						"type": "string"
 					},
-					"firstName": {
+					"body": {
 						"type": "string"
 					},
-					"lastName": {
-						"type": "string"
-					},
-					"active": {
+					"isFavorite": {
 						"type": "boolean"
 					},
-					"displayName": {
-						"type": "string"
+					"isArchived": {
+						"type": "boolean"
 					},
-					"roles": {
+					"tags": {
 						"items": {
 							"type": "string"
 						},
 						"type": "array"
 					},
-					"phone": {
-						"type": "string"
-					},
-					"photoURL": {
-						"type": "string"
-					},
-					"provider": {
-						"type": "string"
-					},
-					"verified": {
-						"type": "boolean"
-					}
-				},
-				"required": [
-					"email",
-					"firstName",
-					"lastName",
-					"active",
-					"displayName"
-				],
-				"type": "object",
-				"description": "From T, pick a set of properties whose keys are in the union K"
-			},
-			"IUserResponseExample": {
-				"properties": {
-					"email": {
-						"type": "string"
-					},
-					"firstName": {
-						"type": "string"
-					},
-					"lastName": {
-						"type": "string"
-					},
-					"active": {
-						"type": "boolean"
-					},
-					"displayName": {
-						"type": "string"
-					},
-					"roles": {
+					"imageURLs": {
 						"items": {
 							"type": "string"
 						},
 						"type": "array"
-					},
-					"phone": {
-						"type": "string"
-					},
-					"photoURL": {
-						"type": "string"
-					},
-					"provider": {
-						"type": "string"
-					},
-					"verified": {
-						"type": "boolean"
-					},
-					"_id": {
-						"type": "string"
-					},
-					"__v": {
-						"type": "string"
-					},
-					"createdAt": {
-						"type": "string"
-					},
-					"updatedAt": {
-						"type": "string"
 					}
 				},
 				"required": [
-					"email",
-					"firstName",
-					"lastName",
-					"active",
-					"displayName",
-					"_id"
+					"title"
 				],
 				"type": "object",
 				"additionalProperties": false
 			},
-			"UserResponseExample": {
+			"NoteUpdateInput": {
+				"description": "Request body to update a note: any subset of the editable fields.",
 				"properties": {
-					"currentPage": {
-						"type": "number",
-						"format": "double"
+					"title": {
+						"type": "string"
 					},
-					"totalPages": {
-						"type": "number",
-						"format": "double"
+					"body": {
+						"type": "string"
 					},
-					"users": {
+					"isFavorite": {
+						"type": "boolean"
+					},
+					"isArchived": {
+						"type": "boolean"
+					},
+					"tags": {
 						"items": {
-							"$ref": "#/components/schemas/IUserResponseExample"
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"imageURLs": {
+						"items": {
+							"type": "string"
 						},
 						"type": "array"
 					}
 				},
-				"required": [
-					"currentPage",
-					"totalPages",
-					"users"
-				],
-				"type": "object"
+				"type": "object",
+				"additionalProperties": false
 			},
 			"IVaultModel": {
 				"$ref": "#/components/schemas/FlattenMaps_T_"
@@ -264,14 +231,92 @@
 					"vaults"
 				],
 				"type": "object"
+			},
+			"VaultInput": {
+				"description": "Request body to create a vault. The owner is always the authenticated user.",
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"data": {
+						"type": "string"
+					},
+					"dataFieldType": {
+						"type": "string"
+					},
+					"isFavorite": {
+						"type": "boolean"
+					},
+					"tags": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"isArchived": {
+						"type": "boolean"
+					},
+					"expirationDate": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					}
+				},
+				"required": [
+					"name",
+					"data",
+					"dataFieldType"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"VaultUpdateInput": {
+				"description": "Request body to update a vault: any subset of the editable fields.",
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"data": {
+						"type": "string"
+					},
+					"dataFieldType": {
+						"type": "string"
+					},
+					"isFavorite": {
+						"type": "boolean"
+					},
+					"tags": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"isArchived": {
+						"type": "boolean"
+					},
+					"expirationDate": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
 			}
 		},
-		"securitySchemes": {}
+		"securitySchemes": {
+			"bearer": {
+				"type": "http",
+				"scheme": "bearer",
+				"bearerFormat": "JWT",
+				"description": "Access token from POST /api/v1/auth/login (valid for 15 minutes)."
+			}
+		}
 	},
 	"info": {
-		"title": "pass-manager-back",
+		"title": "Pass Manager API",
 		"version": "1.1.0",
-		"description": "Node.js + Express + Typescript + Mongodb + Swagger ",
+		"description": "REST API of Pass Manager. Every route except register, login, refresh, logout and Google sign-in requires a Bearer access token.",
 		"license": {
 			"name": "ISC"
 		},
@@ -304,7 +349,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/IUserModel"
+								"$ref": "#/components/schemas/RegisterUserInput"
 							}
 						}
 					}
@@ -319,11 +364,43 @@
 						"description": "Ok",
 						"content": {
 							"application/json": {
-								"schema": {}
+								"schema": {
+									"properties": {
+										"user": {
+											"$ref": "#/components/schemas/IUserResponseModel"
+										},
+										"expiresIn": {
+											"type": "number",
+											"format": "double"
+										},
+										"tokenType": {
+											"type": "string",
+											"enum": [
+												"Bearer"
+											],
+											"nullable": false
+										},
+										"accessToken": {
+											"type": "string"
+										},
+										"refreshToken": {
+											"$ref": "#/components/schemas/IssuedRefreshToken"
+										}
+									},
+									"required": [
+										"user",
+										"expiresIn",
+										"tokenType",
+										"accessToken",
+										"refreshToken"
+									],
+									"type": "object"
+								}
 							}
 						}
 					}
 				},
+				"description": "Returns a short-lived access token in the body. The refresh token is\nonly sent as an httpOnly cookie scoped to /api/v1/auth.",
 				"tags": [
 					"AuthController"
 				],
@@ -339,6 +416,153 @@
 						}
 					}
 				}
+			}
+		},
+		"/api/v1/auth/refresh": {
+			"post": {
+				"operationId": "RefreshSession",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"expiresIn": {
+											"type": "number",
+											"format": "double"
+										},
+										"tokenType": {
+											"type": "string",
+											"enum": [
+												"Bearer"
+											],
+											"nullable": false
+										},
+										"accessToken": {
+											"type": "string"
+										},
+										"refreshToken": {
+											"properties": {
+												"expiresAt": {
+													"type": "string",
+													"format": "date-time"
+												},
+												"token": {
+													"type": "string"
+												}
+											},
+											"required": [
+												"expiresAt",
+												"token"
+											],
+											"type": "object"
+										}
+									},
+									"required": [
+										"expiresIn",
+										"tokenType",
+										"accessToken",
+										"refreshToken"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"description": "Rotates the refresh token cookie and returns a new access token.",
+				"tags": [
+					"AuthController"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/api/v1/auth/oauth/exchange": {
+			"post": {
+				"operationId": "ExchangeOAuthCode",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"user": {
+											"$ref": "#/components/schemas/IUserResponseModel"
+										},
+										"expiresIn": {
+											"type": "number",
+											"format": "double"
+										},
+										"tokenType": {
+											"type": "string",
+											"enum": [
+												"Bearer"
+											],
+											"nullable": false
+										},
+										"accessToken": {
+											"type": "string"
+										},
+										"refreshToken": {
+											"$ref": "#/components/schemas/IssuedRefreshToken"
+										}
+									},
+									"required": [
+										"user",
+										"expiresIn",
+										"tokenType",
+										"accessToken",
+										"refreshToken"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"description": "Completes a Google sign-in: exchanges the single-use code received by\nthe front end for a session (same response as login).",
+				"tags": [
+					"AuthController"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"code": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"code"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/v1/auth/logout": {
+			"post": {
+				"operationId": "LogoutUser",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"description": "Revokes the current session and clears the refresh token cookie.",
+				"tags": [
+					"AuthController"
+				],
+				"security": [],
+				"parameters": []
 			}
 		},
 		"/api/v1/fields": {
@@ -357,7 +581,11 @@
 				"tags": [
 					"FieldController"
 				],
-				"security": [],
+				"security": [
+					{
+						"bearer": []
+					}
+				],
 				"parameters": []
 			},
 			"post": {
@@ -375,7 +603,11 @@
 				"tags": [
 					"FieldController"
 				],
-				"security": [],
+				"security": [
+					{
+						"bearer": []
+					}
+				],
 				"parameters": [],
 				"requestBody": {
 					"required": true,
@@ -389,25 +621,7 @@
 				}
 			}
 		},
-		"/api/v1/fieldvalues": {
-			"get": {
-				"operationId": "GetAllFieldValues",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {}
-							}
-						}
-					}
-				},
-				"tags": [
-					"FieldValueController"
-				],
-				"security": [],
-				"parameters": []
-			},
+		"/api/v1/fieldValues": {
 			"post": {
 				"operationId": "CreateFieldValue",
 				"responses": {
@@ -415,22 +629,29 @@
 						"description": "Ok",
 						"content": {
 							"application/json": {
-								"schema": {}
+								"schema": {
+									"$ref": "#/components/schemas/IFieldValueModel"
+								}
 							}
 						}
 					}
 				},
+				"description": "Adds a field value to one of the caller's vaults. Field values are read\nthrough their vault (GET /vaults/{id}).",
 				"tags": [
 					"FieldValueController"
 				],
-				"security": [],
+				"security": [
+					{
+						"bearer": []
+					}
+				],
 				"parameters": [],
 				"requestBody": {
 					"required": true,
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/IFieldValueModel"
+								"$ref": "#/components/schemas/FieldValueInput"
 							}
 						}
 					}
@@ -452,10 +673,15 @@
 						}
 					}
 				},
+				"description": "Notes of the authenticated user, newest first.",
 				"tags": [
 					"NoteController"
 				],
-				"security": [],
+				"security": [
+					{
+						"bearer": []
+					}
+				],
 				"parameters": [
 					{
 						"in": "query",
@@ -494,14 +720,18 @@
 				"tags": [
 					"NoteController"
 				],
-				"security": [],
+				"security": [
+					{
+						"bearer": []
+					}
+				],
 				"parameters": [],
 				"requestBody": {
 					"required": true,
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/INoteModel"
+								"$ref": "#/components/schemas/NoteInput"
 							}
 						}
 					}
@@ -509,14 +739,16 @@
 			}
 		},
 		"/api/v1/notes/{id}": {
-			"delete": {
-				"operationId": "DeleteNoteById",
+			"get": {
+				"operationId": "GetNoteById",
 				"responses": {
 					"200": {
 						"description": "Ok",
 						"content": {
 							"application/json": {
-								"schema": {}
+								"schema": {
+									"$ref": "#/components/schemas/INoteModel"
+								}
 							}
 						}
 					}
@@ -524,7 +756,11 @@
 				"tags": [
 					"NoteController"
 				],
-				"security": [],
+				"security": [
+					{
+						"bearer": []
+					}
+				],
 				"parameters": [
 					{
 						"in": "path",
@@ -553,7 +789,11 @@
 				"tags": [
 					"NoteController"
 				],
-				"security": [],
+				"security": [
+					{
+						"bearer": []
+					}
+				],
 				"parameters": [
 					{
 						"in": "path",
@@ -569,40 +809,31 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/INoteModel"
+								"$ref": "#/components/schemas/NoteUpdateInput"
 							}
 						}
 					}
 				}
-			}
-		},
-		"/api/v1/notes/user/{userId}": {
-			"get": {
-				"operationId": "GetNotesByUser",
+			},
+			"delete": {
+				"operationId": "DeleteNoteById",
 				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"items": {
-										"$ref": "#/components/schemas/INoteModel"
-									},
-									"type": "array",
-									"nullable": true
-								}
-							}
-						}
+					"204": {
+						"description": "No content"
 					}
 				},
 				"tags": [
 					"NoteController"
 				],
-				"security": [],
+				"security": [
+					{
+						"bearer": []
+					}
+				],
 				"parameters": [
 					{
 						"in": "path",
-						"name": "userId",
+						"name": "id",
 						"required": true,
 						"schema": {
 							"type": "string"
@@ -611,55 +842,31 @@
 				]
 			}
 		},
-		"/api/v1/users": {
+		"/api/v1/users/me": {
 			"get": {
-				"operationId": "GetUsers",
+				"operationId": "GetMe",
 				"responses": {
 					"200": {
-						"description": "Success",
+						"description": "Ok",
 						"content": {
 							"application/json": {
-								"schema": {},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"users": [],
-											"totalPages": 1,
-											"currentPage": 1
-										}
-									}
+								"schema": {
+									"$ref": "#/components/schemas/IUserResponseModel"
 								}
 							}
 						}
 					}
 				},
-				"description": "Tsoa documentation for this endpoint with optional page and limit query params",
+				"description": "Profile of the authenticated user (never includes the password hash).",
 				"tags": [
 					"UserController"
 				],
-				"security": [],
-				"parameters": [
+				"security": [
 					{
-						"description": "- The page number",
-						"in": "query",
-						"name": "page",
-						"required": true,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					},
-					{
-						"description": "- The limit per page",
-						"in": "query",
-						"name": "limit",
-						"required": true,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
+						"bearer": []
 					}
-				]
+				],
+				"parameters": []
 			}
 		},
 		"/api/v1/vaults": {
@@ -667,7 +874,7 @@
 				"operationId": "GetAllVaults",
 				"responses": {
 					"200": {
-						"description": "A group of vaults",
+						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {
@@ -677,13 +884,18 @@
 						}
 					}
 				},
-				"description": "Endpoint to retrieve all vaults paginated",
+				"description": "Vaults of the authenticated user, newest first.",
 				"tags": [
 					"VaultController"
 				],
-				"security": [],
+				"security": [
+					{
+						"bearer": []
+					}
+				],
 				"parameters": [
 					{
+						"description": "Page number, starting at 1",
 						"in": "query",
 						"name": "page",
 						"required": true,
@@ -693,7 +905,7 @@
 						}
 					},
 					{
-						"description": "per page to show vaults",
+						"description": "Vaults per page (max 50)",
 						"in": "query",
 						"name": "limit",
 						"required": true,
@@ -711,7 +923,9 @@
 						"description": "Ok",
 						"content": {
 							"application/json": {
-								"schema": {}
+								"schema": {
+									"$ref": "#/components/schemas/IVaultModel"
+								}
 							}
 						}
 					}
@@ -719,18 +933,127 @@
 				"tags": [
 					"VaultController"
 				],
-				"security": [],
+				"security": [
+					{
+						"bearer": []
+					}
+				],
 				"parameters": [],
 				"requestBody": {
 					"required": true,
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/IVaultModel"
+								"$ref": "#/components/schemas/VaultInput"
 							}
 						}
 					}
 				}
+			}
+		},
+		"/api/v1/vaults/{id}": {
+			"get": {
+				"operationId": "GetVaultById",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IVaultModel"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"VaultController"
+				],
+				"security": [
+					{
+						"bearer": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"put": {
+				"operationId": "UpdateVault",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IVaultModel"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"VaultController"
+				],
+				"security": [
+					{
+						"bearer": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/VaultUpdateInput"
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"operationId": "DeleteVault",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"description": "Deletes the vault and all its field values.",
+				"tags": [
+					"VaultController"
+				],
+				"security": [
+					{
+						"bearer": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
 			}
 		}
 	},
