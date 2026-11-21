@@ -11,7 +11,6 @@ const authHandler = new AuthHandler();
 authRouter.post('/register', authHandler.registerHandler);
 
 authRouter.post('/login', authHandler.loginHandler);
-authRouter.get('/user', authHandler.getauthUserDataHandler);
 authRouter.use('/oauth', oauthRouter);
 
 export default authRouter;

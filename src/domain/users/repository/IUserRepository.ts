@@ -9,7 +9,5 @@ export interface IUserRepository {
   countDocuments(): Promise<number>;
   getUserById(_id: string): Promise<IUserModel | null>;
   getUserByEmail(email: string): Promise<IUserResponseModel | null>;
-  getAllUsers(): Promise<IUserModel[]>;
   getFilteredUserData(_id: string): Promise<IUserResponseModel | null>
-  getUsersPaginated(page: number, limit: number): Promise<IUserResponseModel[]>;
 };

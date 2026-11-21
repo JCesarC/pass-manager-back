@@ -26,6 +26,22 @@ describe('authorization between users', () => {
   afterEach(clearTestDb);
   afterAll(disconnectTestDb);
 
+  describe('users', () => {
+    it('only exposes the caller\'s own profile', async () => {
+      const response = await request(app).get(`${API}/users/me`).set('Authorization', bob.authHeader);
+
+      expect(response.status).toBe(200);
+      expect(response.body.user._id).toBe(bob.id);
+      expect(response.body.user.password).toBeUndefined();
+    });
+
+    it('does not offer a user listing', async () => {
+      const response = await request(app).get(`${API}/users`).set('Authorization', bob.authHeader);
+
+      expect(response.status).toBe(404);
+    });
+  });
+
   describe('notes', () => {
     let aliceNoteId: string;
 

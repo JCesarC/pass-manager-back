@@ -16,8 +16,7 @@ describe('authentication', () => {
   afterAll(disconnectTestDb);
 
   it.each([
-    ['GET', '/users'],
-    ['GET', '/auth/user'],
+    ['GET', '/users/me'],
     ['GET', '/vaults'],
     ['POST', '/vaults'],
     ['GET', '/notes'],
@@ -47,7 +46,7 @@ describe('authentication', () => {
   it('accepts a valid Bearer token', async () => {
     const user = await createAuthenticatedUser(app);
 
-    const response = await request(app).get(`${API}/auth/user`).set('Authorization', user.authHeader);
+    const response = await request(app).get(`${API}/users/me`).set('Authorization', user.authHeader);
 
     expect(response.status).toBe(200);
     expect(response.body.user.email).toBe(user.email);
@@ -71,7 +70,7 @@ describe('authentication', () => {
       ['an unsigned token (alg: none)', () => `Bearer ${jwt.sign({}, '', { ...claims, subject: userId, algorithm: 'none' })}`],
       ['a token without subject', () => `Bearer ${jwt.sign({}, SECRET, claims)}`],
     ])('%s', async (_case, header) => {
-      const response = await request(app).get(`${API}/auth/user`).set('Authorization', header());
+      const response = await request(app).get(`${API}/users/me`).set('Authorization', header());
 
       expect(response.status).toBe(401);
       expect(response.body.error.code).toBe('UNAUTHORIZED');

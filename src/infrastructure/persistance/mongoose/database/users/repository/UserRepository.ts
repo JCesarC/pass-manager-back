@@ -41,20 +41,7 @@ export class UserRepository implements IUserRepository{
     return await UserModel.findOne({ email });
   }
 
-  async getAllUsers(): Promise<IUserModel[]> {
-    const users = await UserModel.find({}, { __v: 0, password: 0 }).exec();
-    return users;
-  }
-
   async getFilteredUserData(_id: string): Promise<IUserResponseModel | null>{
     return await UserModel.findById(_id, { __v: 0, password: 0 });
-  }
-
-  async getUsersPaginated(page: number, limit: number): Promise<IUserResponseModel[]> {
-    return await UserModel
-      .find({}, { __v: 0, password: 0 })
-      .limit(limit)
-      .skip((page - 1) * limit)
-      .exec();
   }
 }

@@ -8,7 +8,6 @@ import { IUserRepository } from '../../../../../../domain/users/repository/IUser
 import { LoginUserUseCase, RegisterUserUseCase } from '../../../../../../application/auth/UseCases';
 import {
   CreateUserUseCase,
-  GetFilteredUserDataUseCase,
   GetUserByEmailUseCase,
 } from '../../../../../../application/users/UseCases';
 import { AuthService } from '../../../../../../application/auth/services/AuthService';
@@ -86,15 +85,6 @@ export class AuthController implements IAuthController {
 
   logoutUser(): Promise<unknown> {
     throw new Error('Method not implemented.');
-  }
-
-  async getAuthenticatedUserData(id: string) {
-    const getFilteredUserDataUseCase = new GetFilteredUserDataUseCase(this.userRepository);
-
-    const existingUser = await getFilteredUserDataUseCase.execute(id);
-
-    if (!existingUser) throw new NotFoundError('User');
-    return existingUser;
   }
 
 }
