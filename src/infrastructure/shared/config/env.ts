@@ -1,5 +1,10 @@
-import 'dotenv/config';
+import dotenv from 'dotenv';
 import Joi from 'joi';
+
+// Tests configure the environment themselves and must not pick up a developer's .env.
+if (process.env.NODE_ENV !== 'test') {
+  dotenv.config();
+}
 
 /**
  * Single source of truth for runtime configuration.
