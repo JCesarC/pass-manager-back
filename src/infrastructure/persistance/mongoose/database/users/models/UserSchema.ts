@@ -58,4 +58,4 @@ const userSchema: Schema = new Schema<IUserModel>(
   },
 );
 
-export default mongoose.model<IUserModel>('Users', userSchema);
+export default mongoose.model<IUserModel>('User', userSchema);
