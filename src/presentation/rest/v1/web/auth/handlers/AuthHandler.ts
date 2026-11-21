@@ -1,6 +1,7 @@
 import { iocContainer } from '../../../../../../ioc';
 import { TYPES } from '../../../../../../domain/types';
 import { IRefreshTokenRepository } from '../../../../../../domain/auth/repository/IRefreshTokenRepository';
+import { IOAuthCodeRepository } from '../../../../../../domain/auth/repository/IOAuthCodeRepository';
 import { UserRepository } from '../../../../../../infrastructure/persistance/mongoose/database/users/repository/UserRepository';
 
 import { AuthController } from '../controller/AuthController';
@@ -11,6 +12,7 @@ const buildController = () =>
   new AuthController(
     new UserRepository(),
     iocContainer.get<IRefreshTokenRepository>(TYPES.IRefreshTokenRepository),
+    iocContainer.get<IOAuthCodeRepository>(TYPES.IOAuthCodeRepository),
   );
 
 export class AuthHandler {
@@ -36,6 +38,12 @@ export class AuthHandler {
       clearRefreshTokenCookie(res);
       throw error;
     }
+  });
+
+  public oauthExchangeHandler = asyncHandler(async (req, res) => {
+    const { refreshToken, ...session } = await buildController().exchangeOAuthCode(req.body);
+    setRefreshTokenCookie(res, refreshToken.token, refreshToken.expiresAt);
+    res.status(200).json(session);
   });
 
   public logoutHandler = asyncHandler(async (req, res) => {

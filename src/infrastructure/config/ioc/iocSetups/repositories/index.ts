@@ -4,3 +4,4 @@ export * from './FieldValueRepositorySetup';
 export * from './NoteRepositorySetup';
 export * from './VaultRepositorySetup';
 export * from './RefreshTokenRepositorySetup';
+export * from './OAuthCodeRepositorySetup';

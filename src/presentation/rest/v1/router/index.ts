@@ -17,6 +17,7 @@ export const PUBLIC_ROUTES: PublicRoute[] = [
   { method: 'POST', path: '/auth/refresh' },
   { method: 'POST', path: '/auth/logout' },
   { method: 'GET', path: '/auth/oauth/*' },
+  { method: 'POST', path: '/auth/oauth/exchange' },
 ];
 
 const v1Router = express.Router();

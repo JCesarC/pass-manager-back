@@ -1,7 +1,6 @@
 import { GetFilteredUserDataUseCase, GetUserByEmailUseCase } from '../../users/UseCases';
 import { AuthService } from '../services/AuthService';
-import { TokenService } from '../services/TokenService';
-import { RefreshTokenService } from '../services/RefreshTokenService';
+import { SessionService } from '../services/SessionService';
 
 import { IAuthCredentials } from '../../../domain/auth/interfaces';
 import { IRefreshTokenRepository } from '../../../domain/auth/repository/IRefreshTokenRepository';
@@ -14,7 +13,6 @@ import { logger } from '../../../infrastructure/shared/logger';
 
 export class LoginUserUseCase {
   private readonly authService = new AuthService();
-  private readonly tokenService = new TokenService();
 
   constructor(
     private readonly userRepository: IUserRepository,
@@ -59,12 +57,10 @@ export class LoginUserUseCase {
 
     await this.userRepository.resetFailedLogins(userId);
     const userData = await getFilteredUserDataUseCase.execute(userId);
-    const refreshToken = await new RefreshTokenService(this.refreshTokenRepository).issue(userId);
 
     return {
       user: userData,
-      ...this.tokenService.issueAccessToken(userId),
-      refreshToken,
+      ...(await new SessionService(this.refreshTokenRepository).start(userId)),
     };
   }
 }

@@ -1,20 +1,26 @@
-import { Request, Response } from 'express';
 import passport from 'passport';
 
 import { iocContainer } from '../../../../../../ioc';
 import { TYPES } from '../../../../../../domain/types';
-import { IRefreshTokenRepository } from '../../../../../../domain/auth/repository/IRefreshTokenRepository';
-import { UserRepository } from '../../../../../../infrastructure/persistance/mongoose/database/users/repository/UserRepository';
-import { IGoogleProfile } from '../../../../../../domain/auth/models/IGoogleProfileModel';
+import { IOAuthCodeRepository } from '../../../../../../domain/auth/repository/IOAuthCodeRepository';
+import { OAuthCodeService } from '../../../../../../application/auth/services/OAuthCodeService';
 import { UnauthorizedError } from '../../../../../../application/shared';
+import { env } from '../../../../../../infrastructure/shared/config';
+import { GoogleSignInResult } from '../../../../../../infrastructure/authentication/passport/passportConfig';
 import { asyncHandler } from '../../../../shared';
 
-import { AuthController } from '../controller/AuthController';
+/** Where the front end receives the result of a social sign-in. */
+const frontendCallbackUrl = (params: Record<string, string>) => {
+  const url = new URL('/auth/callback', env.FRONTEND_URL);
+  Object.entries(params).forEach(([key, value]) => url.searchParams.set(key, value));
+  return url.toString();
+};
 
 export class OAuthHandler {
 
   public googleAuthenticationHandler = passport.authenticate('google', {
     scope: ['email', 'profile'],
+    session: false,
   });
 
   public googleCallbackHandler = passport.authenticate('google', {
@@ -22,24 +28,23 @@ export class OAuthHandler {
     session: false,
   });
 
+  /**
+   * Redirects to the front end with a single-use code instead of a token, so
+   * no credential ends up in the browser history, logs or Referer headers.
+   */
   public googleSuccessCallbackHandler = asyncHandler(async (req, res) => {
-    const authController = new AuthController(
-      new UserRepository(),
-      iocContainer.get<IRefreshTokenRepository>(TYPES.IRefreshTokenRepository),
-    );
-    const profile = req.user as IGoogleProfile;
+    const result = req.user as GoogleSignInResult | undefined;
+    if (!result?.userId) throw new UnauthorizedError('Google sign-in failed.');
 
-    const token = await authController.generateAuthToken(profile._json.email);
+    const code = await new OAuthCodeService(
+      iocContainer.get<IOAuthCodeRepository>(TYPES.IOAuthCodeRepository),
+    ).issue(result.userId);
 
-    res.redirect(`http://localhost:3000/auth/login?token=${token}`);
+    res.redirect(frontendCallbackUrl({ code }));
   });
 
-  public googleFailureHandler(_req: Request, _res: Response) {
-    throw new UnauthorizedError('Google sign-in failed.');
-  }
-
-  public googleLogoutHandler(_req: Request, res: Response) {
-    res.redirect('/');
-  }
+  public googleFailureHandler = asyncHandler(async (_req, res) => {
+    res.redirect(frontendCallbackUrl({ error: 'google_sign_in_failed' }));
+  });
 
 }

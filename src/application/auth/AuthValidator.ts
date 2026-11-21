@@ -29,4 +29,8 @@ const loginValidator = Joi.object<IAuthCredentials>({
   password: Joi.string().max(72).required(),
 });
 
-export { loginValidator, registerUserValidator };
+const oauthExchangeValidator = Joi.object<{ code: string }>({
+  code: Joi.string().pattern(/^[\w-]{20,100}$/).required(),
+});
+
+export { loginValidator, oauthExchangeValidator, registerUserValidator };
