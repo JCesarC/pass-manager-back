@@ -8,7 +8,7 @@ import { IFieldValueRepository } from '../../../../../../domain/fieldValues/repo
 import { IVaultRepository } from '../../../../../../domain/vaults/repository/IVaultRepository';
 
 import { CreateFieldValueUseCase } from '../../../../../../application/FieldValues/UseCases';
-import { fieldValueValidator } from '../../../../../../application/FieldValues/FieldValueValidator';
+import { FieldValueInput, fieldValueValidator } from '../../../../../../application/FieldValues/FieldValueValidator';
 import { validate } from '../../../../../../application/shared';
 
 @Route('/api/v1/fieldValues')
@@ -28,10 +28,10 @@ export class FieldValueController {
    */
   @Post('/')
   async createFieldValue(
-    @Body() fieldValueData: IFieldValueModel,
+    @Body() fieldValueData: FieldValueInput,
     @Inject() ownerId: string,
   ): Promise<IFieldValueModel> {
-    const fieldValue = validate(fieldValueValidator, fieldValueData) as IFieldValueModel;
+    const fieldValue = validate(fieldValueValidator, fieldValueData);
     return new CreateFieldValueUseCase(
       this.fieldValueRepository,
       this.vaultRepository,

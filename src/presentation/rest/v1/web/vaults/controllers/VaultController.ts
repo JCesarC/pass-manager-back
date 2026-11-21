@@ -15,7 +15,7 @@ import {
   GetVaultByIdUseCase,
   UpdateVaultUseCase,
 } from '../../../../../../application/vaults/UseCases';
-import { vaultUpdateValidator, vaultValidator } from '../../../../../../application/vaults/VaultValidator';
+import { VaultInput, VaultUpdateInput, vaultUpdateValidator, vaultValidator } from '../../../../../../application/vaults/VaultValidator';
 import { validate } from '../../../../../../application/shared';
 
 /** Every operation is scoped to the authenticated user (ownerId comes from the access token). */
@@ -49,7 +49,7 @@ export class VaultController {
   }
 
   @Post('/')
-  async createVault(@Body() vaultData: Partial<IVaultModel>, @Inject() ownerId: string): Promise<IVaultModel> {
+  async createVault(@Body() vaultData: VaultInput, @Inject() ownerId: string): Promise<IVaultModel> {
     const vault = validate(vaultValidator, vaultData);
     return new CreateVaultUseCase(this.vaultRepository).exec(ownerId, vault);
   }
@@ -57,7 +57,7 @@ export class VaultController {
   @Put('/{id}')
   async updateVault(
     @Path() id: string,
-    @Body() vaultData: Partial<IVaultModel>,
+    @Body() vaultData: VaultUpdateInput,
     @Inject() ownerId: string,
   ): Promise<IVaultModel> {
     const changes = validate(vaultUpdateValidator, vaultData);

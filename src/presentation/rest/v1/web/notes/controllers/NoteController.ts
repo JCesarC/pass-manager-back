@@ -14,7 +14,7 @@ import {
   UpdateNoteByIdUseCase,
 } from '../../../../../../application/notes/UseCases';
 import { validate } from '../../../../../../application/shared';
-import { noteUpdateValidator, noteValidator } from '../../../../../../application/notes/NoteValidator';
+import { NoteInput, NoteUpdateInput, noteUpdateValidator, noteValidator } from '../../../../../../application/notes/NoteValidator';
 
 /**
  * Every operation is scoped to the authenticated user (ownerId comes from
@@ -43,7 +43,7 @@ export class NoteController implements INoteController {
   }
 
   @Post('/')
-  async createNote(@Body() noteData: Partial<INoteModel>, @Inject() ownerId: string): Promise<INoteModel> {
+  async createNote(@Body() noteData: NoteInput, @Inject() ownerId: string): Promise<INoteModel> {
     const note = validate(noteValidator, noteData);
     return new CreateNoteUseCase(this.noteRepository).exec(ownerId, note);
   }
@@ -51,7 +51,7 @@ export class NoteController implements INoteController {
   @Put('/{id}')
   async updateNoteById(
     @Path() id: string,
-    @Body() noteData: Partial<INoteModel>,
+    @Body() noteData: NoteUpdateInput,
     @Inject() ownerId: string,
   ): Promise<INoteModel> {
     const changes = validate(noteUpdateValidator, noteData);

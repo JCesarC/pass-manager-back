@@ -1,6 +1,26 @@
 import Joi from 'joi';
 
-import { IVaultModel } from '../../domain/vaults/interfaces';
+/** Request body to create a vault. The owner is always the authenticated user. */
+export interface VaultInput {
+  name: string;
+  data: string;
+  dataFieldType: string;
+  isFavorite?: boolean;
+  tags?: string[];
+  isArchived?: boolean;
+  expirationDate?: Date | null;
+}
+
+/** Request body to update a vault: any subset of the editable fields. */
+export interface VaultUpdateInput {
+  name?: string;
+  data?: string;
+  dataFieldType?: string;
+  isFavorite?: boolean;
+  tags?: string[];
+  isArchived?: boolean;
+  expirationDate?: Date | null;
+}
 
 const vaultFields = {
   name: Joi.string().trim().min(1).max(100),
@@ -18,13 +38,13 @@ const vaultFields = {
  * extraFields would let a client reference (and, through autopopulate,
  * read) another user's field values.
  */
-const vaultValidator = Joi.object<Partial<IVaultModel>>({
+const vaultValidator = Joi.object<VaultInput>({
   ...vaultFields,
   name: vaultFields.name.required(),
   data: vaultFields.data.required(),
   dataFieldType: vaultFields.dataFieldType.required(),
 });
 
-const vaultUpdateValidator = Joi.object<Partial<IVaultModel>>(vaultFields).min(1);
+const vaultUpdateValidator = Joi.object<VaultUpdateInput>(vaultFields).min(1);
 
 export { vaultUpdateValidator, vaultValidator };
