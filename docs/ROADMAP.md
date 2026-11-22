@@ -78,10 +78,10 @@ Found and fixed during M0 (not in the original audit): `IModule` extended the DO
 - [x] **SEC-10** Validate **every** body and param (including `ObjectId`s and pagination with a maximum `limit`).
 - [x] **SEC-11** Uploads disabled until M2. If they come back: private, signed URLs, type/size limits, encrypted on the client. *(Removed entirely, with their dependencies.)*
 - [x] **SEC-12** Mass assignment on registration: the user validator accepts `roles`, `active`, `verified` and `provider` from the client. Registration must only accept profile fields and credentials.
-- [ ] **SEC-13** `POST /fields` lets any authenticated user add entries to the global field catalog. Make fields per-user or admin-only (decide together with ZK-06).
-- [ ] **SEC-14** If the front end is deployed on another site (`COOKIE_SAME_SITE=none`), add CSRF protection to `/auth/refresh` and `/auth/logout` (e.g. a required custom header or a double-submit token).
-- [ ] **SEC-15** Rate limits use an in-memory store: switch to a shared store (e.g. Redis) before running more than one API instance.
-- [ ] **FE-01** `[FRONT]` Adopt the M1 API contract: `Authorization: Bearer`, `POST /auth/refresh` with `credentials: 'include'`, `GET /users/me`, the `{ error: { code, message } }` format and the `/auth/callback?code=` Google flow.
+- [x] **SEC-13** `POST /fields` let any authenticated user add entries to the global field catalog. *(The catalog is now read-only and seeded by the server; per-user custom fields will live encrypted inside vault items, see ZK-06.)*
+- [x] **SEC-14** CSRF protection for the cookie-based auth endpoints. *(The front end will be served by the API itself, so SameSite=Strict applies; as defense in depth, unsafe `/auth/*` requests must come from the API's own origin or a configured origin.)*
+- [ ] **SEC-15** Rate limits use an in-memory store. *(Decision: keep it while the API runs as a single instance. Introduce Redis only when scaling horizontally, together with the other shared-state needs listed in OPS-01.)*
+- [ ] **FE-01** `[FRONT]` Adopt the M1 API contract: `Authorization: Bearer`, `POST /auth/refresh` with `credentials: 'include'`, `GET /users/me`, the `{ error: { code, message } }` format and the `/auth/callback?code=` Google flow. The front end is served by the API (same origin), so it calls relative `/api/v1` URLs and uses a Vite dev proxy locally.
 
 ---
 
@@ -130,11 +130,17 @@ Found and fixed during M0 (not in the original audit): `IModule` extended the DO
 **DoD:** a recruiter can open a public URL, use a demo account and understand the project by reading only the README.
 
 - [ ] **DEMO-01** Deploy the API (Render / Fly.io / Railway) + MongoDB Atlas free tier.
-- [ ] **DEMO-02** `[FRONT]` Deploy the front end (Vercel / Netlify) over HTTPS.
+- [ ] **DEMO-02** `[BOTH]` Serve the front-end build from the API (static files + SPA fallback outside `/api`), build it into the Docker image, and set the CSP accordingly. One origin over HTTPS: no CORS, SameSite=Strict cookies.
 - [ ] **DEMO-03** Demo account with fake data that is reset periodically.
 - [ ] **DEMO-04** Final README: CI badges, demo GIF, diagram, "Security model" section, technical decisions, lessons learned.
 - [ ] **DEMO-05** `/health` endpoint (liveness + database connectivity).
 - [ ] **DEMO-06** `v2.0.0` release + `CHANGELOG.md` telling the evolution since v1.
+
+---
+
+## Operations (when needed)
+
+- [ ] **OPS-01** Redis as shared state once the API runs more than one instance: rate-limit store (SEC-15), an access-token denylist for instant revocation, background jobs (e.g. BullMQ for emails and exports) and pub/sub for real-time multi-device sync. Refresh tokens, OAuth codes and lockout counters stay in MongoDB (TTL indexes) unless profiling says otherwise.
 
 ---
 
