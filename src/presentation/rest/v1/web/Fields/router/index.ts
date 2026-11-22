@@ -7,6 +7,5 @@ const fieldRouter = express.Router();
 const fieldHandler = new FieldHandler();
 
 fieldRouter.get('/', fieldHandler.getAllFields);
-fieldRouter.post('/', fieldHandler.createField);
 
 export default fieldRouter;

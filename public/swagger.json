@@ -263,22 +263,6 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"FieldInput": {
-				"properties": {
-					"name": {
-						"type": "string"
-					},
-					"type": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"name",
-					"type"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
 			"FieldValue": {
 				"properties": {
 					"_id": {
@@ -1200,7 +1184,7 @@
 						}
 					}
 				},
-				"summary": "List the field definitions catalog",
+				"summary": "List the field definitions catalog (read-only, defined by the server)",
 				"tags": [
 					"Fields"
 				],
@@ -1210,87 +1194,6 @@
 					}
 				],
 				"parameters": []
-			},
-			"post": {
-				"operationId": "createField",
-				"responses": {
-					"201": {
-						"description": "Field created",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/Field"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "Invalid body",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponseBody"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"error": {
-												"code": "VALIDATION_ERROR",
-												"message": "The request is invalid.",
-												"details": [
-													{
-														"path": "name",
-														"message": "\"name\" is required"
-													}
-												]
-											}
-										}
-									}
-								}
-							}
-						}
-					},
-					"401": {
-						"description": "Missing, invalid or expired access token",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponseBody"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"error": {
-												"code": "UNAUTHORIZED",
-												"message": "Authentication is required."
-											}
-										}
-									}
-								}
-							}
-						}
-					}
-				},
-				"summary": "Add a field definition to the catalog",
-				"tags": [
-					"Fields"
-				],
-				"security": [
-					{
-						"bearer": []
-					}
-				],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/FieldInput"
-							}
-						}
-					}
-				}
 			}
 		},
 		"/api/v1/fieldValues": {

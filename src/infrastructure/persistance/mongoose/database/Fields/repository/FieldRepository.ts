@@ -11,4 +11,12 @@ export class FieldRepository extends BaseRepository<IFieldModel> implements IFie
     super(model);
   }
 
+  async upsertByName(name: string, typeId: string): Promise<IFieldModel> {
+    const document = await this.model.findOneAndUpdate(
+      { name },
+      { $setOnInsert: { name, type: typeId } },
+      { upsert: true, new: true },
+    );
+    return document as IFieldModel;
+  }
 }

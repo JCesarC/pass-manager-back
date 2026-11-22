@@ -13,9 +13,4 @@ export class FieldHandler {
     const response = await buildController().getAllFields();
     res.status(200).json(response);
   });
-
-  createField = asyncHandler(async (req, res) => {
-    const response = await buildController().createField(req.body);
-    res.status(201).json(response);
-  });
 }

@@ -8,4 +8,5 @@ export interface IFieldRepository {
   update(id: string, fieldData: IFieldModel): Promise<IFieldModel | null>;
   query(query: Record<string, unknown>): Promise<IFieldModel[]>;
   queryOne(query: Record<string, unknown>): Promise<IFieldModel | null>;
+  upsertByName(name: string, typeId: string): Promise<IFieldModel>;
 }

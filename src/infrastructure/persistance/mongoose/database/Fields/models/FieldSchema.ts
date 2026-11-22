@@ -7,6 +7,7 @@ const FieldSchema = new Schema<IFieldModel>({
   name: {
     type: Schema.Types.String,
     required: true,
+    unique: true,
   },
   type: {
     type: Schema.Types.ObjectId,

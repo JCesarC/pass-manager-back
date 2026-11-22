@@ -1,15 +1,12 @@
 import { inject, injectable } from 'inversify';
-import { Body, Example, Get, OperationId, Post, Response, Route, Security, SuccessResponse, Tags } from 'tsoa';
+import { Example, Get, OperationId, Response, Route, Security, Tags } from 'tsoa';
 
 import { TYPES } from '../../../../../../domain/types';
 import { IFieldRepository } from '../../../../../../domain/fields/repository';
-import { IFieldModel } from '../../../../../../domain/fields/interfaces';
 
-import { CreateFieldUseCase, GetAllFieldsUseCase } from '../../../../../../application/Fields/Usecases';
-import { fieldValidator } from '../../../../../../application/Fields/FieldValidator';
-import { validate } from '../../../../../../application/shared';
+import { GetAllFieldsUseCase } from '../../../../../../application/Fields/Usecases';
 
-import { ErrorResponseBody, Field, FieldInput, presentField } from '../../../contracts';
+import { ErrorResponseBody, Field, presentField } from '../../../contracts';
 
 @Route('/api/v1/fields')
 @Tags('Fields')
@@ -22,7 +19,7 @@ export class FieldController {
   constructor(@inject(TYPES.IFieldRepository) private readonly fieldRepository: IFieldRepository) {}
 
   /**
-   * @summary List the field definitions catalog
+   * @summary List the field definitions catalog (read-only, defined by the server)
    */
   @Get('/')
   @OperationId('listFields')
@@ -30,23 +27,5 @@ export class FieldController {
   async getAllFields(): Promise<Field[]> {
     const fields = await new GetAllFieldsUseCase(this.fieldRepository).exec();
     return (fields ?? []).map(presentField);
-  }
-
-  /**
-   * @summary Add a field definition to the catalog
-   */
-  @Post('/')
-  @OperationId('createField')
-  @SuccessResponse(201, 'Field created')
-  @Response<ErrorResponseBody>(400, 'Invalid body', {
-    error: {
-      code: 'VALIDATION_ERROR',
-      message: 'The request is invalid.',
-      details: [{ path: 'name', message: '"name" is required' }],
-    },
-  })
-  async createField(@Body() fieldData: FieldInput): Promise<Field> {
-    const field = validate(fieldValidator, fieldData) as unknown as IFieldModel;
-    return presentField(await new CreateFieldUseCase(this.fieldRepository).exec(field));
   }
 }

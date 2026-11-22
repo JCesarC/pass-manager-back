@@ -7,11 +7,6 @@ export interface Field {
   type: string;
 }
 
-export interface FieldInput {
-  name: string;
-  type: string;
-}
-
 export interface FieldValue {
   _id: string;
   field: Field | string;

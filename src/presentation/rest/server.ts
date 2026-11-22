@@ -5,6 +5,10 @@ import { createApp } from './app';
 import { env } from '../../infrastructure/shared/config';
 import { logger } from '../../infrastructure/shared/logger';
 
+import { iocContainer } from '../../ioc';
+import { TYPES } from '../../domain/types';
+import { IFieldRepository, IFieldTypeRepository } from '../../domain/fields/repository';
+import { SeedFieldCatalogUseCase } from '../../application/Fields/Usecases';
 import { closeDBConnection, forceCloseDBConnection, startDBConnection } from '../../infrastructure/persistance/mongoose/connection';
 
 class Server {
@@ -12,6 +16,10 @@ class Server {
 
   private async startServer(): Promise<void> {
     await startDBConnection();
+    await new SeedFieldCatalogUseCase(
+      iocContainer.get<IFieldTypeRepository>(TYPES.IFieldTypeRepository),
+      iocContainer.get<IFieldRepository>(TYPES.IFieldRepository),
+    ).exec();
     this.httpServer = http.createServer(createApp());
     this.httpServer.listen(env.PORT, () => {
       logger.info(

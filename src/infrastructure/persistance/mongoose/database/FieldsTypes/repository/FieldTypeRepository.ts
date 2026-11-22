@@ -12,4 +12,12 @@ export class FieldTypeRepository extends BaseRepository<IFieldTypeModel> impleme
     super(model);
   }
 
+  async upsertByName(name: string): Promise<IFieldTypeModel> {
+    const document = await this.model.findOneAndUpdate(
+      { name },
+      { $setOnInsert: { name } },
+      { upsert: true, new: true },
+    );
+    return document as IFieldTypeModel;
+  }
 }
