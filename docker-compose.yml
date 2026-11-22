@@ -1,6 +1,8 @@
 services:
   mongo:
     image: mongo:7
+    command: ['--quiet']
+    attach: false
     restart: unless-stopped
     volumes:
       - mongo-data:/data/db
