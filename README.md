@@ -122,6 +122,8 @@ src/
 - **Google sign-in:** the API redirects to the front end with a 60-second,
   single-use code (never a token), exchanged via `POST /auth/oauth/exchange`.
   Only verified Google emails are accepted.
+- **Cross-site requests:** unsafe requests to `/auth/*` (where the refresh
+  cookie is used) must come from the API's own origin or a configured origin.
 - **Hardening:** strict input validation (unknown fields rejected), 100 kb
   JSON limit, CORS allowlist, helmet headers, one error format
   (`{ error: { code, message, details? } }`) without internal details, and
@@ -144,7 +146,7 @@ Swagger UI at `/api/docs` (use **Authorize** with an access token).
 | `GET, POST /vaults` · `GET, PUT, DELETE /vaults/:id` | Vaults of the authenticated user |
 | `POST /fieldValues` | Add a field value to one of your vaults |
 | `GET, POST /notes` · `GET, PUT, DELETE /notes/:id` | Notes of the authenticated user |
-| `GET, POST /fields` | Field definitions catalog |
+| `GET /fields` | Field definitions catalog (read-only, seeded by the server) |
 
 ## Tests
 
