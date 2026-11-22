@@ -38,6 +38,9 @@ const toProfile = (user: IUserResponseModel | null) => {
 
 @Route('/api/v1/auth')
 @Tags('Auth')
+@Response<ErrorResponseBody>(403, 'Request sent from an untrusted origin (cross-site request)', {
+  error: { code: 'FORBIDDEN', message: 'Cross-site requests are not allowed.' },
+})
 @Response<ErrorResponseBody>(429, 'Too many requests from this IP', {
   error: { code: 'RATE_LIMITED', message: 'Too many requests. Please try again later.' },
 })

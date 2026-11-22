@@ -720,6 +720,26 @@
 							}
 						}
 					},
+					"403": {
+						"description": "Request sent from an untrusted origin (cross-site request)",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseBody"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"error": {
+												"code": "FORBIDDEN",
+												"message": "Cross-site requests are not allowed."
+											}
+										}
+									}
+								}
+							}
+						}
+					},
 					"409": {
 						"description": "Email already registered",
 						"content": {
@@ -831,6 +851,26 @@
 							}
 						}
 					},
+					"403": {
+						"description": "Request sent from an untrusted origin (cross-site request)",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseBody"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"error": {
+												"code": "FORBIDDEN",
+												"message": "Cross-site requests are not allowed."
+											}
+										}
+									}
+								}
+							}
+						}
+					},
 					"429": {
 						"description": "Too many requests from this IP",
 						"content": {
@@ -913,6 +953,26 @@
 							}
 						}
 					},
+					"403": {
+						"description": "Request sent from an untrusted origin (cross-site request)",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseBody"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"error": {
+												"code": "FORBIDDEN",
+												"message": "Cross-site requests are not allowed."
+											}
+										}
+									}
+								}
+							}
+						}
+					},
 					"429": {
 						"description": "Too many requests from this IP",
 						"content": {
@@ -976,6 +1036,26 @@
 							}
 						}
 					},
+					"403": {
+						"description": "Request sent from an untrusted origin (cross-site request)",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseBody"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"error": {
+												"code": "FORBIDDEN",
+												"message": "Cross-site requests are not allowed."
+											}
+										}
+									}
+								}
+							}
+						}
+					},
 					"429": {
 						"description": "Too many requests from this IP",
 						"content": {
@@ -1021,6 +1101,26 @@
 				"responses": {
 					"204": {
 						"description": "Session revoked and refresh token cookie cleared"
+					},
+					"403": {
+						"description": "Request sent from an untrusted origin (cross-site request)",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseBody"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"error": {
+												"code": "FORBIDDEN",
+												"message": "Cross-site requests are not allowed."
+											}
+										}
+									}
+								}
+							}
+						}
 					},
 					"429": {
 						"description": "Too many requests from this IP",
