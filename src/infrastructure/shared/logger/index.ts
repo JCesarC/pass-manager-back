@@ -13,11 +13,22 @@ export const REDACTED_PATHS = [
   ]),
 ];
 
+const isInstalled = (moduleName: string) => {
+  try {
+    require.resolve(moduleName);
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+const usePrettyOutput = env.NODE_ENV === 'development' && isInstalled('pino-pretty');
+
 export const logger = pino({
   level: env.LOG_LEVEL,
   base: { service: 'pass-manager-api' },
   redact: { paths: REDACTED_PATHS, censor: '[REDACTED]' },
-  ...(env.NODE_ENV === 'development' && {
+  ...(usePrettyOutput && {
     transport: {
       target: 'pino-pretty',
       options: { colorize: true, translateTime: 'SYS:HH:MM:ss', ignore: 'pid,hostname,service' },

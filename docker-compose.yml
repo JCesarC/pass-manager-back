@@ -1,6 +1,8 @@
 services:
   mongo:
     image: mongo:7
+    command: ['--quiet']
+    attach: false
     restart: unless-stopped
     volumes:
       - mongo-data:/data/db
@@ -20,6 +22,7 @@ services:
       - path: .env
         required: false
     environment:
+      NODE_ENV: production
       MONGODB_URL: mongodb://mongo:27017/pass-manager
       PORT: 3000
       JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET (at least 32 characters) in .env}
