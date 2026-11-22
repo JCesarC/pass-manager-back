@@ -6,8 +6,71 @@
 		"requestBodies": {},
 		"responses": {},
 		"schemas": {
-			"IUserModel": {
+			"ErrorCode": {
+				"type": "string",
+				"enum": [
+					"VALIDATION_ERROR",
+					"INVALID_CREDENTIALS",
+					"UNAUTHORIZED",
+					"FORBIDDEN",
+					"NOT_FOUND",
+					"CONFLICT",
+					"RATE_LIMITED",
+					"PAYLOAD_TOO_LARGE",
+					"INTERNAL_ERROR"
+				]
+			},
+			"ErrorDetail": {
 				"properties": {
+					"path": {
+						"type": "string"
+					},
+					"message": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"path",
+					"message"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ErrorResponseBody": {
+				"properties": {
+					"error": {
+						"properties": {
+							"details": {
+								"items": {
+									"$ref": "#/components/schemas/ErrorDetail"
+								},
+								"type": "array"
+							},
+							"message": {
+								"type": "string"
+							},
+							"code": {
+								"$ref": "#/components/schemas/ErrorCode"
+							}
+						},
+						"required": [
+							"message",
+							"code"
+						],
+						"type": "object"
+					}
+				},
+				"required": [
+					"error"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UserProfile": {
+				"properties": {
+					"_id": {
+						"type": "string"
+					},
 					"email": {
 						"type": "string"
 					},
@@ -17,22 +80,7 @@
 					"lastName": {
 						"type": "string"
 					},
-					"active": {
-						"type": "boolean"
-					},
 					"displayName": {
-						"type": "string"
-					},
-					"password": {
-						"type": "string"
-					},
-					"roles": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array"
-					},
-					"phone": {
 						"type": "string"
 					},
 					"photoURL": {
@@ -41,17 +89,103 @@
 					"provider": {
 						"type": "string"
 					},
+					"roles": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"active": {
+						"type": "boolean"
+					},
 					"verified": {
 						"type": "boolean"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
 					}
 				},
 				"required": [
+					"_id",
 					"email",
 					"firstName",
 					"lastName",
+					"roles",
 					"active",
-					"displayName",
+					"verified"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UserResponse": {
+				"properties": {
+					"user": {
+						"$ref": "#/components/schemas/UserProfile"
+					}
+				},
+				"required": [
+					"user"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"RegisterUserInput": {
+				"properties": {
+					"firstName": {
+						"type": "string"
+					},
+					"lastName": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					},
+					"displayName": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"firstName",
+					"lastName",
+					"email",
 					"password"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SessionResponse": {
+				"properties": {
+					"accessToken": {
+						"type": "string"
+					},
+					"tokenType": {
+						"type": "string",
+						"enum": [
+							"Bearer"
+						],
+						"nullable": false
+					},
+					"expiresIn": {
+						"type": "number",
+						"format": "double"
+					},
+					"user": {
+						"$ref": "#/components/schemas/UserProfile"
+					}
+				},
+				"required": [
+					"accessToken",
+					"tokenType",
+					"expiresIn",
+					"user"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -72,206 +206,455 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"FlattenMaps_T_": {
-				"properties": {},
-				"type": "object"
-			},
-			"IFieldModel": {
-				"$ref": "#/components/schemas/FlattenMaps_T_"
-			},
-			"IFieldValueModel": {
-				"$ref": "#/components/schemas/FlattenMaps_T_"
-			},
-			"INoteModel": {
-				"$ref": "#/components/schemas/FlattenMaps_T_"
-			},
-			"AllNotesResponseType": {
+			"AccessTokenResponse": {
 				"properties": {
-					"currentPage": {
+					"accessToken": {
+						"type": "string"
+					},
+					"tokenType": {
+						"type": "string",
+						"enum": [
+							"Bearer"
+						],
+						"nullable": false
+					},
+					"expiresIn": {
 						"type": "number",
 						"format": "double"
-					},
-					"totalPages": {
-						"type": "number",
-						"format": "double"
-					},
-					"notes": {
-						"items": {
-							"$ref": "#/components/schemas/INoteModel"
-						},
-						"type": "array"
 					}
 				},
 				"required": [
-					"currentPage",
-					"totalPages",
-					"notes"
-				],
-				"type": "object"
-			},
-			"Pick_IUserModel.Exclude_keyofIUserModel.password__": {
-				"properties": {
-					"email": {
-						"type": "string"
-					},
-					"firstName": {
-						"type": "string"
-					},
-					"lastName": {
-						"type": "string"
-					},
-					"active": {
-						"type": "boolean"
-					},
-					"displayName": {
-						"type": "string"
-					},
-					"roles": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array"
-					},
-					"phone": {
-						"type": "string"
-					},
-					"photoURL": {
-						"type": "string"
-					},
-					"provider": {
-						"type": "string"
-					},
-					"verified": {
-						"type": "boolean"
-					}
-				},
-				"required": [
-					"email",
-					"firstName",
-					"lastName",
-					"active",
-					"displayName"
-				],
-				"type": "object",
-				"description": "From T, pick a set of properties whose keys are in the union K"
-			},
-			"IUserResponseExample": {
-				"properties": {
-					"email": {
-						"type": "string"
-					},
-					"firstName": {
-						"type": "string"
-					},
-					"lastName": {
-						"type": "string"
-					},
-					"active": {
-						"type": "boolean"
-					},
-					"displayName": {
-						"type": "string"
-					},
-					"roles": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array"
-					},
-					"phone": {
-						"type": "string"
-					},
-					"photoURL": {
-						"type": "string"
-					},
-					"provider": {
-						"type": "string"
-					},
-					"verified": {
-						"type": "boolean"
-					},
-					"_id": {
-						"type": "string"
-					},
-					"__v": {
-						"type": "string"
-					},
-					"createdAt": {
-						"type": "string"
-					},
-					"updatedAt": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"email",
-					"firstName",
-					"lastName",
-					"active",
-					"displayName",
-					"_id"
+					"accessToken",
+					"tokenType",
+					"expiresIn"
 				],
 				"type": "object",
 				"additionalProperties": false
 			},
-			"UserResponseExample": {
+			"OAuthExchangeInput": {
 				"properties": {
-					"currentPage": {
-						"type": "number",
-						"format": "double"
+					"code": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"code"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Field": {
+				"properties": {
+					"_id": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"type": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"_id",
+					"name",
+					"type"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"FieldInput": {
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"type": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"name",
+					"type"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"FieldValue": {
+				"properties": {
+					"_id": {
+						"type": "string"
+					},
+					"field": {
+						"anyOf": [
+							{
+								"$ref": "#/components/schemas/Field"
+							},
+							{
+								"type": "string"
+							}
+						]
+					},
+					"value": {
+						"anyOf": [
+							{
+								"type": "string"
+							},
+							{
+								"items": {
+									"type": "string"
+								},
+								"type": "array"
+							}
+						]
+					},
+					"vault": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"_id",
+					"field",
+					"value",
+					"vault"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"FieldValueInput": {
+				"properties": {
+					"field": {
+						"type": "string"
+					},
+					"value": {
+						"anyOf": [
+							{
+								"type": "string"
+							},
+							{
+								"items": {
+									"type": "string"
+								},
+								"type": "array"
+							}
+						]
+					},
+					"vault": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"field",
+					"value",
+					"vault"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Note": {
+				"properties": {
+					"_id": {
+						"type": "string"
+					},
+					"user": {
+						"type": "string"
+					},
+					"title": {
+						"type": "string"
+					},
+					"body": {
+						"type": "string"
+					},
+					"isFavorite": {
+						"type": "boolean"
+					},
+					"isArchived": {
+						"type": "boolean"
+					},
+					"tags": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"imageURLs": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"_id",
+					"user",
+					"title",
+					"isFavorite",
+					"isArchived",
+					"tags",
+					"imageURLs"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"NotePage": {
+				"properties": {
+					"notes": {
+						"items": {
+							"$ref": "#/components/schemas/Note"
+						},
+						"type": "array"
 					},
 					"totalPages": {
 						"type": "number",
 						"format": "double"
 					},
-					"users": {
+					"currentPage": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"notes",
+					"totalPages",
+					"currentPage"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"NoteInput": {
+				"properties": {
+					"title": {
+						"type": "string"
+					},
+					"body": {
+						"type": "string"
+					},
+					"isFavorite": {
+						"type": "boolean"
+					},
+					"isArchived": {
+						"type": "boolean"
+					},
+					"tags": {
 						"items": {
-							"$ref": "#/components/schemas/IUserResponseExample"
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"imageURLs": {
+						"items": {
+							"type": "string"
 						},
 						"type": "array"
 					}
 				},
 				"required": [
-					"currentPage",
-					"totalPages",
-					"users"
+					"title"
 				],
-				"type": "object"
+				"type": "object",
+				"additionalProperties": false
 			},
-			"IVaultModel": {
-				"$ref": "#/components/schemas/FlattenMaps_T_"
-			},
-			"AllVaultsResponseType": {
+			"NoteUpdateInput": {
 				"properties": {
-					"currentPage": {
-						"type": "number",
-						"format": "double"
+					"title": {
+						"type": "string"
 					},
-					"totalPages": {
-						"type": "number",
-						"format": "double"
+					"body": {
+						"type": "string"
 					},
+					"isFavorite": {
+						"type": "boolean"
+					},
+					"isArchived": {
+						"type": "boolean"
+					},
+					"tags": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"imageURLs": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Vault": {
+				"properties": {
+					"_id": {
+						"type": "string"
+					},
+					"user": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"data": {
+						"type": "string"
+					},
+					"dataFieldType": {
+						"type": "string"
+					},
+					"isFavorite": {
+						"type": "boolean"
+					},
+					"tags": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"isArchived": {
+						"type": "boolean"
+					},
+					"expirationDate": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"extraFields": {
+						"items": {
+							"$ref": "#/components/schemas/FieldValue"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"_id",
+					"user",
+					"name",
+					"data",
+					"dataFieldType",
+					"isFavorite",
+					"tags",
+					"isArchived",
+					"expirationDate",
+					"extraFields"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"VaultPage": {
+				"properties": {
 					"vaults": {
 						"items": {
-							"$ref": "#/components/schemas/IVaultModel"
+							"$ref": "#/components/schemas/Vault"
 						},
 						"type": "array"
+					},
+					"totalPages": {
+						"type": "number",
+						"format": "double"
+					},
+					"currentPage": {
+						"type": "number",
+						"format": "double"
 					}
 				},
 				"required": [
-					"currentPage",
+					"vaults",
 					"totalPages",
-					"vaults"
+					"currentPage"
 				],
-				"type": "object"
+				"type": "object",
+				"additionalProperties": false
+			},
+			"VaultInput": {
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"data": {
+						"type": "string"
+					},
+					"dataFieldType": {
+						"type": "string"
+					},
+					"isFavorite": {
+						"type": "boolean"
+					},
+					"tags": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"isArchived": {
+						"type": "boolean"
+					},
+					"expirationDate": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					}
+				},
+				"required": [
+					"name",
+					"data",
+					"dataFieldType"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"VaultUpdateInput": {
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"data": {
+						"type": "string"
+					},
+					"dataFieldType": {
+						"type": "string"
+					},
+					"isFavorite": {
+						"type": "boolean"
+					},
+					"tags": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"isArchived": {
+						"type": "boolean"
+					},
+					"expirationDate": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
 			}
 		},
-		"securitySchemes": {}
+		"securitySchemes": {
+			"bearer": {
+				"type": "http",
+				"scheme": "bearer",
+				"bearerFormat": "JWT",
+				"description": "Access token from POST /api/v1/auth/login (valid for 15 minutes)."
+			}
+		}
 	},
 	"info": {
-		"title": "pass-manager-back",
+		"title": "Pass Manager API",
 		"version": "1.1.0",
-		"description": "Node.js + Express + Typescript + Mongodb + Swagger ",
+		"description": "REST API of Pass Manager. Every route except register, login, refresh, logout and Google sign-in requires a Bearer access token.",
 		"license": {
 			"name": "ISC"
 		},
@@ -283,19 +666,104 @@
 	"paths": {
 		"/api/v1/auth/register": {
 			"post": {
-				"operationId": "RegisterUser",
+				"operationId": "register",
 				"responses": {
-					"200": {
-						"description": "Ok",
+					"201": {
+						"description": "Account created",
 						"content": {
 							"application/json": {
-								"schema": {}
+								"schema": {
+									"$ref": "#/components/schemas/UserResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"user": {
+												"_id": "6650f1a2b3c4d5e6f7a8b9c0",
+												"email": "jane.doe@example.com",
+												"firstName": "Jane",
+												"lastName": "Doe",
+												"displayName": "Jane",
+												"roles": [],
+												"active": false,
+												"verified": false
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Invalid or unknown fields",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseBody"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"error": {
+												"code": "VALIDATION_ERROR",
+												"message": "The request is invalid.",
+												"details": [
+													{
+														"path": "password",
+														"message": "\"password\" length must be at least 8 characters long"
+													}
+												]
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"409": {
+						"description": "Email already registered",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseBody"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"error": {
+												"code": "CONFLICT",
+												"message": "This email is already registered."
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"429": {
+						"description": "Too many requests from this IP",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseBody"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"error": {
+												"code": "RATE_LIMITED",
+												"message": "Too many requests. Please try again later."
+											}
+										}
+									}
+								}
 							}
 						}
 					}
 				},
+				"summary": "Create an account",
 				"tags": [
-					"AuthController"
+					"Auth"
 				],
 				"security": [],
 				"parameters": [],
@@ -304,7 +772,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/IUserModel"
+								"$ref": "#/components/schemas/RegisterUserInput"
 							}
 						}
 					}
@@ -313,19 +781,80 @@
 		},
 		"/api/v1/auth/login": {
 			"post": {
-				"operationId": "LoginUser",
+				"operationId": "login",
 				"responses": {
 					"200": {
-						"description": "Ok",
+						"description": "Signed in. The refresh token is set as an HttpOnly cookie scoped to /api/v1/auth",
 						"content": {
 							"application/json": {
-								"schema": {}
+								"schema": {
+									"$ref": "#/components/schemas/SessionResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+											"tokenType": "Bearer",
+											"expiresIn": 900,
+											"user": {
+												"_id": "6650f1a2b3c4d5e6f7a8b9c0",
+												"email": "jane.doe@example.com",
+												"firstName": "Jane",
+												"lastName": "Doe",
+												"roles": [],
+												"active": false,
+												"verified": false
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Wrong credentials or temporarily locked account",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseBody"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"error": {
+												"code": "INVALID_CREDENTIALS",
+												"message": "Invalid email or password."
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"429": {
+						"description": "Too many requests from this IP",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseBody"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"error": {
+												"code": "RATE_LIMITED",
+												"message": "Too many requests. Please try again later."
+											}
+										}
+									}
+								}
 							}
 						}
 					}
 				},
+				"summary": "Sign in with email and password",
 				"tags": [
-					"AuthController"
+					"Auth"
 				],
 				"security": [],
 				"parameters": [],
@@ -341,39 +870,136 @@
 				}
 			}
 		},
-		"/api/v1/fields": {
-			"get": {
-				"operationId": "GetAllFields",
+		"/api/v1/auth/refresh": {
+			"post": {
+				"operationId": "refreshSession",
 				"responses": {
 					"200": {
-						"description": "Ok",
+						"description": "New access token. The refresh token cookie is rotated",
 						"content": {
 							"application/json": {
-								"schema": {}
+								"schema": {
+									"$ref": "#/components/schemas/AccessTokenResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+											"tokenType": "Bearer",
+											"expiresIn": 900
+										}
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Missing, expired, revoked or reused refresh token",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseBody"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"error": {
+												"code": "UNAUTHORIZED",
+												"message": "The session is invalid. Please sign in again."
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"429": {
+						"description": "Too many requests from this IP",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseBody"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"error": {
+												"code": "RATE_LIMITED",
+												"message": "Too many requests. Please try again later."
+											}
+										}
+									}
+								}
 							}
 						}
 					}
 				},
+				"summary": "Get a new access token",
 				"tags": [
-					"FieldController"
+					"Auth"
 				],
 				"security": [],
 				"parameters": []
-			},
+			}
+		},
+		"/api/v1/auth/oauth/exchange": {
 			"post": {
-				"operationId": "CreateField",
+				"operationId": "exchangeOAuthCode",
 				"responses": {
 					"200": {
-						"description": "Ok",
+						"description": "Signed in. Same response as login",
 						"content": {
 							"application/json": {
-								"schema": {}
+								"schema": {
+									"$ref": "#/components/schemas/SessionResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Invalid, expired or already used code",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseBody"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"error": {
+												"code": "UNAUTHORIZED",
+												"message": "The sign-in code is invalid or has expired."
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"429": {
+						"description": "Too many requests from this IP",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseBody"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"error": {
+												"code": "RATE_LIMITED",
+												"message": "Too many requests. Please try again later."
+											}
+										}
+									}
+								}
 							}
 						}
 					}
 				},
+				"summary": "Complete a Google sign-in",
 				"tags": [
-					"FieldController"
+					"Auth"
 				],
 				"security": [],
 				"parameters": [],
@@ -382,55 +1008,298 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/IFieldModel"
+								"$ref": "#/components/schemas/OAuthExchangeInput"
 							}
 						}
 					}
 				}
 			}
 		},
-		"/api/v1/fieldvalues": {
-			"get": {
-				"operationId": "GetAllFieldValues",
+		"/api/v1/auth/logout": {
+			"post": {
+				"operationId": "logout",
 				"responses": {
-					"200": {
-						"description": "Ok",
+					"204": {
+						"description": "Session revoked and refresh token cookie cleared"
+					},
+					"429": {
+						"description": "Too many requests from this IP",
 						"content": {
 							"application/json": {
-								"schema": {}
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseBody"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"error": {
+												"code": "RATE_LIMITED",
+												"message": "Too many requests. Please try again later."
+											}
+										}
+									}
+								}
 							}
 						}
 					}
 				},
+				"summary": "Sign out",
 				"tags": [
-					"FieldValueController"
+					"Auth"
 				],
 				"security": [],
 				"parameters": []
-			},
-			"post": {
-				"operationId": "CreateFieldValue",
+			}
+		},
+		"/api/v1/fields": {
+			"get": {
+				"operationId": "listFields",
 				"responses": {
 					"200": {
 						"description": "Ok",
 						"content": {
 							"application/json": {
-								"schema": {}
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/Field"
+									},
+									"type": "array"
+								},
+								"examples": {
+									"Example 1": {
+										"value": [
+											{
+												"_id": "6650f0a1b3c4d5e6f7a8b9a1",
+												"name": "Recovery code",
+												"type": "6650f09fb3c4d5e6f7a8b9a0"
+											}
+										]
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Missing, invalid or expired access token",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseBody"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"error": {
+												"code": "UNAUTHORIZED",
+												"message": "Authentication is required."
+											}
+										}
+									}
+								}
 							}
 						}
 					}
 				},
+				"summary": "List the field definitions catalog",
 				"tags": [
-					"FieldValueController"
+					"Fields"
 				],
-				"security": [],
+				"security": [
+					{
+						"bearer": []
+					}
+				],
+				"parameters": []
+			},
+			"post": {
+				"operationId": "createField",
+				"responses": {
+					"201": {
+						"description": "Field created",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Field"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Invalid body",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseBody"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"error": {
+												"code": "VALIDATION_ERROR",
+												"message": "The request is invalid.",
+												"details": [
+													{
+														"path": "name",
+														"message": "\"name\" is required"
+													}
+												]
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Missing, invalid or expired access token",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseBody"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"error": {
+												"code": "UNAUTHORIZED",
+												"message": "Authentication is required."
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"summary": "Add a field definition to the catalog",
+				"tags": [
+					"Fields"
+				],
+				"security": [
+					{
+						"bearer": []
+					}
+				],
 				"parameters": [],
 				"requestBody": {
 					"required": true,
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/IFieldValueModel"
+								"$ref": "#/components/schemas/FieldInput"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/v1/fieldValues": {
+			"post": {
+				"operationId": "createFieldValue",
+				"responses": {
+					"201": {
+						"description": "Field value created and linked to the vault",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/FieldValue"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"_id": "6650f4e6b3c4d5e6f7a8b9f3",
+											"field": "6650f0a1b3c4d5e6f7a8b9a1",
+											"value": "1234-5678",
+											"vault": "6650f3d5b3c4d5e6f7a8b9e2"
+										}
+									}
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Invalid body",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseBody"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"error": {
+												"code": "VALIDATION_ERROR",
+												"message": "The request is invalid.",
+												"details": [
+													{
+														"path": "vault",
+														"message": "\"vault\" length must be 24 characters long"
+													}
+												]
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Missing, invalid or expired access token",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseBody"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"error": {
+												"code": "UNAUTHORIZED",
+												"message": "Authentication is required."
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "The vault belongs to another user or the field does not exist",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseBody"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"error": {
+												"code": "NOT_FOUND",
+												"message": "Vault not found."
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"summary": "Add a field value to one of the authenticated user's vaults",
+				"tags": [
+					"Field values"
+				],
+				"security": [
+					{
+						"bearer": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/FieldValueInput"
 							}
 						}
 					}
@@ -439,69 +1308,200 @@
 		},
 		"/api/v1/notes": {
 			"get": {
-				"operationId": "GetAllNotes",
+				"operationId": "listNotes",
 				"responses": {
 					"200": {
 						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/AllNotesResponseType"
+									"$ref": "#/components/schemas/NotePage"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"notes": [
+												{
+													"_id": "6650f2c4b3c4d5e6f7a8b9d1",
+													"user": "6650f1a2b3c4d5e6f7a8b9c0",
+													"title": "Wi-Fi at home",
+													"body": "Router admin is on 192.168.0.1",
+													"isFavorite": false,
+													"isArchived": false,
+													"tags": [
+														"home"
+													],
+													"imageURLs": []
+												}
+											],
+											"totalPages": 1,
+											"currentPage": 1
+										}
+									}
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Invalid id, query or body",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseBody"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"error": {
+												"code": "VALIDATION_ERROR",
+												"message": "The request is invalid.",
+												"details": [
+													{
+														"path": "title",
+														"message": "\"title\" is required"
+													}
+												]
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Missing, invalid or expired access token",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseBody"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"error": {
+												"code": "UNAUTHORIZED",
+												"message": "Authentication is required."
+											}
+										}
+									}
 								}
 							}
 						}
 					}
 				},
+				"summary": "List the authenticated user's notes, newest first",
 				"tags": [
-					"NoteController"
+					"Notes"
 				],
-				"security": [],
+				"security": [
+					{
+						"bearer": []
+					}
+				],
 				"parameters": [
 					{
+						"description": "Page number, starting at 1",
 						"in": "query",
 						"name": "page",
-						"required": true,
+						"required": false,
 						"schema": {
-							"format": "double",
-							"type": "number"
+							"default": 1,
+							"format": "int32",
+							"type": "integer",
+							"minimum": 1
 						}
 					},
 					{
+						"description": "Notes per page, up to 50",
 						"in": "query",
 						"name": "limit",
-						"required": true,
+						"required": false,
 						"schema": {
-							"format": "double",
-							"type": "number"
+							"default": 10,
+							"format": "int32",
+							"type": "integer",
+							"minimum": 1,
+							"maximum": 50
 						}
 					}
 				]
 			},
 			"post": {
-				"operationId": "CreateNote",
+				"operationId": "createNote",
 				"responses": {
-					"200": {
-						"description": "Ok",
+					"201": {
+						"description": "Note created",
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/INoteModel"
+									"$ref": "#/components/schemas/Note"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Invalid id, query or body",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseBody"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"error": {
+												"code": "VALIDATION_ERROR",
+												"message": "The request is invalid.",
+												"details": [
+													{
+														"path": "title",
+														"message": "\"title\" is required"
+													}
+												]
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Missing, invalid or expired access token",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseBody"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"error": {
+												"code": "UNAUTHORIZED",
+												"message": "Authentication is required."
+											}
+										}
+									}
 								}
 							}
 						}
 					}
 				},
+				"summary": "Create a note owned by the authenticated user",
 				"tags": [
-					"NoteController"
+					"Notes"
 				],
-				"security": [],
+				"security": [
+					{
+						"bearer": []
+					}
+				],
 				"parameters": [],
 				"requestBody": {
 					"required": true,
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/INoteModel"
+								"$ref": "#/components/schemas/NoteInput"
 							}
 						}
 					}
@@ -509,22 +1509,95 @@
 			}
 		},
 		"/api/v1/notes/{id}": {
-			"delete": {
-				"operationId": "DeleteNoteById",
+			"get": {
+				"operationId": "getNote",
 				"responses": {
 					"200": {
 						"description": "Ok",
 						"content": {
 							"application/json": {
-								"schema": {}
+								"schema": {
+									"$ref": "#/components/schemas/Note"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Invalid id, query or body",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseBody"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"error": {
+												"code": "VALIDATION_ERROR",
+												"message": "The request is invalid.",
+												"details": [
+													{
+														"path": "title",
+														"message": "\"title\" is required"
+													}
+												]
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Missing, invalid or expired access token",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseBody"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"error": {
+												"code": "UNAUTHORIZED",
+												"message": "Authentication is required."
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "The note does not exist or belongs to another user",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseBody"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"error": {
+												"code": "NOT_FOUND",
+												"message": "Note not found."
+											}
+										}
+									}
+								}
 							}
 						}
 					}
 				},
+				"summary": "Get one of the authenticated user's notes",
 				"tags": [
-					"NoteController"
+					"Notes"
 				],
-				"security": [],
+				"security": [
+					{
+						"bearer": []
+					}
+				],
 				"parameters": [
 					{
 						"in": "path",
@@ -537,23 +1610,94 @@
 				]
 			},
 			"put": {
-				"operationId": "UpdateNoteById",
+				"operationId": "updateNote",
 				"responses": {
 					"200": {
 						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/INoteModel"
+									"$ref": "#/components/schemas/Note"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Invalid id, query or body",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseBody"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"error": {
+												"code": "VALIDATION_ERROR",
+												"message": "The request is invalid.",
+												"details": [
+													{
+														"path": "title",
+														"message": "\"title\" is required"
+													}
+												]
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Missing, invalid or expired access token",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseBody"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"error": {
+												"code": "UNAUTHORIZED",
+												"message": "Authentication is required."
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "The note does not exist or belongs to another user",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseBody"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"error": {
+												"code": "NOT_FOUND",
+												"message": "Note not found."
+											}
+										}
+									}
 								}
 							}
 						}
 					}
 				},
+				"summary": "Update one of the authenticated user's notes",
 				"tags": [
-					"NoteController"
+					"Notes"
 				],
-				"security": [],
+				"security": [
+					{
+						"bearer": []
+					}
+				],
 				"parameters": [
 					{
 						"in": "path",
@@ -569,40 +1713,98 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/INoteModel"
+								"$ref": "#/components/schemas/NoteUpdateInput"
 							}
 						}
 					}
 				}
-			}
-		},
-		"/api/v1/notes/user/{userId}": {
-			"get": {
-				"operationId": "GetNotesByUser",
+			},
+			"delete": {
+				"operationId": "deleteNote",
 				"responses": {
-					"200": {
-						"description": "Ok",
+					"204": {
+						"description": "Note deleted"
+					},
+					"400": {
+						"description": "Invalid id, query or body",
 						"content": {
 							"application/json": {
 								"schema": {
-									"items": {
-										"$ref": "#/components/schemas/INoteModel"
-									},
-									"type": "array",
-									"nullable": true
+									"$ref": "#/components/schemas/ErrorResponseBody"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"error": {
+												"code": "VALIDATION_ERROR",
+												"message": "The request is invalid.",
+												"details": [
+													{
+														"path": "title",
+														"message": "\"title\" is required"
+													}
+												]
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Missing, invalid or expired access token",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseBody"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"error": {
+												"code": "UNAUTHORIZED",
+												"message": "Authentication is required."
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "The note does not exist or belongs to another user",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseBody"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"error": {
+												"code": "NOT_FOUND",
+												"message": "Note not found."
+											}
+										}
+									}
 								}
 							}
 						}
 					}
 				},
+				"summary": "Delete one of the authenticated user's notes",
 				"tags": [
-					"NoteController"
+					"Notes"
 				],
-				"security": [],
+				"security": [
+					{
+						"bearer": []
+					}
+				],
 				"parameters": [
 					{
 						"in": "path",
-						"name": "userId",
+						"name": "id",
 						"required": true,
 						"schema": {
 							"type": "string"
@@ -611,21 +1813,50 @@
 				]
 			}
 		},
-		"/api/v1/users": {
+		"/api/v1/users/me": {
 			"get": {
-				"operationId": "GetUsers",
+				"operationId": "getMe",
 				"responses": {
 					"200": {
-						"description": "Success",
+						"description": "Ok",
 						"content": {
 							"application/json": {
-								"schema": {},
+								"schema": {
+									"$ref": "#/components/schemas/UserResponse"
+								},
 								"examples": {
 									"Example 1": {
 										"value": {
-											"users": [],
-											"totalPages": 1,
-											"currentPage": 1
+											"user": {
+												"_id": "6650f1a2b3c4d5e6f7a8b9c0",
+												"email": "jane.doe@example.com",
+												"firstName": "Jane",
+												"lastName": "Doe",
+												"displayName": "Jane",
+												"roles": [],
+												"active": true,
+												"verified": true
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Missing, invalid or expired access token",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseBody"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"error": {
+												"code": "UNAUTHORIZED",
+												"message": "Authentication is required."
+											}
 										}
 									}
 								}
@@ -633,104 +1864,525 @@
 						}
 					}
 				},
-				"description": "Tsoa documentation for this endpoint with optional page and limit query params",
+				"summary": "Get the authenticated user's profile",
 				"tags": [
-					"UserController"
+					"Users"
 				],
-				"security": [],
-				"parameters": [
+				"security": [
 					{
-						"description": "- The page number",
-						"in": "query",
-						"name": "page",
-						"required": true,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					},
-					{
-						"description": "- The limit per page",
-						"in": "query",
-						"name": "limit",
-						"required": true,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
+						"bearer": []
 					}
-				]
+				],
+				"parameters": []
 			}
 		},
 		"/api/v1/vaults": {
 			"get": {
-				"operationId": "GetAllVaults",
-				"responses": {
-					"200": {
-						"description": "A group of vaults",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/AllVaultsResponseType"
-								}
-							}
-						}
-					}
-				},
-				"description": "Endpoint to retrieve all vaults paginated",
-				"tags": [
-					"VaultController"
-				],
-				"security": [],
-				"parameters": [
-					{
-						"in": "query",
-						"name": "page",
-						"required": true,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					},
-					{
-						"description": "per page to show vaults",
-						"in": "query",
-						"name": "limit",
-						"required": true,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					}
-				]
-			},
-			"post": {
-				"operationId": "CreateVault",
+				"operationId": "listVaults",
 				"responses": {
 					"200": {
 						"description": "Ok",
 						"content": {
 							"application/json": {
-								"schema": {}
+								"schema": {
+									"$ref": "#/components/schemas/VaultPage"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"vaults": [
+												{
+													"_id": "6650f3d5b3c4d5e6f7a8b9e2",
+													"user": "6650f1a2b3c4d5e6f7a8b9c0",
+													"name": "Personal email",
+													"data": "not-encrypted-yet",
+													"dataFieldType": "password",
+													"isFavorite": true,
+													"tags": [
+														"email"
+													],
+													"isArchived": false,
+													"expirationDate": null,
+													"extraFields": []
+												}
+											],
+											"totalPages": 1,
+											"currentPage": 1
+										}
+									}
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Invalid id, query or body",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseBody"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"error": {
+												"code": "VALIDATION_ERROR",
+												"message": "The request is invalid.",
+												"details": [
+													{
+														"path": "user",
+														"message": "\"user\" is not allowed"
+													}
+												]
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Missing, invalid or expired access token",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseBody"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"error": {
+												"code": "UNAUTHORIZED",
+												"message": "Authentication is required."
+											}
+										}
+									}
+								}
 							}
 						}
 					}
 				},
+				"summary": "List the authenticated user's vaults, newest first",
 				"tags": [
-					"VaultController"
+					"Vaults"
 				],
-				"security": [],
+				"security": [
+					{
+						"bearer": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "Page number, starting at 1",
+						"in": "query",
+						"name": "page",
+						"required": false,
+						"schema": {
+							"default": 1,
+							"format": "int32",
+							"type": "integer",
+							"minimum": 1
+						}
+					},
+					{
+						"description": "Vaults per page, up to 50",
+						"in": "query",
+						"name": "limit",
+						"required": false,
+						"schema": {
+							"default": 10,
+							"format": "int32",
+							"type": "integer",
+							"minimum": 1,
+							"maximum": 50
+						}
+					}
+				]
+			},
+			"post": {
+				"operationId": "createVault",
+				"responses": {
+					"201": {
+						"description": "Vault created",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Vault"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Invalid id, query or body",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseBody"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"error": {
+												"code": "VALIDATION_ERROR",
+												"message": "The request is invalid.",
+												"details": [
+													{
+														"path": "user",
+														"message": "\"user\" is not allowed"
+													}
+												]
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Missing, invalid or expired access token",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseBody"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"error": {
+												"code": "UNAUTHORIZED",
+												"message": "Authentication is required."
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"summary": "Create a vault owned by the authenticated user",
+				"tags": [
+					"Vaults"
+				],
+				"security": [
+					{
+						"bearer": []
+					}
+				],
 				"parameters": [],
 				"requestBody": {
 					"required": true,
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/IVaultModel"
+								"$ref": "#/components/schemas/VaultInput"
 							}
 						}
 					}
 				}
+			}
+		},
+		"/api/v1/vaults/{id}": {
+			"get": {
+				"operationId": "getVault",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Vault"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Invalid id, query or body",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseBody"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"error": {
+												"code": "VALIDATION_ERROR",
+												"message": "The request is invalid.",
+												"details": [
+													{
+														"path": "user",
+														"message": "\"user\" is not allowed"
+													}
+												]
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Missing, invalid or expired access token",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseBody"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"error": {
+												"code": "UNAUTHORIZED",
+												"message": "Authentication is required."
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "The vault does not exist or belongs to another user",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseBody"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"error": {
+												"code": "NOT_FOUND",
+												"message": "Vault not found."
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"summary": "Get one of the authenticated user's vaults with its field values",
+				"tags": [
+					"Vaults"
+				],
+				"security": [
+					{
+						"bearer": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"put": {
+				"operationId": "updateVault",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Vault"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Invalid id, query or body",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseBody"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"error": {
+												"code": "VALIDATION_ERROR",
+												"message": "The request is invalid.",
+												"details": [
+													{
+														"path": "user",
+														"message": "\"user\" is not allowed"
+													}
+												]
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Missing, invalid or expired access token",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseBody"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"error": {
+												"code": "UNAUTHORIZED",
+												"message": "Authentication is required."
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "The vault does not exist or belongs to another user",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseBody"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"error": {
+												"code": "NOT_FOUND",
+												"message": "Vault not found."
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"summary": "Update one of the authenticated user's vaults",
+				"tags": [
+					"Vaults"
+				],
+				"security": [
+					{
+						"bearer": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/VaultUpdateInput"
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"operationId": "deleteVault",
+				"responses": {
+					"204": {
+						"description": "Vault and field values deleted"
+					},
+					"400": {
+						"description": "Invalid id, query or body",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseBody"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"error": {
+												"code": "VALIDATION_ERROR",
+												"message": "The request is invalid.",
+												"details": [
+													{
+														"path": "user",
+														"message": "\"user\" is not allowed"
+													}
+												]
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Missing, invalid or expired access token",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseBody"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"error": {
+												"code": "UNAUTHORIZED",
+												"message": "Authentication is required."
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "The vault does not exist or belongs to another user",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseBody"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"error": {
+												"code": "NOT_FOUND",
+												"message": "Vault not found."
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"summary": "Delete one of the authenticated user's vaults and its field values",
+				"tags": [
+					"Vaults"
+				],
+				"security": [
+					{
+						"bearer": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
 			}
 		}
 	},

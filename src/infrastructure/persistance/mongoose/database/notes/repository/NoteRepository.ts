@@ -1,17 +1,13 @@
 import { Model } from 'mongoose';
 import { injectable } from 'inversify';
 
-import { BaseRepository } from '../../Base/repository/BaseRepository';
-
+import { OwnedRepository } from '../../Base/repository/OwnedRepository';
 import { INoteModel } from '../../../../../../domain/notes/interfaces';
 import { INoteRepository } from '../../../../../../domain/notes/repository/INoteRepository';
 
 @injectable()
-export class NoteRepository extends BaseRepository<INoteModel> implements INoteRepository{
+export class NoteRepository extends OwnedRepository<INoteModel> implements INoteRepository {
   constructor(model: Model<INoteModel>) {
     super(model);
-  }
-  async getNotesByUser(userId: string): Promise<INoteModel[] | null> {
-    return this.model.find({ user: userId });
   }
 }

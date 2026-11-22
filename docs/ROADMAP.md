@@ -64,18 +64,24 @@ Found and fixed during M0 (not in the original audit): `IModule` extended the DO
 
 **DoD:** no non-public endpoint answers without a token; an automated test proves that user A cannot read, edit or delete user B's resources.
 
-- [ ] **SEC-01** Global authentication with an explicit allowlist of public routes (`/auth/register`, `/auth/login`, `/health`, `/docs`).
-- [ ] **SEC-02** Ownership-based access control: the `userId` always comes from the token, never from the body or params. Applies to vaults, items, notes and fieldValues.
-- [ ] **SEC-03** Remove the global `GET /users` and `GET /vaults` (or restrict them to a future admin role); replace them with `GET /me/...`.
-- [ ] **SEC-04** Tokens: short-lived access token (~15 min) + rotating refresh token in an `httpOnly; Secure; SameSite=Strict` cookie; revoking logout; `Authorization: Bearer` header.
-- [ ] **SEC-05** Rate limiting on `/auth/*` (e.g. `express-rate-limit`) and progressive lockout on failed attempts.
-- [ ] **SEC-06** Per-environment CORS allowlist; body size limit on `express.json` (e.g. 100 kb); review helmet defaults.
-- [ ] **SEC-07** OAuth: never send the token in the query string; use a one-time code or a cookie; the front-end URL comes from config.
-- [ ] **SEC-08** Central error middleware: a single shape (`{ error: { code, message } }`), no internal messages leaked, correct HTTP codes (login → 200, delete → 204 without body).
-- [ ] **SEC-09** Structured logger (pino) redacting `password`, `token`, `authorization` and `data`; remove every `console.log`.
-- [ ] **SEC-10** Validate **every** body and param (including `ObjectId`s and pagination with a maximum `limit`).
-- [ ] **SEC-11** Uploads disabled until M2. If they come back: private, signed URLs, type/size limits, encrypted on the client.
-- [ ] **SEC-12** Mass assignment on registration: the user validator accepts `roles`, `active`, `verified` and `provider` from the client. Registration must only accept profile fields and credentials.
+**Status:** DoD met on branch `feat/m1-security-baseline`: `authentication.spec.ts` checks every protected route and `authorization.spec.ts` proves cross-user isolation for users, notes, vaults and field values (102 integration tests in total). SEC-13…15 and FE-01 were found during M1 and remain open.
+
+- [x] **SEC-01** Global authentication with an explicit allowlist of public routes (`/auth/register`, `/auth/login`, `/health`, `/docs`).
+- [x] **SEC-02** Ownership-based access control: the `userId` always comes from the token, never from the body or params. Applies to vaults, items, notes and fieldValues.
+- [x] **SEC-03** Remove the global `GET /users` and `GET /vaults` (or restrict them to a future admin role); replace them with `GET /me/...`.
+- [x] **SEC-04** Tokens: short-lived access token (~15 min) + rotating refresh token in an `httpOnly; Secure; SameSite=Strict` cookie; revoking logout; `Authorization: Bearer` header.
+- [x] **SEC-05** Rate limiting on `/auth/*` (e.g. `express-rate-limit`) and progressive lockout on failed attempts.
+- [x] **SEC-06** Per-environment CORS allowlist; body size limit on `express.json` (e.g. 100 kb); review helmet defaults.
+- [x] **SEC-07** OAuth: never send the token in the query string; use a one-time code or a cookie; the front-end URL comes from config.
+- [x] **SEC-08** Central error middleware: a single shape (`{ error: { code, message } }`), no internal messages leaked, correct HTTP codes (login → 200, delete → 204 without body).
+- [x] **SEC-09** Structured logger (pino) redacting `password`, `token`, `authorization` and `data`; remove every `console.log`. *(Request bodies are never logged, so `data` cannot leak.)*
+- [x] **SEC-10** Validate **every** body and param (including `ObjectId`s and pagination with a maximum `limit`).
+- [x] **SEC-11** Uploads disabled until M2. If they come back: private, signed URLs, type/size limits, encrypted on the client. *(Removed entirely, with their dependencies.)*
+- [x] **SEC-12** Mass assignment on registration: the user validator accepts `roles`, `active`, `verified` and `provider` from the client. Registration must only accept profile fields and credentials.
+- [ ] **SEC-13** `POST /fields` lets any authenticated user add entries to the global field catalog. Make fields per-user or admin-only (decide together with ZK-06).
+- [ ] **SEC-14** If the front end is deployed on another site (`COOKIE_SAME_SITE=none`), add CSRF protection to `/auth/refresh` and `/auth/logout` (e.g. a required custom header or a double-submit token).
+- [ ] **SEC-15** Rate limits use an in-memory store: switch to a shared store (e.g. Redis) before running more than one API instance.
+- [ ] **FE-01** `[FRONT]` Adopt the M1 API contract: `Authorization: Bearer`, `POST /auth/refresh` with `credentials: 'include'`, `GET /users/me`, the `{ error: { code, message } }` format and the `/auth/callback?code=` Google flow.
 
 ---
 
@@ -106,7 +112,7 @@ Found and fixed during M0 (not in the original audit): `IModule` extended the DO
 - [ ] **QA-04** Dependabot / Renovate + CodeQL.
 - [ ] **QA-05** Husky + lint-staged + commitlint (Conventional Commits).
 - [ ] **QA-06** A single source of truth for OpenAPI: either use tsoa's generated routes or remove tsoa. No two routing systems. *(Generated routes were removed in M0; decide whether to adopt them or replace tsoa.)*
-- [ ] **QA-07** Format the whole codebase with Prettier in a single `style:` commit and reconcile the ESLint formatting rules (`indent`, `quotes`, `semi`) with Prettier.
+- [ ] **QA-07** Format the whole codebase with Prettier in a single `style:` commit and reconcile the ESLint formatting rules (`indent`, `quotes`, `semi`) with Prettier. Also drop `fixToUnknown` from `no-explicit-any`: `eslint --fix` silently rewrites `any` to `unknown` and breaks types.
 
 ## M3.5 — Architectural consistency
 

@@ -1,32 +1,63 @@
 import { inject, injectable } from 'inversify';
-import { Body, Get, Post, Route, Tags } from 'tsoa';
+import { Body, Example, Inject, OperationId, Post, Response, Route, Security, SuccessResponse, Tags } from 'tsoa';
 
 import { TYPES } from '../../../../../../domain/types';
+import { IFieldRepository } from '../../../../../../domain/fields/repository';
 import { IFieldValueRepository } from '../../../../../../domain/fieldValues/repository/IFieldValueRepository';
-import { IFieldValueModel } from '../../../../../../domain/fieldValues/interfaces';
+import { IVaultRepository } from '../../../../../../domain/vaults/repository/IVaultRepository';
 
-import { CreateFieldValueUseCase, GetAllFieldValuesUseCase } from '../../../../../../application/FieldValues/UseCases';
+import { CreateFieldValueUseCase } from '../../../../../../application/FieldValues/UseCases';
+import { FieldValueInput, fieldValueValidator } from '../../../../../../application/FieldValues/FieldValueValidator';
+import { validate } from '../../../../../../application/shared';
 
-@Route('/api/v1/fieldvalues')
-@Tags('FieldValueController')
+import { ErrorResponseBody, FieldValue, presentFieldValue } from '../../../contracts';
+
+@Route('/api/v1/fieldValues')
+@Tags('Field values')
+@Security('bearer')
 @injectable()
-export class FieldValueController{
-  private fieldValueRepository;
-  constructor(@inject(TYPES.IFieldValueRepository) fieldValueRepository: IFieldValueRepository){
-    this.fieldValueRepository = fieldValueRepository;
-  }
-  //! Disable or hide enpoit after tests
-  @Get('/')
-  async getAllFieldValues(){
-    const getAllFieldValuesUseCase = new GetAllFieldValuesUseCase(this.fieldValueRepository);
-    const response = await getAllFieldValuesUseCase.exec();
-    return response;
-  }
+export class FieldValueController {
+  constructor(
+    @inject(TYPES.IFieldValueRepository) private readonly fieldValueRepository: IFieldValueRepository,
+    @inject(TYPES.IVaultRepository) private readonly vaultRepository: IVaultRepository,
+    @inject(TYPES.IFieldRepository) private readonly fieldRepository: IFieldRepository,
+  ) {}
 
+  /**
+   * @summary Add a field value to one of the authenticated user's vaults
+   */
   @Post('/')
-  async createFieldValue(@Body()fieldValueData: IFieldValueModel ){
-    const createFieldValueUseCase = new CreateFieldValueUseCase(this.fieldValueRepository);
-    const response = await createFieldValueUseCase.exec(fieldValueData);
-    return response;
+  @OperationId('createFieldValue')
+  @SuccessResponse(201, 'Field value created and linked to the vault')
+  @Example<FieldValue>({
+    _id: '6650f4e6b3c4d5e6f7a8b9f3',
+    field: '6650f0a1b3c4d5e6f7a8b9a1',
+    value: '1234-5678',
+    vault: '6650f3d5b3c4d5e6f7a8b9e2',
+  })
+  @Response<ErrorResponseBody>(400, 'Invalid body', {
+    error: {
+      code: 'VALIDATION_ERROR',
+      message: 'The request is invalid.',
+      details: [{ path: 'vault', message: '"vault" length must be 24 characters long' }],
+    },
+  })
+  @Response<ErrorResponseBody>(401, 'Missing, invalid or expired access token', {
+    error: { code: 'UNAUTHORIZED', message: 'Authentication is required.' },
+  })
+  @Response<ErrorResponseBody>(404, 'The vault belongs to another user or the field does not exist', {
+    error: { code: 'NOT_FOUND', message: 'Vault not found.' },
+  })
+  async createFieldValue(
+    @Body() fieldValueData: FieldValueInput,
+    @Inject() ownerId: string,
+  ): Promise<FieldValue> {
+    const fieldValue = validate(fieldValueValidator, fieldValueData);
+    const created = await new CreateFieldValueUseCase(
+      this.fieldValueRepository,
+      this.vaultRepository,
+      this.fieldRepository,
+    ).exec(ownerId, fieldValue);
+    return presentFieldValue(created);
   }
 }

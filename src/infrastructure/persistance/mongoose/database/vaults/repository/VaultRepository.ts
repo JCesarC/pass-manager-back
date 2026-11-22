@@ -1,25 +1,17 @@
+import { Model } from 'mongoose';
 import { injectable } from 'inversify';
+
 import { IVaultModel } from '../../../../../../domain/vaults/interfaces';
 import { IVaultRepository } from '../../../../../../domain/vaults/repository/IVaultRepository';
-
-import { BaseRepository } from '../../Base/repository/BaseRepository';
-import { Model } from 'mongoose';
+import { OwnedRepository } from '../../Base/repository/OwnedRepository';
 
 @injectable()
-export class VaultRepository extends BaseRepository<IVaultModel> implements IVaultRepository {
+export class VaultRepository extends OwnedRepository<IVaultModel> implements IVaultRepository {
   constructor(model: Model<IVaultModel>) {
     super(model);
   }
 
-  async getAllVaultsPaginated(page: number, limit: number): Promise<IVaultModel[] | null> {
-    return this.model.find({}, { __v: 0 })
-      .limit(limit)
-      .skip((page - 1) * limit)
-      .exec();
+  async addExtraField(vaultId: string, fieldValueId: string): Promise<void> {
+    await this.model.updateOne({ _id: vaultId }, { $addToSet: { extraFields: fieldValueId } });
   }
-
-  async getByUser(userId: string): Promise<IVaultModel[] | null> {
-    return this.model.find({ user: userId });
-  }
-
 }

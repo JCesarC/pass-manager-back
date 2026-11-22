@@ -4,6 +4,8 @@ const TYPES = {
   IFieldValueRepository: Symbol.for('FieldValueRepository'),
   IFieldTypeRepository: Symbol.for('FieldTypeRepository'),
   INoteRepository: Symbol.for('NoteRepository'),
+  IRefreshTokenRepository: Symbol.for('RefreshTokenRepository'),
+  IOAuthCodeRepository: Symbol.for('OAuthCodeRepository'),
 };
 
 export { TYPES };

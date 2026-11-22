@@ -1,9 +1,21 @@
 {
   "entryFile": "./src/index.ts",
   "noImplicitAdditionalProperties": "throw-on-extras",
-  "controllerPathGlobs": ["src/**/*Controller.ts"],
+  "controllerPathGlobs": [
+    "src/**/*Controller.ts"
+  ],
   "spec": {
     "outputDirectory": "public",
-    "specVersion": 3
+    "specVersion": 3,
+    "securityDefinitions": {
+      "bearer": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "Access token from POST /api/v1/auth/login (valid for 15 minutes)."
+      }
+    },
+    "name": "Pass Manager API",
+    "description": "REST API of Pass Manager. Every route except register, login, refresh, logout and Google sign-in requires a Bearer access token."
   }
 }

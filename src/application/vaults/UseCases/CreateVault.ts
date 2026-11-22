@@ -2,14 +2,9 @@ import { IVaultModel } from '../../../domain/vaults/interfaces';
 import { IVaultRepository } from '../../../domain/vaults/repository/IVaultRepository';
 
 export class CreateVaultUseCase {
-  private vaultRepository;
+  constructor(private readonly vaultRepository: IVaultRepository) {}
 
-  constructor(vaultRepository: IVaultRepository){
-    this.vaultRepository = vaultRepository;
-  }
-
-  async exec(vaultData: IVaultModel){
-    const createdVault = await this.vaultRepository.create(vaultData);
-    return createdVault;
+  async exec(ownerId: string, vaultData: Partial<IVaultModel>): Promise<IVaultModel> {
+    return this.vaultRepository.create({ ...vaultData, user: ownerId } as unknown as IVaultModel);
   }
 }

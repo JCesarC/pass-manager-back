@@ -52,6 +52,14 @@ const userSchema: Schema = new Schema<IUserModel>(
       type: Boolean,
       required: false,
       default: false
+    },
+    failedLoginAttempts: {
+      type: Number,
+      default: 0
+    },
+    lockUntil: {
+      type: Date,
+      default: null
     }
   },
   {

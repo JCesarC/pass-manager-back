@@ -3,7 +3,6 @@ import express from 'express';
 import oauthRouter from './OAuth';
 
 import { AuthHandler } from '../handlers';
-import { checkLoggedIn } from '../../../middlewares';
 
 const authRouter = express.Router();
 
@@ -12,7 +11,8 @@ const authHandler = new AuthHandler();
 authRouter.post('/register', authHandler.registerHandler);
 
 authRouter.post('/login', authHandler.loginHandler);
-authRouter.get('/user', checkLoggedIn, authHandler.getauthUserDataHandler);
+authRouter.post('/refresh', authHandler.refreshHandler);
+authRouter.post('/logout', authHandler.logoutHandler);
 authRouter.use('/oauth', oauthRouter);
 
 export default authRouter;

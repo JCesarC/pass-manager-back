@@ -8,5 +8,4 @@ export interface IBaseRepository<T extends Document> {
   delete(id: string): Promise<unknown>;
   countDocuments(): Promise<number>;
   getDocumentsPaginated(page: number, limit: number): Promise<T[] | null>
-  // Otros métodos comunes para los repositorios
 }

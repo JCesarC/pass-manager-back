@@ -1,70 +1,57 @@
-import { Request, Response } from 'express';
-import { userModelValidator } from '../../../../../../application/users/UserValidator';
-import { AuthController } from '../controller/AuthController';
-import { IUserModel, IUserResponseModel } from '../../../../../../domain/users/interfaces';
+import { Response } from 'express';
+
+import { iocContainer } from '../../../../../../ioc';
+import { TYPES } from '../../../../../../domain/types';
+import { IRefreshTokenRepository } from '../../../../../../domain/auth/repository/IRefreshTokenRepository';
+import { IOAuthCodeRepository } from '../../../../../../domain/auth/repository/IOAuthCodeRepository';
 import { UserRepository } from '../../../../../../infrastructure/persistance/mongoose/database/users/repository/UserRepository';
+
+import { AuthController } from '../controller/AuthController';
+import { asyncHandler } from '../../../../shared';
+import { RefreshTokenSink } from '../../../contracts';
+import { clearRefreshTokenCookie, readRefreshTokenCookie, setRefreshTokenCookie } from '../refreshTokenCookie';
+
+const buildController = () =>
+  new AuthController(
+    new UserRepository(),
+    iocContainer.get<IRefreshTokenRepository>(TYPES.IRefreshTokenRepository),
+    iocContainer.get<IOAuthCodeRepository>(TYPES.IOAuthCodeRepository),
+  );
+
+const cookieSink = (res: Response): RefreshTokenSink => (refreshToken) =>
+  setRefreshTokenCookie(res, refreshToken.token, refreshToken.expiresAt);
 
 export class AuthHandler {
 
-  public async registerHandler(req: Request, res: Response) {
+  public registerHandler = asyncHandler(async (req, res) => {
+    const response = await buildController().registerUser(req.body);
+    res.status(201).json(response);
+  });
+
+  public loginHandler = asyncHandler(async (req, res) => {
+    const session = await buildController().loginUser(req.body, cookieSink(res));
+    res.status(200).json(session);
+  });
+
+  public refreshHandler = asyncHandler(async (req, res) => {
     try {
-      const userRepository = new UserRepository();
-      const authController = new AuthController(userRepository);
-
-      const { error, value } = userModelValidator.validate(req.body);
-      if (error) {
-        // Si hay errores de validación, devolver una respuesta de error
-        return res.status(400).send({
-          hasError: true,
-          error: error.details[0].message,
-        });
-      }
-
-      // Los datos son válidos, crear un objeto con las propiedades validadas
-      const user: IUserModel = value as IUserModel;
-      const response = await authController.registerUser(user);
-      return res.status(201).send(response);
+      const session = await buildController().refreshSession(readRefreshTokenCookie(req), cookieSink(res));
+      res.status(200).json(session);
     } catch (error) {
-      return res.status(400).send({
-        hasError: true,
-        error: `${error}`
-      });
+      clearRefreshTokenCookie(res);
+      throw error;
     }
-  };
+  });
 
-  public async loginHandler(req: Request, res: Response) {
-    try {
-      const userRepository = new UserRepository();
-      const authController = new AuthController(userRepository);
+  public oauthExchangeHandler = asyncHandler(async (req, res) => {
+    const session = await buildController().exchangeOAuthCode(req.body, cookieSink(res));
+    res.status(200).json(session);
+  });
 
-      const response = await authController.loginUser(req.body);
-      return res.status(201).send(response);
-    } catch (error) {
-      return res.status(400).send({
-        hasError: true,
-        error: `${error}`
-      });
-    }
-  };
-
-  public async getauthUserDataHandler(req: Request, res: Response){
-    try {
-      const userRepository = new UserRepository();
-      const authController = new AuthController(userRepository);
-
-      const { _id = '' } = req.user as IUserResponseModel;
-
-      const user = await authController.getAuthenticatedUserData(_id);
-      return res.status(200).send({
-        hasError: false,
-        user
-      });
-    } catch (error: any) {
-      return res.status(500).send({
-        hasError: true,
-        error: `${error}`
-      });
-    }
-  };
+  public logoutHandler = asyncHandler(async (req, res) => {
+    await buildController().logoutUser(readRefreshTokenCookie(req));
+    clearRefreshTokenCookie(res);
+    res.status(204).end();
+  });
 
 }

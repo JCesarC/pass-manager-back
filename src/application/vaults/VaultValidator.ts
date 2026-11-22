@@ -1,20 +1,42 @@
 import Joi from 'joi';
 
-import { IVaultModel } from '../../domain/vaults/interfaces';
+export interface VaultInput {
+  name: string;
+  data: string;
+  dataFieldType: string;
+  isFavorite?: boolean;
+  tags?: string[];
+  isArchived?: boolean;
+  expirationDate?: Date | null;
+}
 
-const objectId = Joi.string().hex().length(24);
+export interface VaultUpdateInput {
+  name?: string;
+  data?: string;
+  dataFieldType?: string;
+  isFavorite?: boolean;
+  tags?: string[];
+  isArchived?: boolean;
+  expirationDate?: Date | null;
+}
 
-const vaultValidator = Joi.object<IVaultModel>({
-  user: objectId.required(),
-  name: Joi.string().trim().min(1).max(100).required(),
-  data: Joi.string().required(),
-  dataFieldType: Joi.string().required(),
+const vaultFields = {
+  name: Joi.string().trim().min(1).max(100),
+  data: Joi.string().max(10_000),
+  dataFieldType: Joi.string().max(50),
   isFavorite: Joi.boolean(),
-  tags: Joi.array().items(Joi.string().max(50)).max(20),
+  tags: Joi.array().items(Joi.string().trim().max(50)).max(20),
   isArchived: Joi.boolean(),
   expirationDate: Joi.date().allow(null),
-  attachments: Joi.array().items(Joi.string()),
-  extraFields: Joi.array().items(objectId),
+};
+
+const vaultValidator = Joi.object<VaultInput>({
+  ...vaultFields,
+  name: vaultFields.name.required(),
+  data: vaultFields.data.required(),
+  dataFieldType: vaultFields.dataFieldType.required(),
 });
 
-export { vaultValidator };
+const vaultUpdateValidator = Joi.object<VaultUpdateInput>(vaultFields).min(1);
+
+export { vaultUpdateValidator, vaultValidator };

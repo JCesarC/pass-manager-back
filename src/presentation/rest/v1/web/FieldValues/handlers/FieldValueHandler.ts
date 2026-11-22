@@ -1,48 +1,23 @@
-import { Request, Response } from 'express';
-
 import { iocContainer } from '../../../../../../ioc';
 import { TYPES } from '../../../../../../domain/types';
-
+import { IFieldRepository } from '../../../../../../domain/fields/repository';
 import { IFieldValueRepository } from '../../../../../../domain/fieldValues/repository/IFieldValueRepository';
-import { IFieldValueModel } from '../../../../../../domain/fieldValues/interfaces';
-
-import { fieldValueValidator } from '../../../../../../application/FieldValues/FieldValueValidator';
-import { ThrowValidatorError } from '../../../../../../application/shared';
+import { IVaultRepository } from '../../../../../../domain/vaults/repository/IVaultRepository';
 
 import { FieldValueController } from '../controllers/FieldValueController';
+import { asyncHandler } from '../../../../shared';
+import { getAuthUserId } from '../../../../middlewares';
 
-export class FieldValueHandler{
-  async getAllFieldValues(req: Request, res: Response){
-    try {
-      const fieldValueRepository = iocContainer.get<IFieldValueRepository>(TYPES.IFieldValueRepository);
-      const fieldValueController = new FieldValueController(fieldValueRepository);
-      const response = await fieldValueController.getAllFieldValues();
-      return res.send(response);
-    } catch (error) {
-      return res.status(500).send({
-        error: true,
-        errorMessage: `${error}`
-      });
-    }
-  }
+const buildController = () =>
+  new FieldValueController(
+    iocContainer.get<IFieldValueRepository>(TYPES.IFieldValueRepository),
+    iocContainer.get<IVaultRepository>(TYPES.IVaultRepository),
+    iocContainer.get<IFieldRepository>(TYPES.IFieldRepository),
+  );
 
-  async createFieldValue(req: Request, res: Response){
-    try {
-      const fieldValueRepository = iocContainer.get<IFieldValueRepository>(TYPES.IFieldValueRepository);
-
-      const fieldValueController = new FieldValueController(fieldValueRepository);
-      const { error, value } = fieldValueValidator.validate(req.body);
-
-      if (error) return ThrowValidatorError(error);
-      // * TODO: Move validator logic to controller
-      const fieldValueData = value as IFieldValueModel;
-      const response = await fieldValueController.createFieldValue(fieldValueData);
-      return res.status(201).send(response);
-    } catch (error) {
-      return res.status(400).send({
-        error: true,
-        errorMessage: `${error}`
-      });
-    }
-  }
+export class FieldValueHandler {
+  createFieldValue = asyncHandler(async (req, res) => {
+    const response = await buildController().createFieldValue(req.body, getAuthUserId(req));
+    res.status(201).json(response);
+  });
 }

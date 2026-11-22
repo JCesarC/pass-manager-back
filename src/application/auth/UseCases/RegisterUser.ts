@@ -20,7 +20,7 @@ export class RegisterUserUseCase {
     this.userRepository = userRepository;
   }
 
-  async execute(newUserData: IUserModel) {
+  async execute(newUserData: IUserModel & { password: string }) {
     const createUserUseCase = new CreateUserUseCase(this.userRepository);
     const getUserByEmailUseCase = new GetUserByEmailUseCase(this.userRepository);
     const getFilteredUserDataUseCase = new GetFilteredUserDataUseCase(this.userRepository);
@@ -42,12 +42,9 @@ export class RegisterUserUseCase {
     };
 
     const response = await createUserUseCase.execute(user);
-    console.log('🚀 ~ execute ~ response:', response);
     const userData = await getFilteredUserDataUseCase.execute(response._id);
-    console.log('🚀 ~ execute ~ userData:', userData);
 
     return {
-      error: false,
       user: userData,
     };
   }

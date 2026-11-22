@@ -1,41 +1,24 @@
-import mongoose, { ConnectOptions } from 'mongoose';
+import mongoose from 'mongoose';
 
 import { env } from '../../../shared/config';
+import { logger } from '../../../shared/logger';
 
-// Drop filter fields that are not in the schema (explicit; Mongoose 7+ flips the default).
 mongoose.set('strictQuery', true);
 
 mongoose.connection.once('open', () => {
-  console.log('MongoDB Connection ready!');
+  logger.info('MongoDB connection ready');
 });
 
 mongoose.connection.on('error', (err) => {
-  console.log('Error with MongoDB', err);
+  logger.error({ err }, 'MongoDB connection error');
 });
 
 mongoose.connection.on('close', () => {
-  console.log('MongoDB Connection Closed sucessfully!');
+  logger.info('MongoDB connection closed');
 });
 
-// const SIGS = [
-//   'SIGINT',
-//   'SIGBREAK',
-//   'SIGTERM'
-// ] as const;
-
-// SIGS.forEach((SIG) => {
-//   process.on(SIG, () => {
-//     console.log('Closing db connection...');
-//     mongoose.connection.close(true);
-//   });
-// });
-
 export const startDBConnection = async () => {
-  const options = {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-  } as ConnectOptions;
-  await mongoose.connect(env.MONGODB_URL, options);
+  await mongoose.connect(env.MONGODB_URL);
 };
 
 export const closeDBConnection = async () => {

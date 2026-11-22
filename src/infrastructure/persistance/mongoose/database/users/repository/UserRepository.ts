@@ -6,9 +6,10 @@ import { IUserResponseModel, IUserModel } from '../../../../../../domain/users/i
 import { IUserRepository } from '../../../../../../domain/users/repository/IUserRepository';
 import { injectable } from 'inversify';
 
+const PRIVATE_FIELDS = { __v: 0, password: 0, failedLoginAttempts: 0, lockUntil: 0 };
+
 @injectable()
 export class UserRepository implements IUserRepository{
-
   async getAll(): Promise<IUserResponseModel[] | null> {
     return await UserModel.find({});
   };
@@ -41,20 +42,26 @@ export class UserRepository implements IUserRepository{
     return await UserModel.findOne({ email });
   }
 
-  async getAllUsers(): Promise<IUserModel[]> {
-    const users = await UserModel.find({}, { __v: 0, password: 0 }).exec();
-    return users;
-  }
-
   async getFilteredUserData(_id: string): Promise<IUserResponseModel | null>{
-    return await UserModel.findById(_id, { __v: 0, password: 0 });
+    return await UserModel.findById(_id, PRIVATE_FIELDS);
   }
 
-  async getUsersPaginated(page: number, limit: number): Promise<IUserResponseModel[]> {
-    return await UserModel
-      .find({}, { __v: 0, password: 0 })
-      .limit(limit)
-      .skip((page - 1) * limit)
-      .exec();
+  async registerFailedLogin(_id: string, maxAttempts: number, lockMinutes: number): Promise<void> {
+    const user = await UserModel.findByIdAndUpdate(
+      _id,
+      { $inc: { failedLoginAttempts: 1 } },
+      { new: true, projection: { failedLoginAttempts: 1 } },
+    );
+
+    if (user && (user.failedLoginAttempts ?? 0) >= maxAttempts) {
+      await UserModel.updateOne(
+        { _id },
+        { $set: { failedLoginAttempts: 0, lockUntil: new Date(Date.now() + lockMinutes * 60_000) } },
+      );
+    }
+  }
+
+  async resetFailedLogins(_id: string): Promise<void> {
+    await UserModel.updateOne({ _id }, { $set: { failedLoginAttempts: 0, lockUntil: null } });
   }
 }

@@ -1,25 +1,14 @@
-import express, { Request, Response } from 'express';
+import express from 'express';
+
 import { UserController } from '../controllers';
+import { asyncHandler } from '../../../../shared';
+import { getAuthUserId } from '../../../../middlewares';
 
 const userRouter = express.Router();
-//* TODO: Refactor to userHandler...
-userRouter.route('/').get(async (req: Request, res: Response) => {
-  try {
-    const userController = new UserController();
 
-    const page = req?.query?.page as string || '1';
-    const limit = req?.query?.limit as string || '5';
-
-    const intPage = parseInt(page);
-    const intLimit = parseInt(limit);
-
-    const dataUsers = await userController.getUsers(intPage, intLimit);
-
-    return res.send(dataUsers);
-
-  } catch (error) {
-    return res.status(500).send({ Error: error });
-  }
-});
+userRouter.get('/me', asyncHandler(async (req, res) => {
+  const response = await new UserController().getMe(getAuthUserId(req));
+  res.status(200).json(response);
+}));
 
 export default userRouter;

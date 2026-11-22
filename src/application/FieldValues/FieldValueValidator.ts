@@ -1,11 +1,15 @@
 import Joi from 'joi';
 
-import { IFieldValueModel } from '../../domain/fieldValues/interfaces';
+export interface FieldValueInput {
+  field: string;
+  value: string | string[];
+  vault: string;
+}
 
-const fieldValueValidator = Joi.object<IFieldValueModel>({
-  field: Joi.string().required(),
-  value: Joi.alternatives().try(Joi.string(), Joi.array().items(Joi.string())).required(),
-  vault: Joi.string().required(),
+const fieldValueValidator = Joi.object<FieldValueInput>({
+  field: Joi.string().hex().length(24).required(),
+  value: Joi.alternatives().try(Joi.string().max(10_000), Joi.array().items(Joi.string().max(10_000)).max(50)).required(),
+  vault: Joi.string().hex().length(24).required(),
 });
 
 export { fieldValueValidator };

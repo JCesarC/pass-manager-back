@@ -1,14 +1,24 @@
-import { Request, Response } from 'express';
 import passport from 'passport';
 
-import { UserRepository } from '../../../../../../infrastructure/persistance/mongoose/database/users/repository/UserRepository';
+import { iocContainer } from '../../../../../../ioc';
+import { TYPES } from '../../../../../../domain/types';
+import { IOAuthCodeRepository } from '../../../../../../domain/auth/repository/IOAuthCodeRepository';
+import { OAuthCodeService } from '../../../../../../application/auth/services/OAuthCodeService';
+import { UnauthorizedError } from '../../../../../../application/shared';
+import { env } from '../../../../../../infrastructure/shared/config';
+import { GoogleSignInResult } from '../../../../../../infrastructure/authentication/passport/passportConfig';
+import { asyncHandler } from '../../../../shared';
 
-import { AuthController } from '../controller/AuthController';
+const frontendCallbackUrl = (params: Record<string, string>) => {
+  const url = new URL('/auth/callback', env.FRONTEND_URL);
+  Object.entries(params).forEach(([key, value]) => url.searchParams.set(key, value));
+  return url.toString();
+};
 
 export class OAuthHandler {
-
   public googleAuthenticationHandler = passport.authenticate('google', {
     scope: ['email', 'profile'],
+    session: false,
   });
 
   public googleCallbackHandler = passport.authenticate('google', {
@@ -16,42 +26,19 @@ export class OAuthHandler {
     session: false,
   });
 
-  public async googleSuccessCallbackHandler(req: any, res: Response) {
-    try {
-      const userRepository = new UserRepository();
-      const authController = new AuthController(userRepository);
+  public googleSuccessCallbackHandler = asyncHandler(async (req, res) => {
+    const result = req.user as GoogleSignInResult | undefined;
+    if (!result?.userId) throw new UnauthorizedError('Google sign-in failed.');
 
-      const token = await authController.generateAuthToken(req.user._json.email);
+    const code = await new OAuthCodeService(
+      iocContainer.get<IOAuthCodeRepository>(TYPES.IOAuthCodeRepository),
+    ).issue(result.userId);
 
-      res.redirect(`http://localhost:3000/auth/login?token=${token}`);
-    } catch (error: any) {
-      return res.status(400).send({
-        error: true,
-        errorMessage: `${error?.message}`,
-      });
-    }
-  };
+    res.redirect(frontendCallbackUrl({ code }));
+  });
 
-  public async googleFailureHandler(req: Request, res: Response){
-    try {
-      return res.send('Failed to log in!');
-    } catch (error) {
-      return res.status(400).send({
-        error: true,
-        errorMessage: `${error}`,
-      });
-    }
-  };
-
-  public googleLogoutHandler(req: Request, res: Response) {
-    try {
-      return res.redirect('/');
-    } catch (error) {
-      return res.status(400).send({
-        error: true,
-        errorMessage: `${error}`,
-      });
-    }
-  };
+  public googleFailureHandler = asyncHandler(async (_req, res) => {
+    res.redirect(frontendCallbackUrl({ error: 'google_sign_in_failed' }));
+  });
 
 }
