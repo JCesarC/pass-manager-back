@@ -12,7 +12,6 @@ export class CreateFieldValueUseCase {
     private readonly fieldRepository: IFieldRepository,
   ) {}
 
-  /** Adds a field value to one of the caller's vaults. */
   async exec(ownerId: string, fieldValueData: FieldValueInput): Promise<IFieldValueModel> {
     const vaultId = fieldValueData.vault;
 

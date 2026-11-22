@@ -31,7 +31,6 @@ class Server {
     await this.startServer();
   }
 
-  /** Stops accepting connections, closes the database and exits. */
   public async stopServer(message = 'Shutting down the server', exitCode = 0) {
     logger.info(message);
     await new Promise<void>((resolve) => {

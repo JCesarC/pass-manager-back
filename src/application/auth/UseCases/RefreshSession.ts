@@ -2,7 +2,6 @@ import { IRefreshTokenRepository } from '../../../domain/auth/repository/IRefres
 import { RefreshTokenService } from '../services/RefreshTokenService';
 import { TokenService } from '../services/TokenService';
 
-/** Exchanges a refresh token for a new access token and a rotated refresh token. */
 export class RefreshSessionUseCase {
   constructor(private readonly refreshTokenRepository: IRefreshTokenRepository) {}
 

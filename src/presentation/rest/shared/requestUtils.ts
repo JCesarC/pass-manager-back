@@ -10,7 +10,6 @@ const paginationSchema = Joi.object<{ page: number; limit: number }>({
   limit: Joi.number().integer().min(1).max(PAGINATION.MAX_LIMIT).default(PAGINATION.DEFAULT_LIMIT),
 }).unknown(true);
 
-/** Reads ?page and ?limit, applying defaults and rejecting out-of-range values. */
 export const getPaginationQueries = (req: Request) => {
   const { page, limit } = validate(paginationSchema, req.query);
   return { page, limit };

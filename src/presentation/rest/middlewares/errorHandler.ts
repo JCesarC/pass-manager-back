@@ -23,7 +23,6 @@ export interface ErrorResponseBody {
   };
 }
 
-/** Translates known infrastructure errors into application errors. */
 const toAppError = (err: unknown): AppError | null => {
   if (err instanceof AppError) return err;
 
@@ -49,7 +48,6 @@ const toAppError = (err: unknown): AppError | null => {
   return null;
 };
 
-/** Single place where errors become HTTP responses. Internal details never leave the server. */
 export const errorHandler: ErrorRequestHandler = (err, req, res, _next) => {
   const appError = toAppError(err);
 

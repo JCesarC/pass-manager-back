@@ -9,7 +9,6 @@ import { env } from '../../../../../../infrastructure/shared/config';
 import { GoogleSignInResult } from '../../../../../../infrastructure/authentication/passport/passportConfig';
 import { asyncHandler } from '../../../../shared';
 
-/** Where the front end receives the result of a social sign-in. */
 const frontendCallbackUrl = (params: Record<string, string>) => {
   const url = new URL('/auth/callback', env.FRONTEND_URL);
   Object.entries(params).forEach(([key, value]) => url.searchParams.set(key, value));
@@ -17,7 +16,6 @@ const frontendCallbackUrl = (params: Record<string, string>) => {
 };
 
 export class OAuthHandler {
-
   public googleAuthenticationHandler = passport.authenticate('google', {
     scope: ['email', 'profile'],
     session: false,
@@ -28,10 +26,6 @@ export class OAuthHandler {
     session: false,
   });
 
-  /**
-   * Redirects to the front end with a single-use code instead of a token, so
-   * no credential ends up in the browser history, logs or Referer headers.
-   */
   public googleSuccessCallbackHandler = asyncHandler(async (req, res) => {
     const result = req.user as GoogleSignInResult | undefined;
     if (!result?.userId) throw new UnauthorizedError('Google sign-in failed.');

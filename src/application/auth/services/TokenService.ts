@@ -14,17 +14,10 @@ export interface AccessTokenClaims {
 export interface IssuedAccessToken {
   accessToken: string;
   tokenType: 'Bearer';
-  /** Lifetime in seconds. */
   expiresIn: number;
 }
 
-/**
- * Issues and verifies access tokens (JWT). The algorithm, issuer and
- * audience are pinned on verification so tokens signed differently or for
- * another service are rejected.
- */
 export class TokenService {
-  /** Access tokens are short-lived; sessions are extended with refresh tokens. */
   get accessTokenTtlSeconds(): number {
     return env.ACCESS_TOKEN_TTL_MINUTES * 60;
   }

@@ -1,6 +1,5 @@
 import Joi from 'joi';
 
-/** Request body to create a vault. The owner is always the authenticated user. */
 export interface VaultInput {
   name: string;
   data: string;
@@ -11,7 +10,6 @@ export interface VaultInput {
   expirationDate?: Date | null;
 }
 
-/** Request body to update a vault: any subset of the editable fields. */
 export interface VaultUpdateInput {
   name?: string;
   data?: string;
@@ -32,12 +30,6 @@ const vaultFields = {
   expirationDate: Joi.date().allow(null),
 };
 
-/**
- * The owner comes from the access token and extra fields are attached
- * through POST /fieldValues, so neither can be set here. Allowing
- * extraFields would let a client reference (and, through autopopulate,
- * read) another user's field values.
- */
 const vaultValidator = Joi.object<VaultInput>({
   ...vaultFields,
   name: vaultFields.name.required(),

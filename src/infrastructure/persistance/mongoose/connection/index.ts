@@ -3,7 +3,6 @@ import mongoose from 'mongoose';
 import { env } from '../../../shared/config';
 import { logger } from '../../../shared/logger';
 
-// Drop filter fields that are not in the schema (explicit; Mongoose 7+ flips the default).
 mongoose.set('strictQuery', true);
 
 mongoose.connection.once('open', () => {

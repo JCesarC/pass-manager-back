@@ -2,11 +2,6 @@ import { IGoogleProfile } from '../../../domain/auth/models/IGoogleProfileModel'
 import { IUserRepository } from '../../../domain/users/repository/IUserRepository';
 import { UnauthorizedError } from '../../shared';
 
-/**
- * Finds or creates the user behind a Google profile and returns its id.
- * Only emails verified by Google are trusted, since the email is what links
- * the Google identity to an existing account.
- */
 export class SignInWithGoogleUseCase {
   constructor(private readonly userRepository: IUserRepository) {}
 

@@ -1,8 +1,3 @@
-/**
- * Application-level errors. They describe WHAT went wrong with a stable
- * machine-readable code; the presentation layer decides how each code maps
- * to a transport (HTTP status codes live in the REST error handler).
- */
 export type ErrorCode =
   | 'VALIDATION_ERROR'
   | 'INVALID_CREDENTIALS'

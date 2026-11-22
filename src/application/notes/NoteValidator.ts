@@ -1,6 +1,5 @@
 import Joi from 'joi';
 
-/** Request body to create a note. The owner is always the authenticated user. */
 export interface NoteInput {
   title: string;
   body?: string;
@@ -10,7 +9,6 @@ export interface NoteInput {
   imageURLs?: string[];
 }
 
-/** Request body to update a note: any subset of the editable fields. */
 export interface NoteUpdateInput {
   title?: string;
   body?: string;
@@ -34,7 +32,6 @@ const noteValidator = Joi.object<NoteInput>({
   title: noteFields.title.required(),
 });
 
-/** Partial update: any subset of the editable fields, but at least one. */
 const noteUpdateValidator = Joi.object<NoteUpdateInput>(noteFields).min(1);
 
 export { noteUpdateValidator, noteValidator };

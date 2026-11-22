@@ -8,10 +8,6 @@ export interface RateLimitOptions {
   max: number;
 }
 
-/**
- * Per-IP limit using the standard RateLimit/Retry-After headers. Behind a
- * reverse proxy, USE_PROXY must be enabled so the client IP is correct.
- */
 export const createRateLimiter = ({ windowMinutes, max }: RateLimitOptions): RequestHandler =>
   rateLimit({
     windowMs: windowMinutes * 60_000,

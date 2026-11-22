@@ -4,7 +4,6 @@ import { ValidationError } from '../../../application/shared';
 
 const OBJECT_ID = /^[a-f\d]{24}$/i;
 
-/** Rejects requests whose route params are not valid MongoDB ObjectIds. */
 export const validateObjectIdParams =
   (...names: string[]): RequestHandler =>
     (req, _res, next) => {

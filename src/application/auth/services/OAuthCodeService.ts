@@ -7,11 +7,6 @@ const CODE_TTL_MS = 60_000;
 
 const hash = (code: string) => createHash('sha256').update(code).digest('hex');
 
-/**
- * After a social sign-in the browser is redirected to the front end with a
- * random, single-use code valid for 60 seconds (never with a token). The
- * front end exchanges it through POST /auth/oauth/exchange.
- */
 export class OAuthCodeService {
   constructor(private readonly repository: IOAuthCodeRepository) {}
 

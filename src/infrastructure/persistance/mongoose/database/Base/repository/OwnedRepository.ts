@@ -3,11 +3,9 @@ import { Document, FilterQuery, Model, UpdateQuery } from 'mongoose';
 import { IOwnedRepository } from '../../../../../../domain/base/repository/IOwnedRepository';
 import { BaseRepository } from './BaseRepository';
 
-/** Base repository for resources that belong to a user through an owner field. */
 export abstract class OwnedRepository<T extends Document>
   extends BaseRepository<T>
   implements IOwnedRepository<T> {
-
   constructor(model: Model<T>, private readonly ownerField = 'user') {
     super(model);
   }

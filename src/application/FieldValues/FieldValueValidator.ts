@@ -1,11 +1,8 @@
 import Joi from 'joi';
 
-/** Request body to add a field value to one of the caller's vaults. */
 export interface FieldValueInput {
-  /** Id of the field definition. */
   field: string;
   value: string | string[];
-  /** Id of a vault owned by the caller. */
   vault: string;
 }
 

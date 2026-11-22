@@ -4,7 +4,6 @@ import { AuthHandler } from '../../handlers/AuthHandler';
 import { NotFoundError } from '../../../../../../../application/shared';
 import { isGoogleAuthEnabled } from '../../../../../../../infrastructure/shared/config';
 
-/** Google routes only exist when Google OAuth credentials are configured. */
 const requireGoogleAuth: RequestHandler = (_req, _res, next) =>
   next(isGoogleAuthEnabled ? undefined : new NotFoundError('Google sign-in'));
 

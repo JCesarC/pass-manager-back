@@ -9,10 +9,6 @@ import FieldValueModel from '../../src/infrastructure/persistance/mongoose/datab
 import { clearTestDb, connectTestDb, disconnectTestDb } from '../helpers/db';
 import { API, createAuthenticatedUser, TestUser } from '../helpers/auth';
 
-/**
- * Milestone M1 Definition of Done: user B can never read, edit or delete
- * user A's resources, and cannot create resources on A's behalf.
- */
 describe('authorization between users', () => {
   const app = createApp();
   let alice: TestUser;

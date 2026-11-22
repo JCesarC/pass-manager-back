@@ -2,7 +2,6 @@ import { IRefreshTokenRepository } from '../../../domain/auth/repository/IRefres
 import { RefreshTokenService } from './RefreshTokenService';
 import { TokenService } from './TokenService';
 
-/** Starts a new session: a short-lived access token plus a new refresh token family. */
 export class SessionService {
   constructor(private readonly refreshTokenRepository: IRefreshTokenRepository) {}
 

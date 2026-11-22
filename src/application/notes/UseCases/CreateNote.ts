@@ -6,7 +6,6 @@ export class CreateNoteUseCase implements ICreateNoteUseCase {
   constructor(private readonly noteRepository: INoteRepository) {}
 
   async exec(ownerId: string, noteData: Partial<INoteModel>): Promise<INoteModel> {
-    // The owner always comes from the authenticated user, never from the payload.
     return this.noteRepository.create({ ...noteData, user: ownerId } as unknown as INoteModel);
   }
 }

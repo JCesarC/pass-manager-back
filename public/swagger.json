@@ -18,8 +18,7 @@
 					"RATE_LIMITED",
 					"PAYLOAD_TOO_LARGE",
 					"INTERNAL_ERROR"
-				],
-				"description": "Application-level errors. They describe WHAT went wrong with a stable\nmachine-readable code; the presentation layer decides how each code maps\nto a transport (HTTP status codes live in the REST error handler)."
+				]
 			},
 			"ErrorDetail": {
 				"properties": {
@@ -322,11 +321,9 @@
 				"additionalProperties": false
 			},
 			"FieldValueInput": {
-				"description": "Request body to add a field value to one of the caller's vaults.",
 				"properties": {
 					"field": {
-						"type": "string",
-						"description": "Id of the field definition."
+						"type": "string"
 					},
 					"value": {
 						"anyOf": [
@@ -342,8 +339,7 @@
 						]
 					},
 					"vault": {
-						"type": "string",
-						"description": "Id of a vault owned by the caller."
+						"type": "string"
 					}
 				},
 				"required": [
@@ -433,7 +429,6 @@
 				"additionalProperties": false
 			},
 			"NoteInput": {
-				"description": "Request body to create a note. The owner is always the authenticated user.",
 				"properties": {
 					"title": {
 						"type": "string"
@@ -467,7 +462,6 @@
 				"additionalProperties": false
 			},
 			"NoteUpdateInput": {
-				"description": "Request body to update a note: any subset of the editable fields.",
 				"properties": {
 					"title": {
 						"type": "string"
@@ -579,7 +573,6 @@
 				"additionalProperties": false
 			},
 			"VaultInput": {
-				"description": "Request body to create a vault. The owner is always the authenticated user.",
 				"properties": {
 					"name": {
 						"type": "string"
@@ -617,7 +610,6 @@
 				"additionalProperties": false
 			},
 			"VaultUpdateInput": {
-				"description": "Request body to update a vault: any subset of the editable fields.",
 				"properties": {
 					"name": {
 						"type": "string"

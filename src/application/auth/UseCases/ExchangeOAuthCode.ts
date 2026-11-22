@@ -5,7 +5,6 @@ import { NotFoundError } from '../../shared';
 import { OAuthCodeService } from '../services/OAuthCodeService';
 import { SessionService } from '../services/SessionService';
 
-/** Turns a single-use social sign-in code into a regular session. */
 export class ExchangeOAuthCodeUseCase {
   constructor(
     private readonly userRepository: IUserRepository,

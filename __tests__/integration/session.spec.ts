@@ -83,10 +83,8 @@ describe('session (access + refresh tokens)', () => {
       const first = await refresh(user.refreshCookie).expect(200);
       const legitimateCookie = getRefreshCookie(first.headers['set-cookie']);
 
-      // An attacker replays the old (already rotated) token...
       await refresh(user.refreshCookie).expect(401);
 
-      // ...so the token held by the legitimate client is revoked too.
       await refresh(legitimateCookie).expect(401);
     });
 

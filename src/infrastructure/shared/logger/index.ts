@@ -2,10 +2,6 @@ import pino from 'pino';
 
 import { env } from '../config';
 
-/**
- * Paths removed from every log line. Request bodies are never logged, but
- * these also cover objects passed explicitly to the logger.
- */
 export const REDACTED_PATHS = [
   'req.headers.authorization',
   'req.headers.cookie',

@@ -35,14 +35,11 @@ export class LoginUserUseCase {
     if (!userFound) throw new InvalidCredentialsError();
     const userId = userFound._id.toString();
 
-    // A locked account answers exactly like wrong credentials, so lockouts
-    // cannot be used to discover which emails are registered.
     if (userFound.lockUntil && userFound.lockUntil.getTime() > Date.now()) {
       logger.warn({ userId }, 'Sign-in attempt on a locked account');
       throw new InvalidCredentialsError();
     }
 
-    // Accounts created through Google have no password and cannot sign in with one.
     if (!userFound.password) throw new InvalidCredentialsError();
 
     const validPassword = this.authService.comparePassword(password, userFound.password);

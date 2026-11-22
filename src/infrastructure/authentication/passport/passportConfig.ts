@@ -8,7 +8,6 @@ import { UserRepository } from '../../persistance/mongoose/database/users/reposi
 import { env, isGoogleAuthEnabled } from '../../shared/config';
 import { logger } from '../../shared/logger';
 
-/** What Passport stores in req.user after a successful Google sign-in. */
 export interface GoogleSignInResult {
   userId: string;
 }
@@ -33,7 +32,6 @@ const verifyCallback = async (
     const result: GoogleSignInResult = { userId };
     return done(null, result);
   } catch (error) {
-    // Rejected identities go to the failure redirect; anything else is a server error.
     if (error instanceof UnauthorizedError) return done(null, false);
     return done(error as Error);
   }

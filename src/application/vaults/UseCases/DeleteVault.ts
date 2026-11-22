@@ -8,7 +8,6 @@ export class DeleteVaultUseCase {
     private readonly fieldValueRepository: IFieldValueRepository,
   ) {}
 
-  /** Deletes the vault and its field values. */
   async exec(ownerId: string, vaultId: string): Promise<void> {
     const deleted = await this.vaultRepository.deleteOwned(vaultId, ownerId);
     if (!deleted) throw new NotFoundError('Vault');

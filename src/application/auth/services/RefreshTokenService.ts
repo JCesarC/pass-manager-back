@@ -5,7 +5,6 @@ import { IRefreshTokenRepository } from '../../../domain/auth/repository/IRefres
 import { UnauthorizedError } from '../../shared';
 
 export interface IssuedRefreshToken {
-  /** Raw token. Only ever sent to the client in an httpOnly cookie. */
   token: string;
   expiresAt: Date;
 }
@@ -16,14 +15,6 @@ export interface RotatedSession extends IssuedRefreshToken {
 
 const hash = (token: string) => createHash('sha256').update(token).digest('hex');
 
-/**
- * Opaque, single-use refresh tokens with rotation and reuse detection.
- *
- * Every refresh revokes the presented token and issues a new one in the
- * same family. Presenting a token that was already rotated means it was
- * copied (stolen), so the whole family is revoked and both the attacker
- * and the legitimate client must sign in again.
- */
 export class RefreshTokenService {
   constructor(private readonly repository: IRefreshTokenRepository) {}
 
@@ -49,7 +40,6 @@ export class RefreshTokenService {
     }
 
     const next = randomBytes(32).toString('base64url');
-    // Two concurrent refreshes with the same token: only one can win.
     const revoked = await this.repository.revokeIfActive(stored.tokenHash, hash(next));
     if (!revoked) {
       await this.repository.revokeFamily(stored.familyId);
@@ -67,7 +57,6 @@ export class RefreshTokenService {
     return { userId: stored.userId, token: next, expiresAt };
   }
 
-  /** Ends the session the token belongs to (its whole family). Unknown tokens are ignored. */
   async revoke(token: string): Promise<void> {
     const stored = await this.repository.findByHash(hash(token));
     if (stored) await this.repository.revokeFamily(stored.familyId);

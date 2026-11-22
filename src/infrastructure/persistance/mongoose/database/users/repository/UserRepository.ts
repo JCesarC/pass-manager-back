@@ -6,12 +6,10 @@ import { IUserResponseModel, IUserModel } from '../../../../../../domain/users/i
 import { IUserRepository } from '../../../../../../domain/users/repository/IUserRepository';
 import { injectable } from 'inversify';
 
-/** Fields that must never leave the API. */
 const PRIVATE_FIELDS = { __v: 0, password: 0, failedLoginAttempts: 0, lockUntil: 0 };
 
 @injectable()
 export class UserRepository implements IUserRepository{
-
   async getAll(): Promise<IUserResponseModel[] | null> {
     return await UserModel.find({});
   };

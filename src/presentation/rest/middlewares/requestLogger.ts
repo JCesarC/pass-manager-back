@@ -8,11 +8,6 @@ const REQUEST_ID_HEADER = 'x-request-id';
 const isValidRequestId = (value: unknown): value is string =>
   typeof value === 'string' && /^[\w-]{1,64}$/.test(value);
 
-/**
- * One structured log line per request, correlated by a request id that is
- * accepted from a trusted proxy (when well-formed) or generated, and echoed
- * back in the X-Request-Id response header.
- */
 export const requestLogger = pinoHttp({
   logger,
   genReqId: (req, res) => {

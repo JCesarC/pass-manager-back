@@ -1,6 +1,5 @@
 import mongoose from 'mongoose';
 
-/** Connects each test file to its own database on the shared in-memory server. */
 export const connectTestDb = async (): Promise<void> => {
   const dbName = `test_${process.env.JEST_WORKER_ID}_${Date.now()}`;
   await mongoose.connect(process.env.MONGODB_URL as string, { dbName });
