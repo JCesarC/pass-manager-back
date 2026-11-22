@@ -7,8 +7,8 @@ import { getAuthUserId } from '../../../../middlewares';
 const userRouter = express.Router();
 
 userRouter.get('/me', asyncHandler(async (req, res) => {
-  const user = await new UserController().getMe(getAuthUserId(req));
-  res.status(200).json({ user });
+  const response = await new UserController().getMe(getAuthUserId(req));
+  res.status(200).json(response);
 }));
 
 export default userRouter;

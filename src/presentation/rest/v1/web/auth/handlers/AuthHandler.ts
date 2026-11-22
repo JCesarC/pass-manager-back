@@ -1,3 +1,5 @@
+import { Response } from 'express';
+
 import { iocContainer } from '../../../../../../ioc';
 import { TYPES } from '../../../../../../domain/types';
 import { IRefreshTokenRepository } from '../../../../../../domain/auth/repository/IRefreshTokenRepository';
@@ -6,6 +8,7 @@ import { UserRepository } from '../../../../../../infrastructure/persistance/mon
 
 import { AuthController } from '../controller/AuthController';
 import { asyncHandler } from '../../../../shared';
+import { RefreshTokenSink } from '../../../contracts';
 import { clearRefreshTokenCookie, readRefreshTokenCookie, setRefreshTokenCookie } from '../refreshTokenCookie';
 
 const buildController = () =>
@@ -15,6 +18,9 @@ const buildController = () =>
     iocContainer.get<IOAuthCodeRepository>(TYPES.IOAuthCodeRepository),
   );
 
+const cookieSink = (res: Response): RefreshTokenSink => (refreshToken) =>
+  setRefreshTokenCookie(res, refreshToken.token, refreshToken.expiresAt);
+
 export class AuthHandler {
 
   public registerHandler = asyncHandler(async (req, res) => {
@@ -23,26 +29,22 @@ export class AuthHandler {
   });
 
   public loginHandler = asyncHandler(async (req, res) => {
-    const { refreshToken, ...session } = await buildController().loginUser(req.body);
-    setRefreshTokenCookie(res, refreshToken.token, refreshToken.expiresAt);
+    const session = await buildController().loginUser(req.body, cookieSink(res));
     res.status(200).json(session);
   });
 
   public refreshHandler = asyncHandler(async (req, res) => {
     try {
-      const { refreshToken, ...session } = await buildController().refreshSession(readRefreshTokenCookie(req));
-      setRefreshTokenCookie(res, refreshToken.token, refreshToken.expiresAt);
+      const session = await buildController().refreshSession(readRefreshTokenCookie(req), cookieSink(res));
       res.status(200).json(session);
     } catch (error) {
-      // A rejected refresh token is useless to the client; remove it.
       clearRefreshTokenCookie(res);
       throw error;
     }
   });
 
   public oauthExchangeHandler = asyncHandler(async (req, res) => {
-    const { refreshToken, ...session } = await buildController().exchangeOAuthCode(req.body);
-    setRefreshTokenCookie(res, refreshToken.token, refreshToken.expiresAt);
+    const session = await buildController().exchangeOAuthCode(req.body, cookieSink(res));
     res.status(200).json(session);
   });
 
