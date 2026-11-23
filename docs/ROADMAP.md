@@ -89,16 +89,19 @@ Found and fixed during M0 (not in the original audit): `IModule` extended the DO
 
 **DoD:** a full database dump does not allow recovering any secret; the design document explains why.
 
-- [ ] **ZK-01** `[BOTH]` Write `docs/SECURITY-DESIGN.md`: threat model, key derivation, ciphertext format and what the server can see (ADR-001).
-- [ ] **ZK-02** `[FRONT]` Key derivation: master password + salt → Argon2id (WASM) or PBKDF2-SHA256 with ≥ 600k iterations, producing `encKey` (never leaves the browser) and `authHash` (sent to the server).
-- [ ] **ZK-03** `[BACK]` The server stores `bcrypt/argon2(authHash)`, never the master password; registration and login adapted.
+Design: [SECURITY-DESIGN.md](SECURITY-DESIGN.md) · Decision: [ADR-001](adr/001-client-side-encryption.md) · Task plan and guides: [docs/m2](m2/README.md)
+
+- [x] **ZK-01** `[BOTH]` Write `docs/SECURITY-DESIGN.md`: threat model, key derivation, ciphertext format and what the server can see (ADR-001).
+- [ ] **ZK-02** `[FRONT]` Key derivation: master password + salt → PBKDF2-SHA256 (600k iterations) → HKDF into `authHash` (sent to the server) and `wrapKey` (never leaves the browser), which unwraps the random `userKey`.
+- [ ] **ZK-03** `[BACK]` The server stores `bcrypt(authHash)`, the KDF parameters and the wrapped `userKey`; prelogin, registration, login and `/users/me/keys` adapted. *(M2-B2)*
 - [ ] **ZK-04** `[FRONT]` Per-item AES-256-GCM encryption (WebCrypto), random IV per item, schema version inside the payload.
-- [ ] **ZK-05** `[BACK]` `VaultItem { owner, type, encryptedData, iv, version, createdAt, updatedAt }` model; the backend never knows the content.
-- [ ] **ZK-06** `[BOTH]` Item types: login, secure note, card (replaces or simplifies the generic Fields/FieldValues).
+- [ ] **ZK-05** `[BACK]` `VaultItem { id, owner, type, data: EncString, revision, createdAt, updatedAt }` with client-generated ids and optimistic concurrency; the backend never knows the content. *(M2-B3)*
+- [ ] **ZK-06** `[BOTH]` Item types: login, secure note, card. They replace vaults, fields, field values and notes, which are removed. *(M2-B3, M2-B4)*
 - [ ] **ZK-07** `[FRONT]` Local search over the decrypted in-memory data.
 - [ ] **ZK-08** `[FRONT]` Auto-lock on inactivity (wipes the key from memory) and self-clearing clipboard.
-- [ ] **ZK-09** `[BOTH]` Master password change with vault re-encryption.
-- [ ] **ZK-10** `[FRONT]` Known-answer tests for KDF and encryption (round-trip; tampered ciphertext → failure).
+- [ ] **ZK-09** `[BOTH]` Master password change: re-wrap the same `userKey` (no item re-encryption) and revoke the other sessions. *(M2-B5)*
+- [ ] **ZK-10** `[FRONT]` Known-answer tests for KDF and encryption against the design's test vectors (round-trip; tampered ciphertext → failure).
+- [ ] **ZK-11** `[BACK]` DoD suite: register and use the vault with simulated client crypto, then assert that a database dump contains no plain text secrets. *(M2-B6)*
 
 ---
 
